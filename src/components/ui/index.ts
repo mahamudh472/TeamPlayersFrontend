@@ -7,4 +7,7 @@ export * from "./PageHeader";
 export * from "./StatsGroup";
 export * from "./ChartWrapper"; 
 export * from "./Select";
+export * from "./BackButton";
+export * from "./Tabs";
+
 

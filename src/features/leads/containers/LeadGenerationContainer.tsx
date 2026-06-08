@@ -15,7 +15,6 @@ export const LeadGenerationContainer: React.FC = () => {
         hiringActivity: string;
     }) => {
         console.log("Generating leads with filters:", filters);
-        // Implement API call or mock updates here
     };
 
     return (

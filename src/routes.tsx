@@ -152,6 +152,10 @@ export const routes = createBrowserRouter([
                         element: <ClientCreateContainer />,
                     },
                     {
+                        path: "edit/:id",
+                        element: <ClientCreateContainer />,
+                    },
+                    {
                         path: ":id",
                         element: <ClientDetailsContainer />,
                     },

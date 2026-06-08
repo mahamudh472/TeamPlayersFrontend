@@ -24,7 +24,7 @@ export const PageHeader: React.FC<PageHeaderProps> = ({
     rightElement,
 }) => {
     return (
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1">
                 <Typography variant="h3">{title}</Typography>
                 {subtitle && <Typography variant="body2">{subtitle}</Typography>}

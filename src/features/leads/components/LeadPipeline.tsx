@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography } from "../../../components/ui";
+import { Typography, Tabs, TabOption } from "../../../components/ui";
 import { Funnel, Mail, Phone, Plus, Building2, Users, MapPin } from "lucide-react";
 import { LeadDetailsModal, LeadDetailItem } from "./LeadDetailsModal";
 
@@ -10,7 +10,7 @@ interface Lead extends LeadDetailItem {
 }
 
 export const LeadPipeline: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<"all" | "new" | "contacted" | "meeting booked">("all");
+    const [activeTab, setActiveTab] = useState<string>("all");
     const [selectedLead, setSelectedLead] = useState<LeadDetailItem | null>(null);
 
     const leads: Lead[] = [
@@ -74,9 +74,16 @@ export const LeadPipeline: React.FC = () => {
         return leads.filter((l) => l.status === status).length;
     };
 
+    const tabOptions: TabOption[] = [
+        { label: `All (${getStatusCount("all")})`, value: "all" },
+        { label: `New (${getStatusCount("new")})`, value: "new" },
+        { label: `Contacted (${getStatusCount("contacted")})`, value: "contacted" },
+        { label: `Meetings (${getStatusCount("meeting booked")})`, value: "meeting booked" },
+    ];
+
     return (
         <div className="bg-white rounded-xl border border-btn-sec-border flex flex-col gap-6">
-            <div className="px-6 pt-6 pb-2">
+            <div className="px-6 pt-6">
                 <div className="flex items-center justify-between">
                     <Typography variant="h4" className="font-bold text-text-main leading-none">
                         Lead Pipeline
@@ -87,51 +94,14 @@ export const LeadPipeline: React.FC = () => {
                     </button>
                 </div>
             </div>
-            
+
             <div className="px-6 pb-6">
-                {/* Tabs list */}
-                <div className="bg-slate-100/80 text-muted-text h-10 w-fit items-center justify-center rounded-xl p-[3px] flex gap-1 mb-6">
-                    <button
-                        onClick={() => setActiveTab("all")}
-                        className={`inline-flex h-full items-center justify-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
-                            activeTab === "all"
-                                ? "bg-white text-text-main shadow-xs"
-                                : "hover:text-text-main text-muted-text"
-                        }`}
-                    >
-                        All ({getStatusCount("all")})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("new")}
-                        className={`inline-flex h-full items-center justify-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
-                            activeTab === "new"
-                                ? "bg-white text-text-main shadow-xs"
-                                : "hover:text-text-main text-muted-text"
-                        }`}
-                    >
-                        New ({getStatusCount("new")})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("contacted")}
-                        className={`inline-flex h-full items-center justify-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
-                            activeTab === "contacted"
-                                ? "bg-white text-text-main shadow-xs"
-                                : "hover:text-text-main text-muted-text"
-                        }`}
-                    >
-                        Contacted ({getStatusCount("contacted")})
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("meeting booked")}
-                        className={`inline-flex h-full items-center justify-center gap-1.5 rounded-lg px-4 py-1.5 text-sm font-medium transition-all ${
-                            activeTab === "meeting booked"
-                                ? "bg-white text-text-main shadow-xs"
-                                : "hover:text-text-main text-muted-text"
-                        }`}
-                    >
-                        Meetings ({getStatusCount("meeting booked")})
-                    </button>
-                </div>
+                <Tabs
+                    options={tabOptions}
+                    value={activeTab}
+                    onChange={setActiveTab}
+                    className="mb-6"
+                />
 
                 {/* Lead Items list */}
                 <div className="space-y-3">
@@ -149,11 +119,10 @@ export const LeadPipeline: React.FC = () => {
                                         <Typography variant="body1" className="font-semibold text-text-main">
                                             {lead.company}
                                         </Typography>
-                                        <span className={`inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit capitalize ${
-                                            lead.status === "new" 
+                                        <span className={`inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium w-fit capitalize ${lead.status === "new"
                                                 ? "bg-slate-100 text-slate-800 border-transparent"
                                                 : "bg-primary/10 text-primary border-transparent"
-                                        }`}>
+                                            }`}>
                                             {lead.status}
                                         </span>
                                         <span className="inline-flex items-center justify-center rounded-md border border-btn-sec-border px-2 py-0.5 text-xs font-medium text-muted-text capitalize">
@@ -176,16 +145,15 @@ export const LeadPipeline: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <button 
+                                    <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             console.log("Action clicked for:", lead.company);
                                         }}
-                                        className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all h-8 rounded-md gap-1.5 px-3 border ${
-                                            lead.actionText === "Convert to Client"
+                                        className={`inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all h-8 rounded-md gap-1.5 px-3 border ${lead.actionText === "Convert to Client"
                                                 ? "bg-primary text-white border-transparent hover:bg-primary/95"
                                                 : "border-btn-sec-border bg-white text-text-main hover:bg-slate-50"
-                                        }`}
+                                            }`}
                                     >
                                         <ActionIcon className="w-4 h-4" />
                                         {lead.actionText}
