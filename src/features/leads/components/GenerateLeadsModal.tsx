@@ -1,0 +1,177 @@
+import React, { useState } from "react";
+import { Typography, Select, OptionType } from "../../../components/ui";
+import { Sparkles, Search, X } from "lucide-react";
+
+interface GenerateLeadsModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+    onGenerate: (filters: {
+        country: string;
+        industry: string;
+        companySize: string;
+        hiringActivity: string;
+    }) => void;
+}
+
+export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
+    isOpen,
+    onClose,
+    onGenerate,
+}) => {
+    const [country, setCountry] = useState<OptionType | null>(null);
+    const [industry, setIndustry] = useState<OptionType | null>(null);
+    const [companySize, setCompanySize] = useState<OptionType | null>(null);
+    const [hiringActivity, setHiringActivity] = useState<OptionType | null>(null);
+
+    if (!isOpen) return null;
+
+    const handleSubmit = () => {
+        onGenerate({
+            country: country?.value || "",
+            industry: industry?.value || "",
+            companySize: companySize?.value || "",
+            hiringActivity: hiringActivity?.value || "",
+        });
+        onClose();
+    };
+
+    const countries: OptionType[] = [
+        { label: "United Kingdom", value: "United Kingdom" },
+        { label: "United States", value: "United States" },
+        { label: "Canada", value: "Canada" },
+        { label: "Germany", value: "Germany" },
+        { label: "France", value: "France" },
+    ];
+
+    const industries: OptionType[] = [
+        { label: "Technology", value: "Technology" },
+        { label: "Finance", value: "Finance" },
+        { label: "Healthcare", value: "Healthcare" },
+        { label: "Retail", value: "Retail" },
+        { label: "Education", value: "Education" },
+    ];
+
+    const sizes: OptionType[] = [
+        { label: "1-10 employees", value: "1-10 employees" },
+        { label: "10-50 employees", value: "10-50 employees" },
+        { label: "50-200 employees", value: "50-200 employees" },
+        { label: "200-500 employees", value: "200-500 employees" },
+        { label: "500+ employees", value: "500+ employees" },
+    ];
+
+    const activities: OptionType[] = [
+        { label: "High", value: "High" },
+        { label: "Medium", value: "Medium" },
+        { label: "Low", value: "Low" },
+        { label: "None", value: "None" },
+    ];
+
+    return (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-0 duration-200">
+            {/* Backdrop */}
+            <div className="absolute inset-0" onClick={onClose} />
+
+            {/* Modal Body */}
+            <div className="bg-white rounded-xl border border-btn-sec-border shadow-xl w-full max-w-lg p-6 relative flex flex-col gap-6 animate-in zoom-in-95 duration-200 z-10">
+                
+                {/* Header */}
+                <div className="flex flex-col gap-1.5 text-left">
+                    <Typography variant="h4" className="text-lg font-bold text-text-main leading-none">
+                        Generate New Leads with AI
+                    </Typography>
+                    <Typography variant="body2" className="text-muted-text text-sm">
+                        Define your target market and let AI find potential clients
+                    </Typography>
+                </div>
+
+                {/* Form fields */}
+                <div className="space-y-4 py-2">
+                    <div className="grid grid-cols-2 gap-4">
+                        
+                        {/* Country Select */}
+                        <Select
+                            label="Country"
+                            placeholder="Select country"
+                            options={countries}
+                            value={country}
+                            onChange={(val) => setCountry(val as OptionType | null)}
+                        />
+
+                        {/* Industry Select */}
+                        <Select
+                            label="Industry"
+                            placeholder="Select industry"
+                            options={industries}
+                            value={industry}
+                            onChange={(val) => setIndustry(val as OptionType | null)}
+                        />
+
+                        {/* Company Size Select */}
+                        <Select
+                            label="Company Size"
+                            placeholder="Select size"
+                            options={sizes}
+                            value={companySize}
+                            onChange={(val) => setCompanySize(val as OptionType | null)}
+                        />
+
+                        {/* Hiring Activity Select */}
+                        <Select
+                            label="Hiring Activity"
+                            placeholder="Select activity"
+                            options={activities}
+                            value={hiringActivity}
+                            onChange={(val) => setHiringActivity(val as OptionType | null)}
+                        />
+
+                    </div>
+
+                    {/* Sparkle info banner */}
+                    <div className="bg-primary/5 border border-primary/15 rounded-xl p-4 mt-4">
+                        <div className="flex items-start gap-3">
+                            <Sparkles className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                            <div className="text-sm">
+                                <p className="font-semibold text-text-main mb-1">AI will search for:</p>
+                                <ul className="space-y-1 text-muted-text">
+                                    <li>• Companies matching your criteria</li>
+                                    <li>• Recent job postings and hiring signals</li>
+                                    <li>• Decision makers and contact information</li>
+                                    <li>• Company health and growth indicators</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Footer Buttons */}
+                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                    <button
+                        type="button"
+                        onClick={onClose}
+                        className="inline-flex items-center justify-center px-4 h-10 text-sm font-medium border border-btn-sec-border rounded-lg hover:bg-slate-50 text-text-main transition-colors"
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSubmit}
+                        className="inline-flex items-center justify-center gap-2 px-4 h-10 text-sm font-medium bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors"
+                    >
+                        <Search className="w-4 h-4" />
+                        Generate Leads
+                    </button>
+                </div>
+
+                {/* Top-right close button */}
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="absolute top-4 right-4 text-muted-text hover:text-text-main transition-colors p-1"
+                >
+                    <X className="w-5 h-5" />
+                    <span className="sr-only">Close</span>
+                </button>
+            </div>
+        </div>
+    );
+};

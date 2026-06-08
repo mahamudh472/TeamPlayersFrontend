@@ -1,13 +1,33 @@
 import React from "react";
-import { Typography } from "../../../components/ui";
+import { PageHeader } from "../../../components/ui";
+import { DashboardStats } from "../components/DashboardStats";
+import { RevenueChart } from "../components/RevenueChart";
+import { ActivePositionsChart } from "../components/ActivePositionsChart";
+import { DashboardCandidateInterviews } from "../components/DashboardCandidateInterviews";
+import { DashboardActionsPipeline } from "../components/DashboardActionsPipeline";
 
 export const DashboardOverviewContainer: React.FC = () => {
-  return (
-    <div className="space-y-6">
-      <Typography variant="h2">Dashboard Overview</Typography>
-      <Typography variant="body1">
-        Welcome to your recruitment management dashboard. Use the sidebar to navigate the modules.
-      </Typography>
-    </div>
-  );
+    return (
+        <main className="space-y-8">
+            <PageHeader
+                title="Dashboard Overview"
+                subtitle="Welcome back! Here's what's happening with your recruitment pipeline."
+            />
+            
+            {/* Top Stats Component */}
+            <DashboardStats />
+
+            {/* Charts Component */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <RevenueChart />
+                <ActivePositionsChart />
+            </div>
+
+            {/* Candidate & Interviews Grid */}
+            <DashboardCandidateInterviews />
+
+            {/* Quick Actions & Pipeline Health Grid */}
+            <DashboardActionsPipeline />
+        </main>
+    );
 };

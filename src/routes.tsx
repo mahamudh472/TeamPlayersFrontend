@@ -26,9 +26,9 @@ import {
 import {
     DashboardLayout,
     DashboardOverviewContainer,
-    AnalyticsContainer,
-    SettingsContainer,
 } from "./features/dashboard";
+import { AnalyticsContainer } from "./features/analytics";
+import { SettingsContainer } from "./features/settings";
 import { LeadGenerationContainer } from "./features/leads";
 import {
     ClientsContainer,

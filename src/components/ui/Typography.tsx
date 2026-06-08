@@ -33,17 +33,17 @@ const variantMapping: Record<TypographyVariant, React.ElementType> = {
 };
 
 const classMapping: Record<TypographyVariant, string> = {
-  h1: "text-4xl font-bold tracking-tight text-gray-900 dark:text-white",
-  h2: "text-3xl font-semibold tracking-tight text-gray-900 dark:text-white",
-  h3: "text-2xl font-semibold text-gray-900 dark:text-white",
-  h4: "text-xl font-medium text-gray-900 dark:text-white",
-  h5: "text-lg font-medium text-gray-900 dark:text-white",
-  h6: "text-base font-medium text-gray-900 dark:text-white",
-  body1: "text-base leading-7 text-gray-700 dark:text-gray-300",
-  body2: "text-sm leading-6 text-gray-600 dark:text-gray-400",
-  caption: "text-xs text-gray-500 dark:text-gray-500",
-  subtitle1: "text-lg font-normal text-gray-500 dark:text-gray-400",
-  subtitle2: "text-sm font-normal text-gray-500 dark:text-gray-400",
+  h1: "text-5xl md:text-6xl font-bold tracking-tight text-text-main mb-6",
+  h2: "text-3xl font-semibold tracking-tight text-text-main",
+  h3: "text-2xl font-semibold text-text-main",
+  h4: "text-xl font-medium text-text-main",
+  h5: "text-lg font-medium text-text-main",
+  h6: "text-base font-medium text-text-main",
+  body1: "text-base leading-7 text-text-main",
+  body2: "text-sm leading-6 text-muted-text",
+  caption: "text-xs text-light-text",
+  subtitle1: "text-lg font-normal text-muted-text",
+  subtitle2: "text-sm font-normal text-light-text",
 };
 
 export const Typography: React.FC<TypographyProps> = ({
