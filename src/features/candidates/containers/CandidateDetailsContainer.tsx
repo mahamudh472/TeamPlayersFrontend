@@ -14,7 +14,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             return {
                 name: "Sarah Martinez",
                 matchScore: 88,
-                status: "interview",
+                status: "interview_scheduled",
                 email: "sarah.m@email.com",
                 phone: "+44 7700 900234",
                 location: "London, UK",
@@ -42,6 +42,8 @@ export const CandidateDetailsContainer: React.FC = () => {
                 recommendationTitle: "Highly Fit Candidate",
                 recommendationText:
                     "Highly recommend moving forward to technical panel interview.",
+                interviewDate: "2026-06-17",
+                interviewTime: "14:00",
                 appliedJobs: [
                     { id: "1", title: "Senior Software Engineer" },
                 ],
@@ -126,7 +128,7 @@ export const CandidateDetailsContainer: React.FC = () => {
         return {
             name: "Alex Thompson",
             matchScore: 92,
-            status: "interview",
+            status: "interview_scheduled",
             email: "alex.thompson@email.com",
             phone: "+44 7700 900123",
             location: "London, UK",
@@ -154,6 +156,8 @@ export const CandidateDetailsContainer: React.FC = () => {
             recommendationTitle: "High Fit Candidate",
             recommendationText:
                 "Recommend to shortlist and schedule interview immediately.",
+            interviewDate: "2026-06-16",
+            interviewTime: "10:00",
             appliedJobs: [
                 { id: "1", title: "Senior Software Engineer" },
                 { id: "3", title: "Full Stack Developer" },
@@ -173,11 +177,25 @@ export const CandidateDetailsContainer: React.FC = () => {
     };
 
     const handleShortlist = (jobId: string) => {
-        setCandidate((prev: any) => prev ? { ...prev, status: "shortlisted" } : null);
+        setCandidate((prev: any) => {
+            if (!prev) return null;
+            const selectedJob = prev.appliedJobs.find((j: any) => j.id === jobId);
+            return {
+                ...prev,
+                status: "shortlisted",
+                jobId: jobId,
+                jobTitle: selectedJob ? selectedJob.title : prev.jobTitle,
+            };
+        });
     };
 
     const handleScheduleInterview = (date: string, time: string) => {
-        setCandidate((prev: any) => prev ? { ...prev, status: "interview" } : null);
+        setCandidate((prev: any) => prev ? {
+            ...prev,
+            status: "interview_scheduled",
+            interviewDate: date,
+            interviewTime: time,
+        } : null);
         console.log("Scheduled interview for candidate:", candidate.name, "at", date, time);
     };
 
@@ -192,6 +210,9 @@ export const CandidateDetailsContainer: React.FC = () => {
                 phone={candidate.phone}
                 location={candidate.location}
                 appliedJobs={candidate.appliedJobs || []}
+                interviewDate={candidate.interviewDate}
+                interviewTime={candidate.interviewTime}
+                jobTitle={candidate.jobTitle}
                 onReject={handleReject}
                 onShortlist={handleShortlist}
                 onScheduleInterview={handleScheduleInterview}
@@ -220,6 +241,7 @@ export const CandidateDetailsContainer: React.FC = () => {
 
                 </div>
                 <div>
+                    {/* Sidebar metrics & recommendations */}
                     <CandidateDetailsSidebar
                         jobTitle={candidate.jobTitle}
                         jobLocation={candidate.jobLocation}

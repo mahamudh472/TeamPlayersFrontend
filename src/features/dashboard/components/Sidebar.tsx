@@ -45,14 +45,12 @@ export const Sidebar: React.FC = () => {
         <aside className="w-64 bg-sidebar border-r border-white/10 flex flex-col shrink-0">
             <div className="p-6 border-b border-white/10">
                 <Link to="/dashboard" className="flex items-center gap-2">
-                    <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain brightness-0 invert" />
+                    <img
+                        src="/logo.png"
+                        alt="Logo"
+                        className="h-8 w-auto object-contain"
+                    />
                 </Link>
-                <div className="mt-4">
-                    <p className="text-sm text-white font-medium">Demo Agency</p>
-                    <span className="inline-flex items-center justify-center rounded-md border border-white/15 px-2 py-0.5 font-medium w-fit whitespace-nowrap shrink-0 transition-[color,box-shadow] overflow-hidden bg-white/10 text-white mt-1 text-xs">
-                        Professional Plan
-                    </span>
-                </div>
             </div>
             <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
                 <SidebarLink to="/dashboard" icon={LayoutDashboard}>
