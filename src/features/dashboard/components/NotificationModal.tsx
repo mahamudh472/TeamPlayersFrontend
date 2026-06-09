@@ -1,0 +1,109 @@
+import React from "react";
+import { Typography } from "../../../components/ui";
+import { Bell, X } from "lucide-react";
+
+interface Notification {
+    id: string;
+    title: string;
+    description: string;
+    time: string;
+    type: "job" | "candidate" | "placement";
+}
+
+interface NotificationModalProps {
+    isOpen: boolean;
+    onClose: () => void;
+}
+
+export const NotificationModal: React.FC<NotificationModalProps> = ({
+    isOpen,
+    onClose,
+}) => {
+    if (!isOpen) return null;
+
+    const notifications: Notification[] = [
+        {
+            id: "1",
+            title: "New Candidate Application",
+            description: "John Smith has applied for the Senior Software Engineer position.",
+            time: "2 hours ago",
+            type: "candidate",
+        },
+        {
+            id: "2",
+            title: "Interview Scheduled",
+            description: "First round interview with Acme Corp has been confirmed.",
+            time: "4 hours ago",
+            type: "job",
+        },
+        {
+            id: "3",
+            title: "Placement Finalized",
+            description: "Sarah Johnson's placement contract has been signed by Manufacturing United.",
+            time: "1 day ago",
+            type: "placement",
+        },
+    ];
+
+    return (
+        <div className="absolute right-0 top-[52px] w-96 md:w-[440px] bg-white rounded-xl border border-btn-sec-border shadow-xl z-50 p-4 flex flex-col gap-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
+            {/* Header */}
+            <div className="flex items-center justify-between border-b border-slate-100 pb-2">
+                <div className="flex items-center gap-2">
+                    <Bell className="w-4 h-4 text-primary" />
+                    <Typography variant="body1" className="font-bold text-text-main text-sm">
+                        Notifications
+                    </Typography>
+                </div>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="text-muted-text hover:text-text-main transition-colors cursor-pointer"
+                >
+                    <X className="w-4 h-4" />
+                </button>
+            </div>
+
+            {/* Notifications List */}
+            <div className="space-y-1 max-h-[300px] overflow-y-auto py-1">
+                {notifications.map((notif) => (
+                    <div
+                        key={notif.id}
+                        className="flex gap-2.5 p-2 rounded-lg hover:bg-slate-50 transition-colors text-left"
+                    >
+                        <div className="w-1.5 h-1.5 rounded-full bg-primary mt-1.5 shrink-0" />
+                        <div className="flex-1 min-w-0">
+                            <Typography variant="body2" className="font-semibold text-text-main text-xs">
+                                {notif.title}
+                            </Typography>
+                            <Typography variant="body2" className="text-xs text-muted-text mt-0.5 leading-normal">
+                                {notif.description}
+                            </Typography>
+                            <Typography variant="caption" className="text-[10px] text-light-text mt-1 block font-medium">
+                                {notif.time}
+                            </Typography>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Footer */}
+            <div className="flex justify-between items-center border-t border-slate-100 pt-2 text-xs">
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="text-primary hover:text-primary/90 font-semibold cursor-pointer"
+                >
+                    Mark all as read
+                </button>
+                <button
+                    type="button"
+                    onClick={onClose}
+                    className="text-muted-text hover:text-text-main font-medium cursor-pointer"
+                >
+                    Dismiss
+                </button>
+            </div>
+        </div>
+    );
+};

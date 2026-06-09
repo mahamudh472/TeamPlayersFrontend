@@ -7,7 +7,6 @@ interface RecruiterPerformanceItem {
     placementsCount: number;
     activeJobsCount: number;
     revenue: string;
-    isCurrentUser?: boolean;
 }
 
 export const AnalyticsRecruiters: React.FC = () => {
@@ -18,7 +17,6 @@ export const AnalyticsRecruiters: React.FC = () => {
             placementsCount: 8,
             activeJobsCount: 4,
             revenue: "£125k",
-            isCurrentUser: true,
         },
         {
             name: "Sarah Johnson",
@@ -37,8 +35,8 @@ export const AnalyticsRecruiters: React.FC = () => {
     ];
 
     return (
-        <div className="bg-white rounded-xl border border-btn-sec-border p-6 shadow-xs">
-            <div className="mb-6">
+        <div className="bg-white rounded-xl border border-btn-sec-border p-6 shadow-xs flex flex-col gap-6">
+            <div>
                 <Typography variant="h4" className="font-bold text-text-main">
                     Recruiter Performance
                 </Typography>
@@ -51,7 +49,7 @@ export const AnalyticsRecruiters: React.FC = () => {
                 {recruiters.map((recruiter, index) => (
                     <div
                         key={index}
-                        className={`flex items-center gap-4 p-4 border rounded-xl bg-white border-btn-sec-border transition-all hover:shadow-xs`}
+                        className="flex items-center gap-4 p-4 border border-btn-sec-border rounded-lg bg-white"
                     >
                         <div className="w-12 h-12 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-lg shrink-0">
                             {recruiter.initial}
@@ -66,10 +64,10 @@ export const AnalyticsRecruiters: React.FC = () => {
                             </div>
                         </div>
                         <div className="text-right">
-                            <Typography variant="h3" className="font-bold text-green-500">
+                            <Typography variant="h2" className="text-2xl font-bold text-green-500">
                                 {recruiter.revenue}
                             </Typography>
-                            <Typography variant="caption" className="text-muted-text">
+                            <Typography variant="caption" className="text-xs text-muted-text">
                                 revenue
                             </Typography>
                         </div>

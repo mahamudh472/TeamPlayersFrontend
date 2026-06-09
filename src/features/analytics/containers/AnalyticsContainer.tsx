@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useParams, useNavigate } from "react-router";
 import { PageHeader, Tabs, TabOption, Select, OptionType } from "../../../components/ui";
 import { AnalyticsOverview } from "../components/AnalyticsOverview";
 import { AnalyticsClients } from "../components/AnalyticsClients";
@@ -13,7 +14,10 @@ const timeRangeOptions = [
 ];
 
 export const AnalyticsContainer: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<string>("overview");
+    const { tab } = useParams<{ tab?: string }>();
+    const navigate = useNavigate();
+    const activeTab = tab || "overview";
+
     const [selectedTimeRange, setSelectedTimeRange] = useState<OptionType | null>(timeRangeOptions[2]); // Last year
 
     const tabOptions: TabOption[] = [
@@ -41,6 +45,10 @@ export const AnalyticsContainer: React.FC = () => {
         }
     };
 
+    const handleTabChange = (value: string) => {
+        navigate(`/dashboard/analytics/${value}`);
+    };
+
     return (
         <main className="space-y-6">
             <PageHeader
@@ -63,9 +71,9 @@ export const AnalyticsContainer: React.FC = () => {
                 <Tabs
                     options={tabOptions}
                     value={activeTab}
-                    onChange={setActiveTab}
+                    onChange={handleTabChange}
                 />
-                
+
                 <div className="mt-6">
                     {renderTabContent()}
                 </div>

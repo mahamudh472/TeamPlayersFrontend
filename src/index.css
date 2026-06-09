@@ -16,9 +16,16 @@
   --color-btn-sec-border: #e2e8f0;
   --color-btn-sec-text: #1e293b;
 
+  --color-accent: #14b8a6;
   --color-accent-light: rgba(20, 184, 166, 0.1);
   --color-footer-bg: #1e293b;
   --color-footer-text: #94a3b8;
   --color-text-main: #1e293b;
   --color-background-main: #ffffff;
+
+  --color-border-3: #e2e8f0;
+  --color-border-2: #cbd5e1;
+  --color-text-3: #78879a;
+  --color-surface-base: #ffffff;
+  --color-chart-1: #14b8a6;
 }

@@ -11,6 +11,7 @@ export interface ChartWrapperProps {
     icon?: LucideIcon;
     text: string;
   };
+  chartBottom?: string[];
   children?: React.ReactNode;
   className?: string;
 }
@@ -21,9 +22,12 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({
   value,
   valuelabel,
   badge,
+  chartBottom,
   children,
   className = "",
 }) => {
+  const hasFooter = Boolean(value || valuelabel || badge);
+
   return (
     <div className={`bg-white p-6 rounded-xl border border-btn-sec-border shadow-xs flex flex-col justify-between ${className}`.trim()}>
       <div className="space-y-1 mb-6">
@@ -41,7 +45,7 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({
         {children}
       </div>
 
-      {(value || valuelabel || badge) && (
+      {hasFooter && (
         <div className="flex items-end justify-between mt-6 border-t border-btn-sec-border pt-4">
           <div className="space-y-0.5">
             {value && (
@@ -61,6 +65,16 @@ export const ChartWrapper: React.FC<ChartWrapperProps> = ({
               <span>{badge.text}</span>
             </div>
           )}
+        </div>
+      )}
+
+      {chartBottom && chartBottom.length > 0 && (
+        <div className="flex justify-center items-center gap-6 mt-4">
+          {chartBottom.map((text, idx) => (
+            <Typography key={idx} variant="body2" className="text-muted-text font-medium">
+              {text}
+            </Typography>
+          ))}
         </div>
       )}
     </div>

@@ -4,3 +4,6 @@ export * from "./containers/FeaturesContainer";
 export * from "./containers/PricingContainer";
 export * from "./containers/AboutContainer";
 export * from "./containers/ContactContainer";
+export * from "./containers/TermsContainer";
+export * from "./containers/PrivacyContainer";
+export * from "./containers/HowItWorksContainer";

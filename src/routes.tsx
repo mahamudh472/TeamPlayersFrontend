@@ -7,6 +7,9 @@ import {
     PricingContainer,
     AboutContainer,
     ContactContainer,
+    TermsContainer,
+    PrivacyContainer,
+    HowItWorksContainer,
 } from "./features/landing";
 import {
     AuthLayout,
@@ -72,6 +75,18 @@ export const routes = createBrowserRouter([
             {
                 path: "contact",
                 element: <ContactContainer />,
+            },
+            {
+                path: "how-it-works",
+                element: <HowItWorksContainer />,
+            },
+            {
+                path: "terms",
+                element: <TermsContainer />,
+            },
+            {
+                path: "privacy",
+                element: <PrivacyContainer />,
             },
         ],
     },
@@ -200,11 +215,11 @@ export const routes = createBrowserRouter([
                 element: <PlacementsContainer />,
             },
             {
-                path: "analytics",
+                path: "analytics/:tab?",
                 element: <AnalyticsContainer />,
             },
             {
-                path: "settings",
+                path: "settings/:tab?",
                 element: <SettingsContainer />,
             },
         ],

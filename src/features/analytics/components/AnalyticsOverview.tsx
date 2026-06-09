@@ -1,15 +1,55 @@
 import React from "react";
 import { Typography, ChartWrapper } from "../../../components/ui";
-import { TrendingUp, Users, Calendar, Award, Hourglass } from "lucide-react";
+import { Users, Calendar, Award, Hourglass } from "lucide-react";
 import {
     CartesianGrid,
     BarChart,
     Bar,
+    LineChart,
+    Line,
+    PieChart,
+    Pie,
+    Sector,
     Tooltip,
     XAxis,
     YAxis,
     ResponsiveContainer,
+    PieLabelRenderProps,
+    PieSectorShapeProps,
 } from "recharts";
+import { RechartsDevtools } from "@recharts/devtools";
+
+const RADIAN = Math.PI / 180;
+const COLORS = ["#14b8a6", "#1e293b", "#64748b", "#0ea5e9"];
+
+const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, name, value, index }: PieLabelRenderProps) => {
+    if (cx == null || cy == null || outerRadius == null) {
+        return null;
+    }
+    const radius = Number(outerRadius) + 20;
+    const ncx = Number(cx);
+    const x = ncx + radius * Math.cos(-(midAngle ?? 0) * RADIAN);
+    const ncy = Number(cy);
+    const y = ncy + radius * Math.sin(-(midAngle ?? 0) * RADIAN);
+    const color = COLORS[(index ?? 0) % COLORS.length];
+
+    return (
+        <text
+            x={x}
+            y={y}
+            fill={color}
+            textAnchor={x > ncx ? "start" : "end"}
+            dominantBaseline="central"
+            className="text-xs font-semibold font-mono"
+        >
+            {`${name}: ${value}`}
+        </text>
+    );
+};
+
+const MyCustomPie = (props: PieSectorShapeProps) => {
+    return <Sector {...props} fill={COLORS[(props.index ?? 0) % COLORS.length]} />;
+};
 
 export const AnalyticsOverview: React.FC = () => {
     const statCards = [
@@ -43,13 +83,28 @@ export const AnalyticsOverview: React.FC = () => {
         },
     ];
 
-    const chartData = [
-        { name: "Jan", placements: 3, goal: 4 },
-        { name: "Feb", placements: 5, goal: 4 },
-        { name: "Mar", placements: 4, goal: 5 },
-        { name: "Apr", placements: 7, goal: 6 },
-        { name: "May", placements: 6, goal: 6 },
-        { name: "Jun", placements: 8, goal: 7 },
+    const lineData = [
+        { name: "Jan", uv: 4000 },
+        { name: "Feb", uv: 3000 },
+        { name: "Mar", uv: 2000 },
+        { name: "Apr" },
+        { name: "May", uv: 1890 },
+        { name: "Jun", uv: 2390 },
+    ];
+
+    const pieData = [
+        { name: "Applications", value: 4 },
+        { name: "Shortlisted", value: 2 },
+        { name: "Interview", value: 1 },
+        { name: "Placed", value: 0 },
+    ];
+
+    const industryData = [
+        { name: "Technology", placements: 8 },
+        { name: "Finance", placements: 5 },
+        { name: "Healthcare", placements: 3 },
+        { name: "Retail", placements: 4 },
+        { name: "Manufacturing", placements: 6 },
     ];
 
     return (
@@ -79,21 +134,82 @@ export const AnalyticsOverview: React.FC = () => {
                 })}
             </div>
 
-            {/* Performance Chart */}
+            {/* Two half-width charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                {/* Line Chart */}
+                <ChartWrapper
+                    title="Revenue & Placements Trend"
+                    subtitle="Monthly performance overview"
+                    chartBottom={["Revenue (£)", "Placements"]}
+                >
+                    <div className="w-full h-[300px] flex items-center justify-center">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart
+                                data={lineData}
+                                margin={{
+                                    top: 10,
+                                    right: 30,
+                                    left: 0,
+                                    bottom: 0,
+                                }}
+                            >
+                                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
+                                <XAxis dataKey="name" stroke="var(--color-text-3)" />
+                                <YAxis stroke="var(--color-text-3)" domain={[0, 140000]} ticks={[0, 35000, 70000, 105000, 140000]} />
+                                <Tooltip
+                                    cursor={{ stroke: "var(--color-border-2)" }}
+                                    contentStyle={{ backgroundColor: "var(--color-surface-base)", borderColor: "var(--color-border-2)" }}
+                                />
+                                <Line
+                                    connectNulls
+                                    type="monotone"
+                                    dataKey="uv"
+                                    stroke="var(--color-chart-1)"
+                                    fill="var(--color-chart-1)"
+                                    activeDot={{
+                                        stroke: "var(--color-surface-base)",
+                                    }}
+                                />
+                                <RechartsDevtools />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </ChartWrapper>
+
+                {/* Pie Chart */}
+                <ChartWrapper
+                    title="Pipeline Distribution"
+                    subtitle="Candidate flow through stages"
+                >
+                    <div className="w-full h-[300px] flex items-center justify-center">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
+                                <Pie
+                                    data={pieData}
+                                    labelLine={false}
+                                    label={renderCustomizedLabel}
+                                    fill="#8884d8"
+                                    dataKey="value"
+                                    isAnimationActive={true}
+                                    shape={MyCustomPie}
+                                    outerRadius={80}
+                                />
+                                <RechartsDevtools />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </ChartWrapper>
+            </div>
+
+            {/* Full width Bar Chart */}
             <ChartWrapper
-                title="Placements Trend"
-                subtitle="Monthly placements compared to target goals"
-                value="33 Placements"
-                valuelabel="Total placements (H1)"
-                badge={{
-                    icon: TrendingUp,
-                    text: "+15% vs Goal",
-                }}
+                title="Placements by Industry"
+                subtitle="Distribution across sectors"
             >
                 <div className="w-full h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                            data={chartData}
+                            data={industryData}
                             margin={{
                                 top: 10,
                                 right: 10,
@@ -104,20 +220,20 @@ export const AnalyticsOverview: React.FC = () => {
                             <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" />
                             <XAxis
                                 dataKey="name"
-                                stroke="#78879a"
+                                stroke="#000000"
                                 fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
+                                tickLine={true}
+                                axisLine={true}
                                 dy={10}
                             />
                             <YAxis
-                                stroke="#78879a"
+                                stroke="#000000"
                                 fontSize={12}
-                                tickLine={false}
-                                axisLine={false}
+                                tickLine={true}
+                                axisLine={true}
                                 dx={-5}
-                                domain={[0, 10]}
-                                ticks={[0, 2, 4, 6, 8, 10]}
+                                domain={[0, 8]}
+                                ticks={[0, 2, 4, 6, 8]}
                             />
                             <Tooltip
                                 contentStyle={{
@@ -133,9 +249,11 @@ export const AnalyticsOverview: React.FC = () => {
                             />
                             <Bar
                                 dataKey="placements"
-                                fill="var(--color-primary, #14b8a6)"
-                                radius={[4, 4, 0, 0]}
-                                maxBarSize={30}
+                                stroke="#000000"
+                                strokeWidth={2}
+                                fill="#000000"
+                                fillOpacity={1}
+                                radius={[2, 2, 0, 0]}
                             />
                         </BarChart>
                     </ResponsiveContainer>

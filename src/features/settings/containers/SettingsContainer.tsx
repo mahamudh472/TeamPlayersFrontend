@@ -1,130 +1,70 @@
-import React, { useState } from "react";
+import React from "react";
+import { useParams, useNavigate } from "react-router";
+import { PageHeader, Tabs, TabOption } from "../../../components/ui";
 import {
-    Typography,
-    Input,
-    Checkbox,
-    AppBadge,
-    Button,
-    PageHeader,
-} from "../../../components/ui";
-import { CheckCircle2, RefreshCw, User, Mail, Lock } from "lucide-react";
+    ProfileSettings,
+    AgencySettings,
+    TeamSettings,
+    BillingSettings,
+    IntegrationsSettings,
+    NotificationSettings,
+} from "../components";
 
 export const SettingsContainer: React.FC = () => {
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [success, setSuccess] = useState(false);
+    const { tab } = useParams<{ tab?: string }>();
+    const navigate = useNavigate();
+    const activeTab = tab || "profile";
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault();
-        setIsSubmitting(true);
-        setSuccess(false);
+    const tabOptions: TabOption[] = [
+        { label: "Profile", value: "profile" },
+        { label: "Agency", value: "agency" },
+        { label: "Team", value: "team" },
+        { label: "Billing", value: "billing" },
+        { label: "Integrations", value: "integrations" },
+        { label: "Notifications", value: "notifications" },
+    ];
 
-        setTimeout(() => {
-            setIsSubmitting(false);
-            setSuccess(true);
-        }, 1500);
+    const handleTabChange = (value: string) => {
+        navigate(`/dashboard/settings/${value}`);
+    };
+
+    const renderTabContent = () => {
+        switch (activeTab) {
+            case "profile":
+                return <ProfileSettings />;
+            case "agency":
+                return <AgencySettings />;
+            case "team":
+                return <TeamSettings />;
+            case "billing":
+                return <BillingSettings />;
+            case "integrations":
+                return <IntegrationsSettings />;
+            case "notifications":
+                return <NotificationSettings />;
+            default:
+                return null;
+        }
     };
 
     return (
-        <div className="max-w-4xl space-y-8">
+        <main className="space-y-6 max-w-5xl">
             <PageHeader
                 title="Settings"
-                subtitle="Manage your personal profile, security configuration, and email notifications."
-                rightElement={
-                    <div className="flex gap-2">
-                        <AppBadge
-                            variant="primary"
-                            prefixIcon={<CheckCircle2 className="w-3 h-3" />}
-                        >
-                            Verified Profile
-                        </AppBadge>
-                        <AppBadge variant="secondary">Enterprise</AppBadge>
-                    </div>
-                }
+                subtitle="Manage your account and agency preferences"
             />
 
-            <form onSubmit={handleSubmit} className="space-y-6">
-                {/* Profile Information Card */}
-                <div className="bg-white p-6 rounded-xl border border-btn-sec-border shadow-xs space-y-6">
-                    <Typography
-                        variant="h4"
-                        className="font-bold border-b border-btn-sec-border pb-3"
-                    >
-                        Profile Information
-                    </Typography>
+            <div className="space-y-6">
+                <Tabs
+                    options={tabOptions}
+                    value={activeTab}
+                    onChange={handleTabChange}
+                />
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Input
-                            label="Full Name"
-                            type="text"
-                            placeholder="Noah Moore"
-                            defaultValue="Noah Moore"
-                            prefixIcon={User}
-                            required
-                        />
-                        <Input
-                            label="Email Address"
-                            type="email"
-                            placeholder="noah.moore@agency.com"
-                            defaultValue="noah.moore@agency.com"
-                            prefixIcon={Mail}
-                            required
-                        />
-                    </div>
+                <div className="mt-6">
+                    {renderTabContent()}
                 </div>
-
-                {/* Security Preferences Card */}
-                <div className="bg-white p-6 rounded-xl border border-btn-sec-border shadow-xs space-y-6">
-                    <Typography
-                        variant="h4"
-                        className="font-bold border-b border-btn-sec-border pb-3"
-                    >
-                        Security & Preferences
-                    </Typography>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <Input
-                            label="New Password"
-                            type="password"
-                            placeholder="••••••••••••"
-                            prefixIcon={Lock}
-                            helperText="Must be at least 8 characters long."
-                        />
-                        <Input
-                            label="Confirm New Password"
-                            type="password"
-                            placeholder="••••••••••••"
-                            prefixIcon={Lock}
-                        />
-                    </div>
-
-                    <div className="space-y-4 pt-2 border-t border-btn-sec-border">
-                        <Checkbox
-                            label="Enable Real-Time Email Notifications"
-                            defaultChecked
-                        />
-                        <Checkbox
-                            label="Require Multi-Factor Authentication (MFA) on sign-in"
-                            defaultChecked
-                        />
-                        <Checkbox label="Opt-in to monthly recruitment report emails" />
-                    </div>
-                </div>
-
-                {/* Action Buttons */}
-                <div className="flex items-center justify-end gap-3 pt-4 border-t border-btn-sec-border">
-                    <Button type="button" variant="secondary">
-                        Cancel
-                    </Button>
-                    <Button
-                        type="submit"
-                        variant="primary"
-                        loading={isSubmitting}
-                        prefixIcon={RefreshCw}
-                    >
-                        {success ? "Saved successfully!" : "Save Changes"}
-                    </Button>
-                </div>
-            </form>
-        </div>
+            </div>
+        </main>
     );
 };
