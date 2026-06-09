@@ -7,11 +7,11 @@ export const CandidateStats: React.FC = () => {
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
                 <div className="px-6 pt-6 pb-3">
                     <Typography variant="body2" className="text-sm font-medium text-muted-text">
-                        New Applications
+                        Total Candidates
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">1</div>
+                    <div className="text-2xl font-bold text-text-main">4</div>
                 </div>
             </div>
 
@@ -22,14 +22,14 @@ export const CandidateStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-accent">1</div>
+                    <div className="text-2xl font-bold text-green-500">1</div>
                 </div>
             </div>
 
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
                 <div className="px-6 pt-6 pb-3">
                     <Typography variant="body2" className="text-sm font-medium text-muted-text">
-                        Interview Stage
+                        Interview Scheduled
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
@@ -40,11 +40,11 @@ export const CandidateStats: React.FC = () => {
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
                 <div className="px-6 pt-6 pb-3">
                     <Typography variant="body2" className="text-sm font-medium text-muted-text">
-                        Placed
+                        Rejected
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-green-500">0</div>
+                    <div className="text-2xl font-bold text-red-500">1</div>
                 </div>
             </div>
         </div>

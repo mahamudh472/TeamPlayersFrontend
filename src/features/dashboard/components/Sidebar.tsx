@@ -45,7 +45,7 @@ export const Sidebar: React.FC = () => {
         <aside className="w-64 bg-sidebar border-r border-white/10 flex flex-col shrink-0">
             <div className="p-6 border-b border-white/10">
                 <Link to="/dashboard" className="flex items-center gap-2">
-                    <img src="" alt="Team Players" className="h-8" />
+                    <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain brightness-0 invert" />
                 </Link>
                 <div className="mt-4">
                     <p className="text-sm text-white font-medium">Demo Agency</p>

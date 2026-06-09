@@ -8,8 +8,7 @@ export const Navbar: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
         <div className="flex items-center">
           <Link to="/" className="flex items-center gap-2.5">
-            <img src="/logo.png" alt="NoahMoore Logo" className="h-9 w-auto object-contain" />
-            <span className="font-bold text-xl text-text-main tracking-tight">NoahMoore</span>
+            <img src="/logo.png" alt="Logo" className="h-9 w-auto object-contain" />
           </Link>
         </div>
 

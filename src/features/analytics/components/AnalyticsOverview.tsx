@@ -84,19 +84,19 @@ export const AnalyticsOverview: React.FC = () => {
     ];
 
     const lineData = [
-        { name: "Jan", uv: 4000 },
-        { name: "Feb", uv: 3000 },
-        { name: "Mar", uv: 2000 },
+        { name: "Jan", uv: 24000 },
+        { name: "Feb", uv: 43000 },
+        { name: "Mar", uv: 82000 },
         { name: "Apr" },
-        { name: "May", uv: 1890 },
-        { name: "Jun", uv: 2390 },
+        { name: "May", uv: 120890 },
+        { name: "Jun", uv: 132390 },
     ];
 
     const pieData = [
-        { name: "Applications", value: 4 },
-        { name: "Shortlisted", value: 2 },
-        { name: "Interview", value: 1 },
-        { name: "Placed", value: 0 },
+        { name: "Applications", value: 40 },
+        { name: "Shortlisted", value: 20 },
+        { name: "Interview", value: 5 },
+        { name: "Placed", value: 10 },
     ];
 
     const industryData = [

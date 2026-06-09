@@ -1,6 +1,5 @@
 import React from "react";
-import { Button, PageHeader } from "../../../components/ui";
-import { Filter } from "lucide-react";
+import { PageHeader } from "../../../components/ui";
 import { CandidateStats } from "../components/CandidateStats";
 import { CandidatesList } from "../components/CandidatesList";
 
@@ -10,13 +9,6 @@ export const CandidatesContainer: React.FC = () => {
             <PageHeader
                 title="Candidates"
                 subtitle="AI-powered candidate pipeline"
-                rightElement={
-                    <>
-                        <Button prefixIcon={Filter} variant="outline">
-                            Filters
-                        </Button>
-                    </>
-                }
             />
             <CandidateStats />
             <CandidatesList />

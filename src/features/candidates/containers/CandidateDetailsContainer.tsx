@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router";
 import { CandidateDetailsHeader } from "../components/CandidateDetailsHeader";
 import { CandidateDetailsSummary } from "../components/CandidateDetailsSummary";
@@ -7,6 +7,7 @@ import { CandidateDetailsSidebar } from "../components/CandidateDetailsSidebar";
 
 export const CandidateDetailsContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const [candidate, setCandidate] = useState<any>(null);
 
     const getCandidateDetails = (candidateId: string | undefined) => {
         if (candidateId === "2") {
@@ -41,6 +42,9 @@ export const CandidateDetailsContainer: React.FC = () => {
                 recommendationTitle: "Highly Fit Candidate",
                 recommendationText:
                     "Highly recommend moving forward to technical panel interview.",
+                appliedJobs: [
+                    { id: "1", title: "Senior Software Engineer" },
+                ],
             };
         }
         if (candidateId === "3") {
@@ -75,13 +79,17 @@ export const CandidateDetailsContainer: React.FC = () => {
                 recommendationTitle: "Fit Candidate",
                 recommendationText:
                     "Recommend for cultural and strategy assessment call.",
+                appliedJobs: [
+                    { id: "2", title: "Product Manager" },
+                    { id: "4", title: "Project Lead" },
+                ],
             };
         }
         if (candidateId === "4") {
             return {
                 name: "Emma Davis",
                 matchScore: 78,
-                status: "new",
+                status: "rejected",
                 email: "emma.d@email.com",
                 phone: "+44 7700 900456",
                 location: "Birmingham, UK",
@@ -109,6 +117,9 @@ export const CandidateDetailsContainer: React.FC = () => {
                 recommendationTitle: "Potential Fit",
                 recommendationText:
                     "Recommend scheduling initial screening interview call.",
+                appliedJobs: [
+                    { id: "3", title: "Store Manager" },
+                ],
             };
         }
         // Fallback or Alex Thompson
@@ -143,10 +154,32 @@ export const CandidateDetailsContainer: React.FC = () => {
             recommendationTitle: "High Fit Candidate",
             recommendationText:
                 "Recommend to shortlist and schedule interview immediately.",
+            appliedJobs: [
+                { id: "1", title: "Senior Software Engineer" },
+                { id: "3", title: "Full Stack Developer" },
+            ],
         };
     };
 
-    const candidate = getCandidateDetails(id);
+    useEffect(() => {
+        const data = getCandidateDetails(id);
+        setCandidate(data);
+    }, [id]);
+
+    if (!candidate) return null;
+
+    const handleReject = () => {
+        setCandidate((prev: any) => prev ? { ...prev, status: "rejected" } : null);
+    };
+
+    const handleShortlist = (jobId: string) => {
+        setCandidate((prev: any) => prev ? { ...prev, status: "shortlisted" } : null);
+    };
+
+    const handleScheduleInterview = (date: string, time: string) => {
+        setCandidate((prev: any) => prev ? { ...prev, status: "interview" } : null);
+        console.log("Scheduled interview for candidate:", candidate.name, "at", date, time);
+    };
 
     return (
         <main className="space-y-6">
@@ -158,6 +191,10 @@ export const CandidateDetailsContainer: React.FC = () => {
                 email={candidate.email}
                 phone={candidate.phone}
                 location={candidate.location}
+                appliedJobs={candidate.appliedJobs || []}
+                onReject={handleReject}
+                onShortlist={handleShortlist}
+                onScheduleInterview={handleScheduleInterview}
             />
 
             {/* 3-Column layout */}
@@ -180,9 +217,9 @@ export const CandidateDetailsContainer: React.FC = () => {
                         skills={candidate.skills}
                         appliedDate={candidate.appliedDate}
                     />
+
                 </div>
                 <div>
-                    {/* Sidebar metrics & recommendations */}
                     <CandidateDetailsSidebar
                         jobTitle={candidate.jobTitle}
                         jobLocation={candidate.jobLocation}

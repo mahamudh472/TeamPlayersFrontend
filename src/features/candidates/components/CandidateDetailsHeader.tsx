@@ -1,6 +1,8 @@
-import React from "react";
-import { Typography, BackButton } from "../../../components/ui";
+import React, { useState } from "react";
+import { Typography, BackButton, Button } from "../../../components/ui";
 import { Users, Mail, Phone, MapPin, X, Calendar } from "lucide-react";
+import { InterviewScheduleModal } from "./InterviewScheduleModal";
+import { ShortlistJobDropdown } from "./ShortlistJobDropdown";
 
 interface CandidateDetailsHeaderProps {
     name: string;
@@ -9,6 +11,10 @@ interface CandidateDetailsHeaderProps {
     email: string;
     phone: string;
     location: string;
+    appliedJobs: { id: string; title: string }[];
+    onReject: () => void;
+    onShortlist: (jobId: string) => void;
+    onScheduleInterview: (date: string, time: string) => void;
 }
 
 export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
@@ -18,7 +24,13 @@ export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
     email,
     phone,
     location,
+    appliedJobs,
+    onReject,
+    onShortlist,
+    onScheduleInterview,
 }) => {
+    const [isInterviewModalOpen, setIsInterviewModalOpen] = useState(false);
+
     return (
         <div className="flex flex-col gap-4">
             <BackButton label="Back to Candidates" />
@@ -36,10 +48,22 @@ export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
                             <span className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold w-fit capitalize">
                                 {matchScore}% match
                             </span>
-                            <span className="inline-flex items-center justify-center rounded-md border border-btn-sec-border px-2 py-0.5 text-xs font-medium text-text-main bg-slate-50 capitalize">
-                                {status}
+                            <span className={`inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-medium capitalize ${
+                                status === "shortlisted"
+                                    ? "bg-green-50 text-green-700 border-green-200"
+                                    : status === "interview"
+                                        ? "bg-blue-50 text-blue-700 border-blue-200"
+                                        : "bg-red-50 text-red-600 border-red-200"
+                            }`}>
+                                {status === "interview" ? "Interview Scheduled" : status}
                             </span>
-                            <div className="w-3 h-3 rounded-full bg-green-500" />
+                            <div className={`w-3 h-3 rounded-full ${
+                                status === "shortlisted"
+                                    ? "bg-green-500"
+                                    : status === "interview"
+                                        ? "bg-blue-500"
+                                        : "bg-red-400"
+                            }`} />
                         </div>
                         <div className="flex items-center gap-4 text-sm text-muted-text flex-wrap">
                             <span className="flex items-center gap-1">
@@ -58,17 +82,55 @@ export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
                     </div>
                 </div>
                 
-                <div className="flex gap-2">
-                    <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 px-4 py-2">
-                        <Calendar className="w-4 h-4 mr-2" />
-                        Schedule Interview
-                    </button>
-                    <button className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all outline-none border border-red-200 bg-red-50 text-red-600 hover:bg-red-100 h-9 px-4 py-2">
-                        <X className="w-4 h-4 mr-2" />
-                        Reject
-                    </button>
+                <div className="flex gap-2 items-center">
+                    {status === "shortlisted" && (
+                        <>
+                            <Button
+                                variant="outline"
+                                prefixIcon={Calendar}
+                                onClick={() => setIsInterviewModalOpen(true)}
+                            >
+                                Book Interview
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-300"
+                                prefixIcon={X}
+                                onClick={onReject}
+                            >
+                                Reject
+                            </Button>
+                        </>
+                    )}
+                    {status === "interview" && (
+                        <Button
+                            variant="outline"
+                            className="border-red-200 bg-red-50 text-red-600 hover:bg-red-100 hover:border-red-300"
+                            prefixIcon={X}
+                            onClick={onReject}
+                        >
+                            Reject
+                        </Button>
+                    )}
+                    {status === "rejected" && (
+                        <ShortlistJobDropdown
+                            candidateName={name}
+                            jobs={appliedJobs}
+                            onSelect={onShortlist}
+                        />
+                    )}
                 </div>
             </div>
+
+            <InterviewScheduleModal
+                isOpen={isInterviewModalOpen}
+                candidateName={name}
+                onClose={() => setIsInterviewModalOpen(false)}
+                onSchedule={(date, time) => {
+                    onScheduleInterview(date, time);
+                    setIsInterviewModalOpen(false);
+                }}
+            />
         </div>
     );
 };
