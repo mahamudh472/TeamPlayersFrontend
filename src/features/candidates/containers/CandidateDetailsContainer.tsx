@@ -213,6 +213,7 @@ export const CandidateDetailsContainer: React.FC = () => {
                 interviewDate={candidate.interviewDate}
                 interviewTime={candidate.interviewTime}
                 jobTitle={candidate.jobTitle}
+                jobId={candidate.jobId}
                 onReject={handleReject}
                 onShortlist={handleShortlist}
                 onScheduleInterview={handleScheduleInterview}

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Send } from "lucide-react";
-import { Input, Select, Typography, OptionType } from "../../../components/ui";
+import { Input, Select, Typography, OptionType, Button } from "../../../components/ui";
 
 export const ContactForm: React.FC = () => {
     const [name, setName] = useState("");
@@ -95,14 +95,14 @@ export const ContactForm: React.FC = () => {
                                 className="w-full px-3.5 py-2.5 rounded-lg border text-sm font-medium text-text-main transition-all duration-200 outline-none bg-white placeholder:text-light-text focus:ring-2 focus:ring-primary/20 border-btn-sec-border focus:border-primary focus:ring-primary/20 resize-none"
                             />
                         </div>
-                        <button
-                            data-slot="button"
-                            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] text-white h-9 px-4 py-2 w-full bg-accent hover:bg-accent/90 cursor-pointer"
+                        <Button
+                            variant="primary"
                             type="submit"
+                            prefixIcon={Send}
+                            className="w-full"
                         >
-                            <Send className="w-4 h-4 mr-2" />
                             Send Message
-                        </button>
+                        </Button>
                     </form>
                 </div>
             </div>

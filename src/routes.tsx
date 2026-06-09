@@ -49,6 +49,7 @@ import {
 } from "./features/candidates";
 import { InterviewsContainer } from "./features/interviews";
 import { PlacementsContainer } from "./features/placements";
+import { FaqContainer } from "./features/landing/containers/FaqContainer";
 
 export const routes = createBrowserRouter([
     // Landing Routes
@@ -72,6 +73,11 @@ export const routes = createBrowserRouter([
                 path: "about-us",
                 element: <AboutContainer />,
             },
+            {
+                path: "faq",
+                element: <FaqContainer />,
+            },
+
             {
                 path: "contact",
                 element: <ContactContainer />,
@@ -185,6 +191,10 @@ export const routes = createBrowserRouter([
                     },
                     {
                         path: "create",
+                        element: <JobCreateContainer />,
+                    },
+                    {
+                        path: "edit/:id",
                         element: <JobCreateContainer />,
                     },
                     {

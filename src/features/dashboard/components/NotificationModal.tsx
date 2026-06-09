@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "../../../components/ui";
+import { Typography, Button } from "../../../components/ui";
 import { Bell, X } from "lucide-react";
 
 interface Notification {
@@ -55,13 +55,13 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                         Notifications
                     </Typography>
                 </div>
-                <button
+                <Button
                     type="button"
+                    variant="icon"
                     onClick={onClose}
-                    className="text-muted-text hover:text-text-main transition-colors cursor-pointer"
                 >
                     <X className="w-4 h-4" />
-                </button>
+                </Button>
             </div>
 
             {/* Notifications List */}
@@ -89,20 +89,22 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
 
             {/* Footer */}
             <div className="flex justify-between items-center border-t border-slate-100 pt-2 text-xs">
-                <button
+                <Button
                     type="button"
+                    variant="link"
                     onClick={onClose}
-                    className="text-primary hover:text-primary/90 font-semibold cursor-pointer"
+                    className="!p-0 !h-auto text-primary hover:text-primary/95 font-semibold"
                 >
                     Mark all as read
-                </button>
-                <button
+                </Button>
+                <Button
                     type="button"
+                    variant="link"
                     onClick={onClose}
-                    className="text-muted-text hover:text-text-main font-medium cursor-pointer"
+                    className="!p-0 !h-auto text-muted-text hover:text-text-main font-medium"
                 >
                     Dismiss
-                </button>
+                </Button>
             </div>
         </div>
     );

@@ -60,7 +60,7 @@ export const HotCandidates: React.FC = () => {
                 <Typography variant="body2" className="font-semibold text-text-main">
                   {item.name}
                 </Typography>
-                <AppBadge variant="primary" className="!bg-black !text-white !border-transparent">
+                <AppBadge variant="primary">
                   {item.match}% match
                 </AppBadge>
               </div>
@@ -70,7 +70,7 @@ export const HotCandidates: React.FC = () => {
               <div className="mt-2">
                 <div className="bg-black/10 relative w-full overflow-hidden rounded-full h-1">
                   <div
-                    className="bg-black h-full rounded-full transition-all"
+                    className="bg-primary h-full rounded-full transition-all"
                     style={{ width: `${item.match}%` }}
                   />
                 </div>

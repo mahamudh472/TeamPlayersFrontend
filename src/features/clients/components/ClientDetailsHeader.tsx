@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router";
 import { Typography, BackButton } from "../../../components/ui";
 import { Building2, Mail, Phone } from "lucide-react";
 
@@ -19,7 +20,7 @@ export const ClientDetailsHeader: React.FC<ClientDetailsHeaderProps> = ({
 }) => {
     return (
         <div className="flex flex-col gap-4">
-            <BackButton label="Back to Clients" />
+            <BackButton label="Back to Clients" to="/dashboard/clients" />
 
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">

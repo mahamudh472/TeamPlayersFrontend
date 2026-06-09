@@ -69,6 +69,7 @@ export const JobDetailsContainer: React.FC = () => {
         <main className="space-y-6">
             {/* Header section */}
             <JobDetailsHeader
+                id={id}
                 title={job.title}
                 status={job.status}
                 company={job.company}

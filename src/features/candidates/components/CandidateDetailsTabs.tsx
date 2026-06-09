@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Tabs, TabOption } from "../../../components/ui";
+import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 
 interface CandidateDetailsTabsProps {
     experience: string;
@@ -51,7 +51,7 @@ export const CandidateDetailsTabs: React.FC<CandidateDetailsTabsProps> = ({
                     <Typography variant="h4" className="font-bold text-text-main leading-none">
                         Candidate Profile
                     </Typography>
-                    
+
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <p className="text-sm text-muted-text">Experience</p>
@@ -99,64 +99,68 @@ export const CandidateDetailsTabs: React.FC<CandidateDetailsTabsProps> = ({
                         Curriculum Vitae
                     </Typography>
                     <p className="text-sm text-muted-text">CV document is uploaded and verified by AI parser.</p>
-                    <button className="inline-flex items-center justify-center px-4 h-9 text-sm font-medium border border-btn-sec-border hover:bg-slate-50 text-text-main rounded-lg">
+                    <Button variant="outline">
                         Download CV PDF
-                    </button>
+                    </Button>
                 </div>
-            )}
+            )
+            }
 
             {/* Notes Content */}
-            {activeTab === "notes" && (
-                <div className="bg-white rounded-xl border border-btn-sec-border p-6 flex flex-col gap-6">
-                    <Typography variant="h4" className="font-bold text-text-main">
-                        Evaluation Notes
-                    </Typography>
-                    
-                    <form onSubmit={handleAddNote} className="space-y-3">
-                        <textarea
-                            value={newNote}
-                            onChange={(e) => setNewNote(e.target.value)}
-                            placeholder="Add evaluation note..."
-                            rows={3}
-                            className="w-full resize-none border border-btn-sec-border rounded-lg bg-white px-3 py-2 text-sm text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                        />
-                        <button
-                            type="submit"
-                            className="inline-flex items-center justify-center px-4 h-9 text-sm font-medium bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors"
-                        >
-                            Add Note
-                        </button>
-                    </form>
+            {
+                activeTab === "notes" && (
+                    <div className="bg-white rounded-xl border border-btn-sec-border p-6 flex flex-col gap-6">
+                        <Typography variant="h4" className="font-bold text-text-main">
+                            Evaluation Notes
+                        </Typography>
 
-                    <div className="space-y-3 pt-2">
-                        {notes.map((note, idx) => (
-                            <div key={idx} className="p-4 border border-btn-sec-border rounded-xl bg-slate-50/30">
-                                <p className="text-sm text-text-main">{note}</p>
-                                <p className="text-xs text-muted-text mt-1.5">Just now</p>
-                            </div>
-                        ))}
+                        <form onSubmit={handleAddNote} className="space-y-3">
+                            <textarea
+                                value={newNote}
+                                onChange={(e) => setNewNote(e.target.value)}
+                                placeholder="Add evaluation note..."
+                                rows={3}
+                                className="w-full resize-none border border-btn-sec-border rounded-lg bg-white px-3 py-2 text-sm text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                            />
+                            <Button
+                                type="submit"
+                            >
+                                Add Note
+                            </Button>
+                        </form>
+
+                        <div className="space-y-3 pt-2">
+                            {notes.map((note, idx) => (
+                                <div key={idx} className="p-4 border border-btn-sec-border rounded-xl bg-slate-50/30">
+                                    <p className="text-sm text-text-main">{note}</p>
+                                    <p className="text-xs text-muted-text mt-1.5">Just now</p>
+                                </div>
+                            ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )
+            }
 
             {/* Activity Content */}
-            {activeTab === "activity" && (
-                <div className="bg-white rounded-xl border border-btn-sec-border p-6">
-                    <Typography variant="h4" className="font-bold text-text-main mb-4">
-                        Applicant History
-                    </Typography>
-                    <div className="border-l-2 border-slate-100 pl-4 space-y-4 py-1">
-                        <div>
-                            <p className="text-sm font-semibold text-text-main">Applied online</p>
-                            <p className="text-xs text-muted-text">{appliedDate}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-text-main">AI Screening completed</p>
-                            <p className="text-xs text-muted-text">{appliedDate}</p>
+            {
+                activeTab === "activity" && (
+                    <div className="bg-white rounded-xl border border-btn-sec-border p-6">
+                        <Typography variant="h4" className="font-bold text-text-main mb-4">
+                            Applicant History
+                        </Typography>
+                        <div className="border-l-2 border-slate-100 pl-4 space-y-4 py-1">
+                            <div>
+                                <p className="text-sm font-semibold text-text-main">Applied online</p>
+                                <p className="text-xs text-muted-text">{appliedDate}</p>
+                            </div>
+                            <div>
+                                <p className="text-sm font-semibold text-text-main">AI Screening completed</p>
+                                <p className="text-xs text-muted-text">{appliedDate}</p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            )}
-        </div>
+                )
+            }
+        </div >
     );
 };

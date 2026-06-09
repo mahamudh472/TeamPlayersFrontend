@@ -17,24 +17,24 @@ import {
 
 const automationFeatures = [
   {
-    icon: <Target className="w-6 h-6 text-primary" />,
-    title: "AI Lead Generation",
-    description: "Automatically discover and qualify potential clients based on hiring activity and market signals."
+    icon: <Sparkles className="w-6 h-6 text-primary" />,
+    title: "AI Lead Discovery",
+    description: "Automatically identify and qualify potential clients using advanced AI algorithms."
   },
   {
-    icon: <Bot className="w-6 h-6 text-primary" />,
-    title: "Intelligent Screening",
-    description: "AI analyzes CVs, scores candidates, and generates detailed summaries in seconds."
+    icon: <Target className="w-6 h-6 text-primary" />,
+    title: "Smart Candidate Matching",
+    description: "Match candidates to roles with 95% accuracy using AI-powered screening."
   },
   {
     icon: <Zap className="w-6 h-6 text-primary" />,
     title: "Automated Workflows",
-    description: "Email sequences, interview scheduling, and follow-ups run on autopilot."
+    description: "Streamline your recruitment process from lead to placement."
   },
   {
     icon: <BarChart3 className="w-6 h-6 text-primary" />,
-    title: "Advanced Analytics",
-    description: "Track placements, revenue, and recruiter performance in real-time."
+    title: "Revenue Analytics",
+    description: "Track placements, revenue, and performance metrics in real-time."
   }
 ];
 
@@ -106,9 +106,6 @@ export const HomeContainer: React.FC = () => {
       {/* Hero */}
       <section
         className="py-24 px-4"
-        style={{
-          background: "linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, #F8FAFC 0.01%, rgba(20, 184, 166, 0.1) 100%)"
-        }}
       >
         <div className="max-w-7xl mx-auto text-center">
           <span className="inline-flex items-center justify-center rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white shadow-xs mb-6">
@@ -118,24 +115,65 @@ export const HomeContainer: React.FC = () => {
             Recruitment Automation<br />for Modern Agencies
           </Typography>
           <Typography variant="body1" className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            AI-powered lead generation, candidate screening, and analytics that help you place more candidates in less time.
+            Transform your recruitment agency with AI-driven lead generation, intelligent candidate matching, and automated workflows. Close more placements, faster.
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/register">
               <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
-                Start Free Trial
+                Get started now
                 <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button variant="secondary" className="h-11 px-8 font-semibold text-sm rounded-lg border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 transition-all cursor-pointer">
-                Book a Demo
               </Button>
             </Link>
           </div>
           <Typography variant="body2" className="text-muted-foreground mt-4 text-sm">
             No credit card required • 14-day free trial • Cancel anytime
           </Typography>
+        </div>
+        <img className="border-4 border-black rounded-2xl max-w-6xl mx-auto mt-8" src="/banner.jpg" />
+
+      </section>
+
+      <section
+        className="py-10"
+        style={{
+          background: "linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, #F8FAFC 0.01%, rgba(20, 184, 166, 0.1) 100%)"
+        }}
+      >
+        <div className="max-w-7xl mx-auto px-4">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+            <div className="flex flex-col items-center">
+              <Typography variant="h2" className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-none">
+                10,000+
+              </Typography>
+              <Typography variant="body2" className="text-xs md:text-sm text-slate-500 font-medium mt-2">
+                Placements Made
+              </Typography>
+            </div>
+            <div className="flex flex-col items-center">
+              <Typography variant="h2" className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-none">
+                500+
+              </Typography>
+              <Typography variant="body2" className="text-xs md:text-sm text-slate-500 font-medium mt-2">
+                Agencies
+              </Typography>
+            </div>
+            <div className="flex flex-col items-center">
+              <Typography variant="h2" className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-none">
+                95%
+              </Typography>
+              <Typography variant="body2" className="text-xs md:text-sm text-slate-500 font-medium mt-2">
+                Match Accuracy
+              </Typography>
+            </div>
+            <div className="flex flex-col items-center">
+              <Typography variant="h2" className="text-4xl md:text-5xl font-extrabold text-slate-900 tracking-tight leading-none">
+                $2M+
+              </Typography>
+              <Typography variant="body2" className="text-xs md:text-sm text-slate-500 font-medium mt-2">
+                Revenue Generated
+              </Typography>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -144,10 +182,10 @@ export const HomeContainer: React.FC = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
-              AI Recruitment Automation
+              Powerful Features for Modern Recruiters
             </Typography>
             <Typography variant="body1" className="text-muted-foreground max-w-2xl mx-auto">
-              Everything you need to run a modern recruitment agency, powered by artificial intelligence.
+              Everything you need to scale your recruitment business
             </Typography>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -169,86 +207,18 @@ export const HomeContainer: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* Product Benefits */}
-      <section className="py-20 px-4 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
-              Product Benefits
-            </Typography>
-            <Typography variant="body1" className="text-muted-foreground max-w-2xl mx-auto">
-              Join hundreds of agencies scaling their business with AI automation
-            </Typography>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {benefits.map((benefit, idx) => (
-              <div key={idx} className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  {benefit.icon}
-                </div>
-                <div className="text-4xl font-bold text-primary mb-2">{benefit.stat}</div>
-                <Typography variant="body2" className="text-muted-foreground">
-                  {benefit.label}
-                </Typography>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works */}
-      <section className="py-20 px-4 bg-white">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
-              How It Works
-            </Typography>
-            <Typography variant="body1" className="text-muted-foreground max-w-2xl mx-auto">
-              Get started in minutes with our simple three-step process
-            </Typography>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {howItWorksSteps.map((step, idx) => (
-              <div key={idx} data-slot="card" className="bg-white rounded-xl border border-btn-sec-border p-6 shadow-xs flex flex-col gap-4">
-                <div className="w-12 h-12 bg-primary text-white rounded-lg flex items-center justify-center text-2xl font-bold">
-                  {step.step}
-                </div>
-                <Typography variant="h5" className="font-bold text-text-main">
-                  {step.title}
-                </Typography>
-                <Typography variant="body2" className="text-muted-foreground leading-relaxed">
-                  {step.description}
-                </Typography>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 px-4 bg-slate-50/50">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
-              What Our Customers Say
-            </Typography>
-            <Typography variant="body1" className="text-muted-foreground max-w-2xl mx-auto">
-              Trusted by recruitment agencies across the UK
-            </Typography>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {testimonials.map((t, idx) => (
-              <TestimonialCard key={idx} quote={t.quote} name={t.name} role={t.role} />
-            ))}
+          <div className="flex justify-center mt-8">
+            <Link to="/features">
+              <Button suffixIcon={ArrowRight} variant="outline">
+                View All Features
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
 
       {/* Pricing */}
-      <section className="py-20 px-4 bg-white">
+      <section className="py-20 px-4 bg-[#F8FAFC]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
@@ -269,6 +239,56 @@ export const HomeContainer: React.FC = () => {
                 popular={plan.popular}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+
+      <section className="py-20 px-4"
+        style={{
+          background: "linear-gradient(135deg, rgba(30, 41, 59, 0.1) 0%, #F8FAFC 0.01%, rgba(20, 184, 166, 0.1) 100%)"
+        }}
+      >
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
+              What Our Customers Say
+            </Typography>
+            <Typography variant="body1" className="text-muted-foreground max-w-2xl mx-auto">
+              Trusted by recruitment agencies across the UK
+            </Typography>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {testimonials.map((t, idx) => (
+              <TestimonialCard key={idx} quote={t.quote} name={t.name} role={t.role} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+
+
+
+      <section className="py-20 px-4 bg-slate-50 border-t border-btn-sec-border">
+        <div className="max-w-4xl mx-auto text-center">
+          <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
+            Ready to Transform Your Recruitment Agency?
+          </Typography>
+          <Typography variant="body1" className="text-muted-foreground mb-8">
+            Join hundreds of agencies using AI to scale their business
+          </Typography>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to="/register">
+              <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                Start Free Trial
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+            <Link to="/contact">
+              <Button variant="secondary" className="h-11 px-8 font-semibold text-sm rounded-lg border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 transition-all cursor-pointer">
+                Contact Sales
+              </Button>
+            </Link>
           </div>
         </div>
       </section>
@@ -302,29 +322,7 @@ export const HomeContainer: React.FC = () => {
       </section>
 
       {/* Final CTA */}
-      <section className="py-20 px-4 bg-slate-50 border-t border-btn-sec-border">
-        <div className="max-w-4xl mx-auto text-center">
-          <Typography variant="h2" className="text-3xl md:text-4xl font-bold mb-4 text-text-main">
-            Ready to Transform Your Recruitment Agency?
-          </Typography>
-          <Typography variant="body1" className="text-muted-foreground mb-8">
-            Join hundreds of agencies using AI to scale their business
-          </Typography>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
-                Start Free Trial
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
-            <Link to="/contact">
-              <Button variant="secondary" className="h-11 px-8 font-semibold text-sm rounded-lg border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 transition-all cursor-pointer">
-                Contact Sales
-              </Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+
     </main>
   );
 };

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Select, OptionType } from "../../../components/ui";
+import { Typography, Select, OptionType, Button } from "../../../components/ui";
 import { X } from "lucide-react";
 
 interface ScheduleInterviewModalProps {
@@ -52,12 +52,14 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in-0 duration-200">
             <div className="bg-white rounded-xl border border-btn-sec-border shadow-lg max-w-md w-full p-6 relative">
-                <button
+                <Button
+                    type="button"
+                    variant="icon"
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-muted-text hover:text-text-main cursor-pointer"
+                    className="absolute top-4 right-4"
                 >
                     <X className="w-5 h-5" />
-                </button>
+                </Button>
                 <div className="mb-6 text-left">
                     <Typography variant="h3" className="font-bold text-text-main">
                         Schedule Interview
@@ -108,19 +110,21 @@ export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
                     </div>
 
                     <div className="flex gap-3 mt-6">
-                        <button
+                        <Button
                             type="button"
+                            variant="secondary"
                             onClick={onClose}
-                            className="flex-1 inline-flex items-center justify-center h-10 text-sm font-semibold border border-btn-sec-border hover:bg-slate-50 text-text-main rounded-lg transition-colors cursor-pointer"
+                            className="flex-1"
                         >
                             Cancel
-                        </button>
-                        <button
+                        </Button>
+                        <Button
                             type="submit"
-                            className="flex-1 inline-flex items-center justify-center h-10 text-sm font-semibold bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors cursor-pointer"
+                            variant="primary"
+                            className="flex-1"
                         >
                             Schedule
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

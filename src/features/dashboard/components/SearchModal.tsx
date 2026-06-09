@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
-import { Typography } from "../../../components/ui";
+import { Typography, Button } from "../../../components/ui";
 import { Search, X, Briefcase, Users, Building2, Target } from "lucide-react";
 
 interface SearchModalProps {
@@ -150,13 +150,13 @@ export const SearchModal: React.FC<SearchModalProps> = ({
                             placeholder="Search candidates, jobs, clients..."
                             className="flex-1 h-14 text-sm text-text-main placeholder:text-muted-text outline-none bg-transparent"
                         />
-                        <button
+                        <Button
                             type="button"
+                            variant="icon"
                             onClick={onClose}
-                            className="text-muted-text hover:text-text-main transition-colors cursor-pointer"
                         >
                             <X className="w-4 h-4" />
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Results */}

@@ -1,5 +1,5 @@
 import React, { useRef } from "react";
-import { Typography, Select, OptionType } from "../../../components/ui";
+import { Typography, Select, OptionType, Button } from "../../../components/ui";
 import { Upload, Sparkles, CheckCircle2 } from "lucide-react";
 
 interface JobCreateFormProps {
@@ -207,32 +207,22 @@ export const JobCreateForm: React.FC<JobCreateFormProps> = ({
                     )}
 
                     <div className="flex gap-2">
-                        <button
+                        <Button
                             type="button"
+                            variant="secondary"
                             onClick={() => fileInputRef.current?.click()}
-                            className="inline-flex items-center justify-center px-4 h-9 text-sm font-medium border border-btn-sec-border bg-white hover:bg-slate-50 text-text-main rounded-lg transition-colors"
                         >
                             Select File
-                        </button>
+                        </Button>
                         {selectedFile && (
-                            <button
+                            <Button
                                 type="button"
                                 onClick={handleAnalyzeAI}
-                                disabled={isAnalyzing}
-                                className="inline-flex items-center justify-center gap-1.5 px-4 h-9 text-sm font-medium bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors disabled:opacity-50"
+                                loading={isAnalyzing}
+                                prefixIcon={!isAnalyzing ? Sparkles : undefined}
                             >
-                                {isAnalyzing ? (
-                                    <>
-                                        <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                                        Analyzing...
-                                    </>
-                                ) : (
-                                    <>
-                                        <Sparkles className="w-4 h-4" />
-                                        Analyze with AI
-                                    </>
-                                )}
-                            </button>
+                                Analyze with AI
+                            </Button>
                         )}
                     </div>
 

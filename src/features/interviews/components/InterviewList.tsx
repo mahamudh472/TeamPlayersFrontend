@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Typography, Tabs } from "../../../components/ui";
+import { Typography, Tabs, Button } from "../../../components/ui";
 import { Calendar as CalendarIcon, Users, Briefcase, MapPin, Clock, Video } from "lucide-react";
 
 interface Interview {
@@ -143,14 +143,18 @@ export const InterviewList: React.FC<InterviewListProps> = ({ interviews }) => {
                                     <div className="flex gap-2 w-full md:w-auto">
                                         <Link
                                             to={`/dashboard/candidates/${int.candidateId}`}
-                                            className="flex-1 md:flex-none inline-flex items-center justify-center px-4 h-9 text-sm font-semibold border border-btn-sec-border hover:bg-slate-50 text-text-main rounded-lg transition-colors"
+                                            className="flex-1 md:flex-none"
                                         >
-                                            View Candidate
+                                            <Button variant="secondary" className="w-full">
+                                                View Candidate
+                                            </Button>
                                         </Link>
-                                        <button className="flex-1 md:flex-none inline-flex items-center justify-center gap-1.5 px-4 h-9 text-sm font-semibold bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors cursor-pointer">
-                                            <Video className="w-4 h-4" />
+                                        <Button
+                                            className="flex-1 md:flex-none font-semibold text-white"
+                                            prefixIcon={Video}
+                                        >
                                             Join Call
-                                        </button>
+                                        </Button>
                                     </div>
                                 </div>
                             ))}

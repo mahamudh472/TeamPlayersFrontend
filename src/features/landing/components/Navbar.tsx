@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, NavLink } from "react-router";
 import { NavItem } from "./NavItem";
+import { Button } from "../../../components/ui";
 
 export const Navbar: React.FC = () => {
   return (
@@ -19,9 +20,9 @@ export const Navbar: React.FC = () => {
           <NavItem to="/features">
             Features
           </NavItem>
-          <NavItem to="/how-it-works">
+          {/* <NavItem to="/how-it-works">
             How It Works
-          </NavItem>
+          </NavItem> */}
           <NavItem to="/pricing">
             Pricing
           </NavItem>
@@ -38,17 +39,9 @@ export const Navbar: React.FC = () => {
             Login
           </NavItem>
           <NavLink to="/register">
-            {({ isActive }) => (
-              <button
-                className={`h-9 px-5 font-semibold text-sm rounded-lg transition-all cursor-pointer ${
-                  isActive
-                    ? "bg-primary/80 text-white shadow-xs"
-                    : "bg-primary hover:bg-primary/95 text-white shadow-xs"
-                }`}
-              >
-                Get Started
-              </button>
-            )}
+            <Button className="!h-9 !px-5 font-semibold text-sm">
+              Get Started
+            </Button>
           </NavLink>
         </div>
       </div>

@@ -3,7 +3,7 @@ import { Typography } from "../../../components/ui";
 
 export const JobCreateSidebar: React.FC = () => {
     return (
-        <div className="bg-white sticky top-5 text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6 text-left">
+        <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6 text-left">
             <div>
                 <Typography variant="h4" className="font-bold text-text-main leading-none">
                     AI Screening Criteria

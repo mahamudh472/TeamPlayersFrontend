@@ -1,5 +1,6 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router";
+import { Button } from "../../../components/ui";
 
 interface OtpVerifyFormProps {
     title: string;
@@ -75,33 +76,34 @@ export const OtpVerifyForm: React.FC<OtpVerifyFormProps> = ({
                     </div>
 
                     <div className="space-y-3">
-                        <button
-                            data-slot="button"
-                            className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] text-white h-9 px-4 py-2 w-full bg-accent hover:bg-accent/90 cursor-pointer"
+                        <Button
                             type="submit"
+                            className="w-full bg-accent hover:bg-accent/90"
                         >
                             Verify Code
-                        </button>
+                        </Button>
 
                         <Link to={backPath} className="block w-full">
-                            <button
+                            <Button
                                 type="button"
-                                className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] h-9 px-4 py-2 w-full border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 cursor-pointer"
+                                variant="secondary"
+                                className="w-full"
                             >
                                 Back
-                            </button>
+                            </Button>
                         </Link>
                     </div>
 
                     <div className="text-center text-sm pt-2">
                         <span className="text-muted-foreground">Didn't receive code? </span>
-                        <button
+                        <Button
                             type="button"
+                            variant="link"
                             onClick={() => alert("Verification code resent successfully")}
-                            className="text-accent hover:underline font-semibold bg-transparent border-none cursor-pointer"
+                            className="!p-0 !h-auto text-accent hover:underline font-semibold bg-transparent"
                         >
                             Resend Code
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

@@ -1,5 +1,5 @@
 import React from "react";
-import { Typography } from "../../../components/ui";
+import { Typography, Button } from "../../../components/ui";
 
 export const JobDetailsSidebar: React.FC = () => {
     return (
@@ -35,15 +35,15 @@ export const JobDetailsSidebar: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6 space-y-2">
-                    <button className="inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 px-4 w-full justify-start">
+                    <Button variant="secondary" className="w-full justify-start">
                         View All Candidates
-                    </button>
-                    <button className="inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 px-4 w-full justify-start">
+                    </Button>
+                    <Button variant="secondary" className="w-full justify-start">
                         Share Job Link
-                    </button>
-                    <button className="inline-flex items-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 px-4 w-full justify-start">
+                    </Button>
+                    <Button variant="secondary" className="w-full justify-start">
                         Post to Job Boards
-                    </button>
+                    </Button>
                 </div>
             </div>
         </div>

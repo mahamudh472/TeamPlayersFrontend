@@ -76,9 +76,9 @@ export const ActivePositionsChart: React.FC = () => {
                         />
                         <Bar
                             dataKey="y"
-                            stroke="#000000"
+                            stroke="#14b8a6"
                             strokeWidth={2}
-                            fill="#000000"
+                            fill="#14b8a6"
                             fillOpacity={1}
                             radius={[2, 2, 0, 0]}
                         />

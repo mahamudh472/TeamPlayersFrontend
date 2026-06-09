@@ -1,9 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import { Outlet, ScrollRestoration } from "react-router";
 import { Sidebar } from "../components/Sidebar";
 import { Header } from "../components/Header";
+import { AIAssistant } from "../components/AIAssistant";
 
 export const DashboardLayout: React.FC = () => {
+    const [aiState, setAiState] = useState<"maximized" | "minimized" | "closed">("maximized");
 
     return (
         <div className="h-screen flex bg-btn-sec-bg text-text-main overflow-hidden">
@@ -17,6 +19,8 @@ export const DashboardLayout: React.FC = () => {
                     <ScrollRestoration getKey={(location) => location.pathname} />
                 </main>
             </div>
+
+            <AIAssistant state={aiState} onChangeState={setAiState} />
         </div>
     );
 };

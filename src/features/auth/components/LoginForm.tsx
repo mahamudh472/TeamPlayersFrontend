@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Input } from "../../../components/ui";
+import { Input, Button } from "../../../components/ui";
 
 interface LoginFormProps {
     onSubmit: (email: string, password: string, remember: boolean) => void;
@@ -74,13 +74,12 @@ export const LoginForm: React.FC<LoginFormProps> = ({ onSubmit }) => {
                         </button>
                         <label className="text-sm font-medium text-text-main select-none cursor-pointer" htmlFor="remember">Remember me</label>
                     </div>
-                    <button
-                        data-slot="button"
-                        className="inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-semibold transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] text-white h-9 px-4 py-2 w-full bg-accent hover:bg-accent/90 cursor-pointer"
+                    <Button
                         type="submit"
+                        className="w-full bg-accent hover:bg-accent/90"
                     >
                         Sign In
-                    </button>
+                    </Button>
                     <div className="text-center text-sm pt-2">
                         <span className="text-muted-foreground">Don't have an account? </span>
                         <Link className="text-accent hover:underline font-semibold" to="/register">Sign up</Link>

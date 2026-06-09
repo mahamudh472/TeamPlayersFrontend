@@ -164,13 +164,21 @@ export const AnalyticsOverview: React.FC = () => {
                                     connectNulls
                                     type="monotone"
                                     dataKey="uv"
-                                    stroke="var(--color-chart-1)"
-                                    fill="var(--color-chart-1)"
+                                    stroke="#14b8a6"
+                                    strokeWidth={3}
+                                    dot={{
+                                        r: 4,
+                                        stroke: "#14b8a6",
+                                        strokeWidth: 2,
+                                        fill: "#14b8a6",
+                                    }}
                                     activeDot={{
-                                        stroke: "var(--color-surface-base)",
+                                        r: 6,
+                                        stroke: "#14b8a6",
+                                        strokeWidth: 2,
+                                        fill: "#ffffff",
                                     }}
                                 />
-                                <RechartsDevtools />
                             </LineChart>
                         </ResponsiveContainer>
                     </div>
@@ -227,7 +235,7 @@ export const AnalyticsOverview: React.FC = () => {
                                 dy={10}
                             />
                             <YAxis
-                                stroke="#000000"
+                                stroke="#14b8a6"
                                 fontSize={12}
                                 tickLine={true}
                                 axisLine={true}
@@ -249,9 +257,9 @@ export const AnalyticsOverview: React.FC = () => {
                             />
                             <Bar
                                 dataKey="placements"
-                                stroke="#000000"
+                                stroke="#14b8a6"
                                 strokeWidth={2}
-                                fill="#000000"
+                                fill="#14b8a6"
                                 fillOpacity={1}
                                 radius={[2, 2, 0, 0]}
                             />

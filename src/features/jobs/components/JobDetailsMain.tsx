@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Typography, Tabs, TabOption } from "../../../components/ui";
-import { Users } from "lucide-react";
+import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
+import { Users, Copy, Check } from "lucide-react";
 
 interface CandidateItem {
     id: string;
@@ -14,6 +14,13 @@ interface CandidateItem {
 
 export const JobDetailsMain: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>("candidates");
+    const [copied, setCopied] = useState(false);
+
+    const handleCopy = () => {
+        navigator.clipboard.writeText("https://tally.so/r/dummy-application-form");
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
 
     const candidates: CandidateItem[] = [
         {
@@ -67,7 +74,7 @@ export const JobDetailsMain: React.FC = () => {
                                 >
                                     {/* Green indicator bar on the left edge */}
                                     <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500" />
-                                    
+
                                     <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 ml-1">
                                         <Users className="w-5 h-5 text-primary" />
                                     </div>
@@ -102,22 +109,51 @@ export const JobDetailsMain: React.FC = () => {
 
             {/* Job Details Tab Content */}
             {activeTab === "details" && (
-                <div className="bg-white rounded-xl border border-btn-sec-border p-6 space-y-4">
-                    <Typography variant="h4" className="font-bold text-text-main">
-                        Job Description
-                    </Typography>
-                    <Typography variant="body1" className="text-muted-text">
-                        We are looking for a Senior Software Engineer to join our growing team. You will be responsible for building premium user interfaces, standardizing core components, and designing robust API integration layers.
-                    </Typography>
-                    <div className="pt-2">
-                        <Typography variant="body2" className="font-semibold text-text-main mb-1.5">
-                            Requirements
+                <div className="bg-white rounded-xl border border-btn-sec-border p-6 space-y-6 text-left">
+                    <div className="space-y-4">
+                        <Typography variant="h4" className="font-bold text-text-main">
+                            Job Description
                         </Typography>
-                        <ul className="list-disc pl-5 text-sm text-muted-text space-y-1">
-                            <li>5+ years of experience with React & TypeScript.</li>
-                            <li>Strong styling foundations using vanilla CSS and Tailwind CSS.</li>
-                            <li>Experience with TanStack Query and state management patterns.</li>
-                        </ul>
+                        <Typography variant="body1" className="text-muted-text">
+                            We are looking for a Senior Software Engineer to join our growing team. You will be responsible for building premium user interfaces, standardizing core components, and designing robust API integration layers.
+                        </Typography>
+                        <div className="pt-2">
+                            <Typography variant="body2" className="font-semibold text-text-main mb-1.5">
+                                Requirements
+                            </Typography>
+                            <ul className="list-disc pl-5 text-sm text-muted-text space-y-1">
+                                <li>5+ years of experience with React & TypeScript.</li>
+                                <li>Strong styling foundations using vanilla CSS and Tailwind CSS.</li>
+                                <li>Experience with TanStack Query and state management patterns.</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div className="pt-4 border-t border-btn-sec-border flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
+                        <div className="flex flex-col">
+                            <span className="text-xs text-muted-text">Application Form</span>
+                            <span className="text-sm font-semibold text-text-main">Tally / Typeform Link</span>
+                        </div>
+                        <div className="flex items-center gap-2">
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                prefixIcon={copied ? Check : Copy}
+                                onClick={handleCopy}
+                            >
+                                {copied ? "Copied" : "Copy Link"}
+                            </Button>
+                            <a
+                                href="https://tally.so/r/dummy-application-form"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-block"
+                            >
+                                <Button variant="outline" size="sm">
+                                    Open Form
+                                </Button>
+                            </a>
+                        </div>
                     </div>
                 </div>
             )}

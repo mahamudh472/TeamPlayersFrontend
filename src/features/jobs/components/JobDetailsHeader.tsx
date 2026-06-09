@@ -1,8 +1,10 @@
 import React from "react";
-import { Typography, BackButton } from "../../../components/ui";
+import { Link } from "react-router";
+import { Typography, BackButton, Button } from "../../../components/ui";
 import { Briefcase, MapPin, DollarSign } from "lucide-react";
 
 interface JobDetailsHeaderProps {
+    id?: string;
     title: string;
     status: string;
     company: string;
@@ -11,6 +13,7 @@ interface JobDetailsHeaderProps {
 }
 
 export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
+    id,
     title,
     status,
     company,
@@ -19,7 +22,7 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
 }) => {
     return (
         <div className="flex flex-col gap-4">
-            <BackButton label="Back to Jobs" />
+            <BackButton label="Back to Jobs" to="/dashboard/jobs" />
 
             <div className="flex items-start justify-between gap-4">
                 <div className="flex items-start gap-4">
@@ -48,9 +51,11 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
                         </div>
                     </div>
                 </div>
-                <button className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-10 rounded-lg px-4">
-                    Edit Job
-                </button>
+                <Link to={`/dashboard/jobs/edit/${id || "1"}`}>
+                    <Button variant="secondary">
+                        Edit Job
+                    </Button>
+                </Link>
             </div>
         </div>
     );

@@ -79,17 +79,17 @@ export const RevenueChart: React.FC = () => {
                         <Line
                             type="monotone"
                             dataKey="revenue"
-                            stroke="#000000"
+                            stroke="#14b8a6"
                             strokeWidth={3}
                             dot={{
                                 r: 4,
-                                stroke: "#000000",
+                                stroke: "#14b8a6",
                                 strokeWidth: 2,
-                                fill: "#ffffff",
+                                fill: "#14b8a6",
                             }}
                             activeDot={{
                                 r: 6,
-                                stroke: "#000000",
+                                stroke: "#14b8a6",
                                 strokeWidth: 2,
                                 fill: "#ffffff",
                             }}

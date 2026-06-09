@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
-import { Typography, Tabs, TabOption } from "../../../components/ui";
+import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 import { Briefcase } from "lucide-react";
 
 interface JobItem {
@@ -83,7 +83,7 @@ export const ClientDetailsTabs: React.FC = () => {
                             </Link>
                         </div>
                     </div>
-                    
+
                     <div className="px-6 pb-6">
                         <div className="space-y-3">
                             {jobs.map((job) => (
@@ -151,7 +151,7 @@ export const ClientDetailsTabs: React.FC = () => {
                     <Typography variant="h4" className="font-bold text-text-main">
                         Client Notes
                     </Typography>
-                    
+
                     <form onSubmit={handleAddNote} className="space-y-3">
                         <textarea
                             value={newNote}
@@ -160,12 +160,11 @@ export const ClientDetailsTabs: React.FC = () => {
                             rows={3}
                             className="w-full resize-none border border-btn-sec-border rounded-lg bg-white px-3 py-2 text-sm text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                         />
-                        <button
+                        <Button
                             type="submit"
-                            className="inline-flex items-center justify-center px-4 h-9 text-sm font-medium bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors"
                         >
                             Add Note
-                        </button>
+                        </Button>
                     </form>
 
                     <div className="space-y-3 pt-2">

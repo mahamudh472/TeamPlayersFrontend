@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Typography, Input } from "../../../components/ui";
+import { Typography, Input, Button } from "../../../components/ui";
 import { Calendar, Clock, X } from "lucide-react";
 
 interface InterviewScheduleModalProps {
@@ -64,33 +64,33 @@ export const InterviewScheduleModal: React.FC<InterviewScheduleModalProps> = ({
 
                 {/* Footer */}
                 <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
-                    <button
+                    <Button
                         type="button"
+                        variant="secondary"
                         onClick={onClose}
-                        className="inline-flex items-center justify-center px-4 h-10 text-sm font-medium border border-btn-sec-border rounded-lg hover:bg-slate-50 text-text-main transition-colors"
                     >
                         Cancel
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                         type="button"
                         onClick={handleSubmit}
                         disabled={!date || !time}
-                        className="inline-flex items-center justify-center gap-2 px-4 h-10 text-sm font-medium bg-primary hover:bg-primary/95 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        prefixIcon={Calendar}
                     >
-                        <Calendar className="w-4 h-4" />
                         Schedule Interview
-                    </button>
+                    </Button>
                 </div>
 
                 {/* Top-right close button */}
-                <button
+                <Button
                     type="button"
+                    variant="icon"
                     onClick={onClose}
-                    className="absolute top-4 right-4 text-muted-text hover:text-text-main transition-colors p-1"
+                    className="absolute top-4 right-4"
                 >
                     <X className="w-5 h-5" />
                     <span className="sr-only">Close</span>
-                </button>
+                </Button>
             </div>
         </div>
     );
