@@ -1,10 +1,7 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-interface InterviewStatsProps {
-    scheduledCount: number;
-    completedCount: number;
-}
+import { InterviewStatsProps } from "../types";
 
 export const InterviewStats: React.FC<InterviewStatsProps> = ({ scheduledCount, completedCount }) => {
     return (

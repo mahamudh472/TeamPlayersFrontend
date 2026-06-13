@@ -1,12 +1,7 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-interface JobDetailsStatsProps {
-    applicants: number;
-    shortlisted: number;
-    interviewed: number;
-    daysActive: number;
-}
+import { JobDetailsStatsProps } from "../types";
 
 export const JobDetailsStats: React.FC<JobDetailsStatsProps> = ({
     applicants,

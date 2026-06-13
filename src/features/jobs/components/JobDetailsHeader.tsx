@@ -3,14 +3,7 @@ import { Link } from "react-router";
 import { Typography, BackButton, Button } from "../../../components/ui";
 import { Briefcase, MapPin, DollarSign } from "lucide-react";
 
-interface JobDetailsHeaderProps {
-    id?: string;
-    title: string;
-    status: string;
-    company: string;
-    location: string;
-    salary: string;
-}
+import { JobDetailsHeaderProps } from "../types";
 
 export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
     id,

@@ -5,22 +5,7 @@ import { Users, Mail, Phone, MapPin, X, Calendar } from "lucide-react";
 import { InterviewScheduleModal } from "./InterviewScheduleModal";
 import { ShortlistJobModal } from "./ShortlistJobModal";
 
-interface CandidateDetailsHeaderProps {
-    name: string;
-    matchScore: number;
-    status: "interview_scheduled" | "shortlisted" | "rejected";
-    email: string;
-    phone: string;
-    location: string;
-    appliedJobs: { id: string; title: string }[];
-    interviewDate?: string;
-    interviewTime?: string;
-    jobTitle?: string;
-    jobId?: string;
-    onReject: () => void;
-    onShortlist: (jobId: string) => void;
-    onScheduleInterview: (date: string, time: string) => void;
-}
+import { CandidateDetailsHeaderProps } from "../types";
 
 export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
     name,

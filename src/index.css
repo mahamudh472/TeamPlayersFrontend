@@ -1,5 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
-
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
 @import "tailwindcss";
 
@@ -7,7 +6,7 @@
   --color-primary: #14b8a6;
   --color-primary-light: rgba(20, 184, 166, 0.1);
 
-  --color-sidebar: #1E293B;
+  --color-sidebar: #1e293b;
   --color-sidebar-text: #ffffff;
   --color-sidebar-muted: #94a3b8;
 

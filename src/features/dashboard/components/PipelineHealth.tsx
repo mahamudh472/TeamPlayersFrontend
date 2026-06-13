@@ -1,10 +1,7 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-interface FunnelStep {
-  label: string;
-  value: number;
-}
+import { FunnelStep } from "../types";
 
 export const PipelineHealth: React.FC = () => {
   const steps: FunnelStep[] = [

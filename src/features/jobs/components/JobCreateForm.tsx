@@ -2,26 +2,7 @@ import React, { useRef } from "react";
 import { Typography, Select, OptionType, Button } from "../../../components/ui";
 import { Upload, Sparkles, CheckCircle2 } from "lucide-react";
 
-interface JobCreateFormProps {
-    title: string;
-    setTitle: (val: string) => void;
-    client: OptionType | null;
-    setClient: (val: OptionType | null) => void;
-    location: string;
-    setLocation: (val: string) => void;
-    salary: string;
-    setSalary: (val: string) => void;
-    experience: string;
-    setExperience: (val: string) => void;
-    description: string;
-    setDescription: (val: string) => void;
-    selectedFile: File | null;
-    setSelectedFile: (val: File | null) => void;
-    isAnalyzing: boolean;
-    setIsAnalyzing: (val: boolean) => void;
-    analysisSuccess: boolean;
-    setAnalysisSuccess: (val: boolean) => void;
-}
+import { JobCreateFormProps } from "../types";
 
 export const JobCreateForm: React.FC<JobCreateFormProps> = ({
     title,

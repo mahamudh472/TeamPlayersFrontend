@@ -2,12 +2,7 @@ import React from "react";
 import { Typography } from "../../../components/ui";
 import { Sparkles, CheckCircle, AlertTriangle } from "lucide-react";
 
-interface CandidateDetailsSummaryProps {
-    matchScore: number;
-    summaryText: string;
-    strengths: string[];
-    concerns: string[];
-}
+import { CandidateDetailsSummaryProps } from "../types";
 
 export const CandidateDetailsSummary: React.FC<CandidateDetailsSummaryProps> = ({
     matchScore,

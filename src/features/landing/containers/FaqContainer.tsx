@@ -103,7 +103,7 @@ export const FaqContainer: React.FC = () => {
                 {
                     question: "What integrations are available?",
                     answer:
-                        "We integrate with Gmail, Outlook, Google Calendar, LinkedIn, Indeed, Stripe, WhatsApp, and 50+ other tools. Custom integrations available on Enterprise plans.",
+                        "We integrate with Gmail, Outlook, Google Calendar, LinkedIn, Indeed, Stripe, and 50+ other tools. Custom integrations available on Enterprise plans.",
                 },
                 {
                     question: "Is my data secure?",

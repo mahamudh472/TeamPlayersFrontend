@@ -2,48 +2,14 @@ import React from "react";
 import { Typography, Button } from "../../../components/ui";
 import { Bell, X } from "lucide-react";
 
-interface Notification {
-    id: string;
-    title: string;
-    description: string;
-    time: string;
-    type: "job" | "candidate" | "placement";
-}
-
-interface NotificationModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
+import { NotificationModalProps } from "../types";
+import { notifications } from "../fake-data";
 
 export const NotificationModal: React.FC<NotificationModalProps> = ({
     isOpen,
     onClose,
 }) => {
     if (!isOpen) return null;
-
-    const notifications: Notification[] = [
-        {
-            id: "1",
-            title: "New Candidate Application",
-            description: "John Smith has applied for the Senior Software Engineer position.",
-            time: "2 hours ago",
-            type: "candidate",
-        },
-        {
-            id: "2",
-            title: "Interview Scheduled",
-            description: "First round interview with Acme Corp has been confirmed.",
-            time: "4 hours ago",
-            type: "job",
-        },
-        {
-            id: "3",
-            title: "Placement Finalized",
-            description: "Sarah Johnson's placement contract has been signed by Manufacturing United.",
-            time: "1 day ago",
-            type: "placement",
-        },
-    ];
 
     return (
         <div className="absolute right-0 top-[52px] w-96 md:w-[440px] bg-white rounded-xl border border-btn-sec-border shadow-xl z-50 p-4 flex flex-col gap-3 animate-in fade-in-0 slide-in-from-top-1 duration-150">
@@ -93,7 +59,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                     type="button"
                     variant="link"
                     onClick={onClose}
-                    className="!p-0 !h-auto text-primary hover:text-primary/95 font-semibold"
+                    className="text-primary"
                 >
                     Mark all as read
                 </Button>
@@ -101,7 +67,7 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                     type="button"
                     variant="link"
                     onClick={onClose}
-                    className="!p-0 !h-auto text-muted-text hover:text-text-main font-medium"
+                    className="text-muted-text hover:text-text-main font-medium"
                 >
                     Dismiss
                 </Button>

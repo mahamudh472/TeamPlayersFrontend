@@ -100,7 +100,7 @@ export const OtpVerifyForm: React.FC<OtpVerifyFormProps> = ({
                             type="button"
                             variant="link"
                             onClick={() => alert("Verification code resent successfully")}
-                            className="!p-0 !h-auto text-accent hover:underline font-semibold bg-transparent"
+                            className="text-accent"
                         >
                             Resend Code
                         </Button>

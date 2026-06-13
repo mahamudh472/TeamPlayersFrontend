@@ -23,8 +23,7 @@ export const AppBadge: React.FC<AppBadgeProps> = ({
         // Outline: Transparent background, Border #14B8A6, Text #14B8A6
         outline: "bg-transparent text-primary border border-primary",
         // Neutral: Gray theme
-        neutral:
-            "bg-gray-100 text-gray-700 border border-gray-200",
+        neutral: "bg-gray-100 text-gray-700 border border-gray-200",
     };
 
     return (

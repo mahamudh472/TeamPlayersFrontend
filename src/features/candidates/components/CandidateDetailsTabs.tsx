@@ -1,14 +1,7 @@
 import React, { useState } from "react";
 import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 
-interface CandidateDetailsTabsProps {
-    experience: string;
-    location: string;
-    currentSalary: string;
-    expectedSalary: string;
-    skills: string[];
-    appliedDate: string;
-}
+import { CandidateDetailsTabsProps } from "../types";
 
 export const CandidateDetailsTabs: React.FC<CandidateDetailsTabsProps> = ({
     experience,

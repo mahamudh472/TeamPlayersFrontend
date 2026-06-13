@@ -3,41 +3,12 @@ import { PageHeader } from "../../../components/ui";
 import { Calendar as CalendarIcon } from "lucide-react";
 import { InterviewStats, InterviewList, ScheduleInterviewModal } from "../components";
 
-interface Interview {
-    id: string;
-    candidateId: string;
-    candidateName: string;
-    role: string;
-    company: string;
-    date: string;
-    time: string;
-    status: "scheduled" | "completed";
-}
+import { Interview } from "../types";
+import { initialInterviews } from "../fake-data";
 
 export const InterviewsContainer: React.FC = () => {
     // Local state for interviews
-    const [interviews, setInterviews] = useState<Interview[]>([
-        {
-            id: "1",
-            candidateId: "2",
-            candidateName: "Sarah Martinez",
-            role: "Senior Software Engineer",
-            company: "GlobalTech Industries",
-            date: "2026-06-10",
-            time: "14:00",
-            status: "scheduled",
-        },
-        {
-            id: "2",
-            candidateId: "3",
-            candidateName: "James Wilson",
-            role: "Product Manager",
-            company: "GlobalTech Industries",
-            date: "2026-06-08",
-            time: "10:00",
-            status: "scheduled",
-        },
-    ]);
+    const [interviews, setInterviews] = useState<Interview[]>(initialInterviews);
 
     const [isScheduleModalOpen, setIsScheduleModalOpen] = useState(false);
 

@@ -2,26 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Button } from "../../../components/ui";
 import { X } from "lucide-react";
 
-export interface LeadDetailItem {
-    id: string;
-    company: string;
-    status: string;
-    priority: "high priority" | "medium priority" | "low priority";
-    industry: string;
-    employees: string;
-    location: string;
-    contactName: string;
-    contactEmail: string;
-    contactPhone: string;
-    notes?: string;
-}
-
-interface LeadDetailsModalProps {
-    isOpen: boolean;
-    lead: LeadDetailItem | null;
-    onClose: () => void;
-    onSaveNotes: (id: string, notes: string) => void;
-}
+import { LeadDetailItem, LeadDetailsModalProps } from "../types";
 
 export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
     isOpen,
@@ -40,7 +21,7 @@ export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
     if (!isOpen || !lead) return null;
 
     const handleSaveNotes = () => {
-        onSaveNotes(lead.id, notes);
+        onSaveNotes?.(lead.id, notes);
     };
 
     return (

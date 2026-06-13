@@ -2,16 +2,7 @@ import React, { useState } from "react";
 import { Typography, Select, OptionType, Button } from "../../../components/ui";
 import { Sparkles, Search, X } from "lucide-react";
 
-interface GenerateLeadsModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onGenerate: (filters: {
-        country: string;
-        industry: string;
-        companySize: string;
-        hiringActivity: string;
-    }) => void;
-}
+import { GenerateLeadsModalProps } from "../types";
 
 export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
     isOpen,

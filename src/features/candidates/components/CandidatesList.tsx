@@ -3,19 +3,8 @@ import { Link } from "react-router";
 import { Typography, Tabs, TabOption } from "../../../components/ui";
 import { Search, Users } from "lucide-react";
 
-type CandidateStatus = "shortlisted" | "interview_scheduled" | "rejected";
-
-interface CandidateItem {
-    id: string;
-    name: string;
-    role: string;
-    matchScore: number;
-    status: CandidateStatus;
-    location: string;
-    experience: string;
-    salary?: string;
-    appliedDate: string;
-}
+import { CandidateStatus, CandidateItem } from "../types";
+import { initialCandidates } from "../fake-data";
 
 const getIndicatorColor = (status: CandidateStatus): string => {
     switch (status) {
@@ -49,52 +38,6 @@ const getStatusLabel = (status: CandidateStatus): string => {
             return "Rejected";
     }
 };
-
-const initialCandidates: CandidateItem[] = [
-    {
-        id: "1",
-        name: "Alex Thompson",
-        role: "Senior Software Engineer",
-        matchScore: 92,
-        status: "interview_scheduled",
-        location: "London, UK",
-        experience: "6 years",
-        salary: "£85,000",
-        appliedDate: "16/05/2026",
-    },
-    {
-        id: "2",
-        name: "Sarah Martinez",
-        role: "Senior Software Engineer",
-        matchScore: 88,
-        status: "interview_scheduled",
-        location: "London, UK",
-        experience: "5 years",
-        salary: "£80,000",
-        appliedDate: "17/05/2026",
-    },
-    {
-        id: "3",
-        name: "James Wilson",
-        role: "Product Manager",
-        matchScore: 85,
-        status: "shortlisted",
-        location: "Manchester, UK",
-        experience: "4 years",
-        salary: "£65,000",
-        appliedDate: "21/05/2026",
-    },
-    {
-        id: "4",
-        name: "Emma Davis",
-        role: "Store Manager",
-        matchScore: 78,
-        status: "rejected",
-        location: "Birmingham, UK",
-        experience: "3 years",
-        appliedDate: "26/05/2026",
-    },
-];
 
 export const CandidatesList: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState("");

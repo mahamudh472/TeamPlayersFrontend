@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router";
-import { PageHeader, Tabs, TabOption, Select, OptionType } from "../../../components/ui";
+import {
+    PageHeader,
+    Tabs,
+    TabOption,
+    Select,
+    OptionType,
+} from "../../../components/ui";
 import { AnalyticsOverview } from "../components/AnalyticsOverview";
 import { AnalyticsClients } from "../components/AnalyticsClients";
 import { AnalyticsCandidates } from "../components/AnalyticsCandidates";
@@ -18,7 +24,9 @@ export const AnalyticsContainer: React.FC = () => {
     const navigate = useNavigate();
     const activeTab = tab || "overview";
 
-    const [selectedTimeRange, setSelectedTimeRange] = useState<OptionType | null>(timeRangeOptions[2]); // Last year
+    const [selectedTimeRange, setSelectedTimeRange] = useState<OptionType | null>(
+        timeRangeOptions[2],
+    );
 
     const tabOptions: TabOption[] = [
         { label: "Overview", value: "overview" },
@@ -74,9 +82,7 @@ export const AnalyticsContainer: React.FC = () => {
                     onChange={handleTabChange}
                 />
 
-                <div className="mt-6">
-                    {renderTabContent()}
-                </div>
+                <div className="mt-6">{renderTabContent()}</div>
             </div>
         </main>
     );

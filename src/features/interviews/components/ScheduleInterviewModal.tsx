@@ -2,30 +2,14 @@ import React, { useState } from "react";
 import { Typography, Select, OptionType, Button } from "../../../components/ui";
 import { X } from "lucide-react";
 
-interface ScheduleInterviewModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-    onSchedule: (candidateName: string, role: string, company: string, date: string, time: string) => void;
-}
+import { ScheduleInterviewModalProps } from "../types";
+import { candidatesOptions, jobsOptions } from "../fake-data";
 
 export const ScheduleInterviewModal: React.FC<ScheduleInterviewModalProps> = ({
     isOpen,
     onClose,
     onSchedule,
 }) => {
-    const candidatesOptions: OptionType[] = [
-        { label: "Alex Thompson", value: "Alex Thompson" },
-        { label: "Sarah Martinez", value: "Sarah Martinez" },
-        { label: "James Wilson", value: "James Wilson" },
-        { label: "Emily Davis", value: "Emily Davis" },
-    ];
-
-    const jobsOptions: OptionType[] = [
-        { label: "Senior Software Engineer - GlobalTech Industries", value: "Senior Software Engineer|GlobalTech Industries" },
-        { label: "Product Manager - GlobalTech Industries", value: "Product Manager|GlobalTech Industries" },
-        { label: "Frontend Developer - Acme Corp", value: "Frontend Developer|Acme Corp" },
-        { label: "Fullstack Developer - TechCorp Solutions", value: "Fullstack Developer|TechCorp Solutions" },
-    ];
 
     const [selectedCandidate, setSelectedCandidate] = useState<OptionType | null>(null);
     const [selectedJob, setSelectedJob] = useState<OptionType | null>(null);

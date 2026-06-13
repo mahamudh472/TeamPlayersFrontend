@@ -3,14 +3,8 @@ import { Link } from "react-router";
 import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 import { Users, Copy, Check } from "lucide-react";
 
-interface CandidateItem {
-    id: string;
-    name: string;
-    matchScore: number;
-    status: string;
-    location: string;
-    experience: string;
-}
+import { CandidateItem } from "../types";
+import { candidates } from "../fake-data";
 
 export const JobDetailsMain: React.FC = () => {
     const [activeTab, setActiveTab] = useState<string>("candidates");
@@ -21,25 +15,6 @@ export const JobDetailsMain: React.FC = () => {
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     };
-
-    const candidates: CandidateItem[] = [
-        {
-            id: "1",
-            name: "Alex Thompson",
-            matchScore: 92,
-            status: "interview",
-            location: "London, UK",
-            experience: "6 years",
-        },
-        {
-            id: "2",
-            name: "Sarah Martinez",
-            matchScore: 88,
-            status: "interview",
-            location: "London, UK",
-            experience: "5 years",
-        },
-    ];
 
     const tabOptions: TabOption[] = [
         { label: `Candidates (${candidates.length})`, value: "candidates" },

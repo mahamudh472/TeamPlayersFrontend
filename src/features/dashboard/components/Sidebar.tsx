@@ -12,11 +12,7 @@ import {
     ChartArea,
 } from "lucide-react";
 
-interface SidebarLinkProps {
-    to: string;
-    icon: React.ComponentType<{ className?: string }>;
-    children: React.ReactNode;
-}
+import { SidebarLinkProps } from "../types";
 
 const SidebarLink: React.FC<SidebarLinkProps> = ({
     to,

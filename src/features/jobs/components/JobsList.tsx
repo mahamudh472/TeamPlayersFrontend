@@ -3,72 +3,11 @@ import { Link } from "react-router";
 import { Typography } from "../../../components/ui";
 import { Search, Briefcase, MapPin, DollarSign } from "lucide-react";
 
-interface JobPosition {
-    id: string;
-    title: string;
-    company: string;
-    location: string;
-    salary: string;
-    status: string;
-    skills: string[];
-    applicants: number;
-    shortlisted: number;
-    interviewed: number;
-}
+import { JobPosition } from "../types";
+import { jobs } from "../fake-data";
 
 export const JobsList: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState("");
-
-    const jobs: JobPosition[] = [
-        {
-            id: "1",
-            title: "Senior Software Engineer",
-            company: "GlobalTech Industries",
-            location: "London, UK",
-            salary: "£70,000 - £90,000",
-            status: "active",
-            skills: ["React", "TypeScript", "Node.js"],
-            applicants: 45,
-            shortlisted: 8,
-            interviewed: 3,
-        },
-        {
-            id: "2",
-            title: "Product Manager",
-            company: "GlobalTech Industries",
-            location: "Manchester, UK",
-            salary: "£60,000 - £80,000",
-            status: "active",
-            skills: ["Product Strategy", "Agile", "User Research"],
-            applicants: 32,
-            shortlisted: 6,
-            interviewed: 2,
-        },
-        {
-            id: "3",
-            title: "Store Manager",
-            company: "RetailPro Group",
-            location: "Birmingham, UK",
-            salary: "£35,000 - £45,000",
-            status: "active",
-            skills: ["Retail Management", "Team Leadership", "Sales"],
-            applicants: 28,
-            shortlisted: 10,
-            interviewed: 5,
-        },
-        {
-            id: "4",
-            title: "Operations Manager",
-            company: "Manufacturing United",
-            location: "Leeds, UK",
-            salary: "£50,000 - £65,000",
-            status: "active",
-            skills: ["Operations", "Lean Manufacturing", "Process Improvement"],
-            applicants: 18,
-            shortlisted: 4,
-            interviewed: 1,
-        },
-    ];
 
     const filteredJobs = jobs.filter(
         (job) =>

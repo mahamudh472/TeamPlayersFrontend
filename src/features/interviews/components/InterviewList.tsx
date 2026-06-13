@@ -3,20 +3,7 @@ import { Link } from "react-router";
 import { Typography, Tabs, Button } from "../../../components/ui";
 import { Calendar as CalendarIcon, Users, Briefcase, MapPin, Clock, Video } from "lucide-react";
 
-interface Interview {
-    id: string;
-    candidateId: string;
-    candidateName: string;
-    role: string;
-    company: string;
-    date: string;
-    time: string;
-    status: "scheduled" | "completed";
-}
-
-interface InterviewListProps {
-    interviews: Interview[];
-}
+import { Interview, InterviewListProps } from "../types";
 
 export const InterviewList: React.FC<InterviewListProps> = ({ interviews }) => {
     const [activeTab, setActiveTab] = useState<string>("upcoming");

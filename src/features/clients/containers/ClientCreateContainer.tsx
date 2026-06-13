@@ -120,6 +120,7 @@ export const ClientCreateContainer: React.FC = () => {
                         setContactPhone={setContactPhone}
                         summary={summary}
                         setSummary={setSummary}
+                        isEdit={isEdit}
                     />
                 </div>
 

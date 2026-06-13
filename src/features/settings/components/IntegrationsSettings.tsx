@@ -52,7 +52,7 @@ export const IntegrationsSettings: React.FC = () => {
                         </Button>
                     </div>
                 </div>
-                <div className="flex items-center justify-between p-4 border border-btn-sec-border rounded-lg bg-slate-50/50">
+                {/* <div className="flex items-center justify-between p-4 border border-btn-sec-border rounded-lg bg-slate-50/50">
                     <div className="flex items-center gap-3">
                         <Zap className="w-8 h-8 text-light-text shrink-0" />
                         <div>
@@ -67,7 +67,7 @@ export const IntegrationsSettings: React.FC = () => {
                     <Button variant="outline" className="text-xs py-1 px-2.5 h-8">
                         Connect
                     </Button>
-                </div>
+                </div> */}
             </div>
         </div>
     );

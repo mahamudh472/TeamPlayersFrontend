@@ -2,18 +2,8 @@ import React, { useState, useRef, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router";
 import { Typography, Button } from "../../../components/ui";
 import { Search, X, Briefcase, Users, Building2, Target } from "lucide-react";
-
-interface SearchModalProps {
-    isOpen: boolean;
-    onClose: () => void;
-}
-
-interface SearchResult {
-    id: string;
-    label: string;
-    type: "candidate" | "job" | "client" | "lead";
-    subtitle: string;
-}
+import { SearchModalProps, SearchResult } from "../types";
+import { mockResults } from "../fake-data";
 
 const typeIcons = {
     candidate: Users,
@@ -28,45 +18,6 @@ const typeLabels = {
     client: "Client",
     lead: "Lead",
 };
-
-const mockResults: SearchResult[] = [
-    {
-        id: "1",
-        label: "John Smith",
-        type: "candidate",
-        subtitle: "Senior Software Engineer",
-    },
-    {
-        id: "2",
-        label: "Senior React Developer",
-        type: "job",
-        subtitle: "Acme Corp • London",
-    },
-    {
-        id: "3",
-        label: "Acme Corporation",
-        type: "client",
-        subtitle: "Technology • 200 employees",
-    },
-    {
-        id: "4",
-        label: "TechStart Ltd",
-        type: "lead",
-        subtitle: "Hiring 3 positions",
-    },
-    {
-        id: "5",
-        label: "Emma Williams",
-        type: "candidate",
-        subtitle: "Product Manager",
-    },
-    {
-        id: "6",
-        label: "DevOps Engineer",
-        type: "job",
-        subtitle: "CloudScale • Remote",
-    },
-];
 
 export const SearchModal: React.FC<SearchModalProps> = ({
     isOpen,

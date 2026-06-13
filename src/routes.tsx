@@ -1,4 +1,3 @@
-import React from "react";
 import { createBrowserRouter, Navigate } from "react-router";
 import {
     LandingLayout,
@@ -52,7 +51,6 @@ import { PlacementsContainer } from "./features/placements";
 import { FaqContainer } from "./features/landing/containers/FaqContainer";
 
 export const routes = createBrowserRouter([
-    // Landing Routes
     {
         path: "/",
         element: <LandingLayout />,

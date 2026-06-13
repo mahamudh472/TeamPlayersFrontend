@@ -1,38 +1,9 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-interface RecruiterPerformanceItem {
-    name: string;
-    initial: string;
-    placementsCount: number;
-    activeJobsCount: number;
-    revenue: string;
-}
+import { recruiters } from "../fake-data";
 
 export const AnalyticsRecruiters: React.FC = () => {
-    const recruiters: RecruiterPerformanceItem[] = [
-        {
-            name: "You",
-            initial: "Y",
-            placementsCount: 8,
-            activeJobsCount: 4,
-            revenue: "£125k",
-        },
-        {
-            name: "Sarah Johnson",
-            initial: "S",
-            placementsCount: 6,
-            activeJobsCount: 3,
-            revenue: "£95k",
-        },
-        {
-            name: "Michael Chen",
-            initial: "M",
-            placementsCount: 5,
-            activeJobsCount: 3,
-            revenue: "£78k",
-        },
-    ];
 
     return (
         <div className="bg-white rounded-xl border border-btn-sec-border p-6 shadow-xs flex flex-col gap-6">
@@ -44,7 +15,7 @@ export const AnalyticsRecruiters: React.FC = () => {
                     Team productivity metrics
                 </Typography>
             </div>
-            
+
             <div className="space-y-4">
                 {recruiters.map((recruiter, index) => (
                     <div

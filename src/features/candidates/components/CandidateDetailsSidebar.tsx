@@ -3,18 +3,7 @@ import { Link } from "react-router";
 import { Typography } from "../../../components/ui";
 import { Briefcase, CheckCircle } from "lucide-react";
 
-interface CandidateDetailsSidebarProps {
-    jobTitle: string;
-    jobLocation: string;
-    jobSalary: string;
-    jobId: string;
-    skillsMatch: number;
-    experienceMatch: number;
-    salaryMatch: number;
-    locationMatch: number;
-    recommendationTitle: string;
-    recommendationText: string;
-}
+import { CandidateDetailsSidebarProps } from "../types";
 
 export const CandidateDetailsSidebar: React.FC<CandidateDetailsSidebarProps> = ({
     jobTitle,
