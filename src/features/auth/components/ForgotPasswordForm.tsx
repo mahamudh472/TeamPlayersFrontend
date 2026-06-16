@@ -38,7 +38,7 @@ export const ForgotPasswordForm: React.FC<ForgotPasswordFormProps> = ({ onSubmit
                         type="submit"
                         className="w-full bg-accent hover:bg-accent/90"
                     >
-                        Send Reset Link
+                        Send OTP
                     </Button>
                     <Link to="/login" className="block w-full">
                         <Button

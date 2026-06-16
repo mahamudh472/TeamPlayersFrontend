@@ -1,6 +1,7 @@
 import React, { useState, useRef } from "react";
 import { Link } from "react-router";
 import { Button } from "../../../components/ui";
+import { useToast } from "../../../shared/context/ToastContext";
 
 interface OtpVerifyFormProps {
     title: string;
@@ -15,6 +16,7 @@ export const OtpVerifyForm: React.FC<OtpVerifyFormProps> = ({
     onSubmit,
     backPath = "/login",
 }) => {
+    const { toast } = useToast();
     const [code, setCode] = useState<string[]>(Array(6).fill(""));
     const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
@@ -41,7 +43,7 @@ export const OtpVerifyForm: React.FC<OtpVerifyFormProps> = ({
         e.preventDefault();
         const fullCode = code.join("");
         if (fullCode.length < 6) {
-            alert("Please enter the full 6-digit code");
+            toast.warning("Please enter the full 6-digit code");
             return;
         }
         onSubmit(fullCode);
@@ -99,7 +101,7 @@ export const OtpVerifyForm: React.FC<OtpVerifyFormProps> = ({
                         <Button
                             type="button"
                             variant="link"
-                            onClick={() => alert("Verification code resent successfully")}
+                            onClick={() => toast.success("Verification code resent successfully")}
                             className="text-accent"
                         >
                             Resend Code

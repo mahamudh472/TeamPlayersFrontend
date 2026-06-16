@@ -1,19 +1,21 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { Input, Button } from "../../../components/ui";
+import { useToast } from "../../../shared/context/ToastContext";
 
 interface PasswordResetFormProps {
     onSubmit: (password: string) => void;
 }
 
 export const PasswordResetForm: React.FC<PasswordResetFormProps> = ({ onSubmit }) => {
+    const { toast } = useToast();
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            toast.warning("Passwords do not match");
             return;
         }
         onSubmit(password);

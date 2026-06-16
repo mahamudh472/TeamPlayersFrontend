@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { Send } from "lucide-react";
 import { Input, Select, Typography, OptionType, Button } from "../../../components/ui";
+import { useToast } from "../../../shared/context/ToastContext";
 
 export const ContactForm: React.FC = () => {
+    const { toast } = useToast();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [company, setCompany] = useState("");
@@ -20,10 +22,10 @@ export const ContactForm: React.FC = () => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (!subject) {
-            alert("Please select a subject");
+            toast.warning("Please select a subject");
             return;
         }
-        alert(`Message sent successfully!\nName: ${name}\nEmail: ${email}\nCompany: ${company}\nSubject: ${subject.label}\nMessage: ${message}`);
+        toast.success(`Message sent successfully!\nName: ${name}\nEmail: ${email}\nCompany: ${company}\nSubject: ${subject.label}\nMessage: ${message}`);
         setName("");
         setEmail("");
         setCompany("");

@@ -9,5 +9,7 @@ export * from "./ChartWrapper";
 export * from "./Select";
 export * from "./BackButton";
 export * from "./Tabs";
+export * from "./Toast";
+
 
 

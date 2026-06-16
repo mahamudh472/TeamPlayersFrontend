@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { Input, Button } from "../../../components/ui";
+import { useToast } from "../../../shared/context/ToastContext";
 
 interface RegisterFormProps {
     onSubmit: (data: {
         name: string;
         email: string;
         agencyName: string;
+        password?: string;
     }) => void;
 }
 
 export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
+    const { toast } = useToast();
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [agencyName, setAgencyName] = useState("");
@@ -21,14 +24,14 @@ export const RegisterForm: React.FC<RegisterFormProps> = ({ onSubmit }) => {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (password !== confirmPassword) {
-            alert("Passwords do not match");
+            toast.warning("Passwords do not match");
             return;
         }
         if (!agree) {
-            alert("You must agree to the Terms and Privacy Policy");
+            toast.warning("You must agree to the Terms and Privacy Policy");
             return;
         }
-        onSubmit({ name, email, agencyName });
+        onSubmit({ name, email, agencyName, password });
     };
 
     return (
