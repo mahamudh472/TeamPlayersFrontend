@@ -1,3 +1,19 @@
+export interface LeadNoteUser {
+    id: string;
+    email: string;
+    full_name: string;
+}
+
+export interface LeadNote {
+    id: number;
+    content: string;
+    model: string;
+    model_id: number;
+    user: LeadNoteUser;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface LeadDetailItem {
     id: string;
     company: string;
@@ -10,6 +26,7 @@ export interface LeadDetailItem {
     contactEmail: string;
     contactPhone: string;
     notes?: string;
+    notesList?: LeadNote[];
 }
 
 export interface LeadDetailsModalProps {
@@ -17,6 +34,7 @@ export interface LeadDetailsModalProps {
     lead: LeadDetailItem | null;
     onClose: () => void;
     onSaveNotes?: (id: string, notes: string) => void;
+    onNoteAdded?: () => void;
 }
 
 export interface GenerateLeadsModalProps {
@@ -30,8 +48,9 @@ export interface GenerateLeadsModalProps {
     }) => void;
 }
 
-export type LeadStatus = "new" | "contacted" | "meeting booked";
+export type LeadStatus = "new" | "contacted" | "meeting" | "converted" | "lost";
 
 export interface Lead extends LeadDetailItem {
     accentColor: string;
 }
+

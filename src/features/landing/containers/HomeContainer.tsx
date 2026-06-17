@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { PricingCard, TestimonialCard } from "../components";
 import { Typography, Button } from "../../../components/ui";
+import { useAuth } from "../../../shared/context/AuthContext";
 import {
   ArrowRight,
   Target,
@@ -101,6 +102,8 @@ const faqs = [
 ];
 
 export const HomeContainer: React.FC = () => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <main className="flex-1">
       {/* Hero */}
@@ -118,12 +121,21 @@ export const HomeContainer: React.FC = () => {
             Transform your recruitment agency with AI-driven lead generation, intelligent candidate matching, and automated workflows. Close more placements, faster.
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
-                Get started now
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/register">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Get started now
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            )}
           </div>
           <Typography variant="body2" className="text-muted-foreground mt-4 text-sm">
             No credit card required • 14-day free trial • Cancel anytime
@@ -278,12 +290,21 @@ export const HomeContainer: React.FC = () => {
             Join hundreds of agencies using AI to scale their business
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
-                Start Free Trial
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/register">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Start Free Trial
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            )}
             <Link to="/contact">
               <Button variant="secondary" className="h-11 px-8 font-semibold text-sm rounded-lg border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 transition-all cursor-pointer">
                 Contact Sales

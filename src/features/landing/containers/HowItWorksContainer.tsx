@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { LandingHeader, StepCard } from "../components";
 import { Typography, Button } from "../../../components/ui";
+import { useAuth } from "../../../shared/context/AuthContext";
 import {
   UserPlus,
   TrendingUp,
@@ -15,6 +16,7 @@ import {
 } from "lucide-react";
 
 export const HowItWorksContainer: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   const steps = [
     {
       icon: <UserPlus className="w-8 h-8" />,
@@ -140,12 +142,21 @@ export const HowItWorksContainer: React.FC = () => {
             Join hundreds of agencies using AI to scale their business
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
-                Start Free Trial
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/register">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Start Free Trial
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            )}
             <Link to="/contact">
               <Button variant="secondary" className="h-11 px-8 font-semibold text-sm rounded-lg border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 transition-all cursor-pointer">
                 Book a Demo

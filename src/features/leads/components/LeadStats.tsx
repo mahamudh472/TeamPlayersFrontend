@@ -1,7 +1,17 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-export const LeadStats: React.FC = () => {
+interface LeadStatsProps {
+    statusCounts?: {
+        new: number;
+        contacted: number;
+        meeting: number;
+        converted: number;
+        lost: number;
+    };
+}
+
+export const LeadStats: React.FC<LeadStatsProps> = ({ statusCounts }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
@@ -14,7 +24,7 @@ export const LeadStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold">1</div>
+                    <div className="text-2xl font-bold">{statusCounts?.new ?? 0}</div>
                 </div>
             </div>
 
@@ -28,7 +38,7 @@ export const LeadStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold">1</div>
+                    <div className="text-2xl font-bold">{statusCounts?.contacted ?? 0}</div>
                 </div>
             </div>
 
@@ -42,7 +52,7 @@ export const LeadStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold">1</div>
+                    <div className="text-2xl font-bold">{statusCounts?.meeting ?? 0}</div>
                 </div>
             </div>
 
@@ -56,9 +66,10 @@ export const LeadStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-green-500">0</div>
+                    <div className="text-2xl font-bold text-green-500">{statusCounts?.converted ?? 0}</div>
                 </div>
             </div>
         </div>
     );
 };
+

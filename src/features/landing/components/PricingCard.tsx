@@ -2,6 +2,7 @@ import React from "react";
 import { Link } from "react-router";
 import { CircleCheck } from "lucide-react";
 import { Typography, Button } from "../../../components/ui";
+import { useAuth } from "../../../shared/context/AuthContext";
 
 interface PricingCardProps {
   title: string;
@@ -18,6 +19,8 @@ export const PricingCard: React.FC<PricingCardProps> = ({
   features,
   popular
 }) => {
+  const { isAuthenticated } = useAuth();
+
   return (
     <div
       data-slot="card"
@@ -55,7 +58,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
           ))}
         </ul>
 
-        <Link to="/register" className="w-full mt-auto">
+        <Link to={isAuthenticated ? "/dashboard" : "/register"} className="w-full mt-auto">
           <Button
             variant={popular ? "primary" : "secondary"}
             className={`w-full h-11 font-semibold text-sm rounded-lg transition-all cursor-pointer flex items-center justify-center ${
@@ -64,7 +67,7 @@ export const PricingCard: React.FC<PricingCardProps> = ({
                 : "border border-btn-sec-border bg-white text-text-main hover:bg-slate-50"
             }`}
           >
-            Start Free Trial
+            {isAuthenticated ? "Go to Dashboard" : "Start Free Trial"}
           </Button>
         </Link>
       </div>

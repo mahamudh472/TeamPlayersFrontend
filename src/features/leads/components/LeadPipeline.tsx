@@ -1,48 +1,43 @@
 import React, { useState } from "react";
 import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
-import { Mail, Phone, Plus, Building2, Users, MapPin } from "lucide-react";
+import { Mail, Phone, Plus, Building2, Users, MapPin, Check, Calendar, X } from "lucide-react";
 import { LeadStatus, Lead, LeadDetailItem } from "../types";
 import { LeadDetailsModal } from "./LeadDetailsModal";
-import { initialLeads } from "../fake-data";
 
-const getActionConfig = (status: LeadStatus) => {
-    switch (status) {
-        case "new":
-            return { text: "Contact", icon: Mail, isPrimary: false };
-        case "contacted":
-            return { text: "Book Meeting", icon: Phone, isPrimary: false };
-        case "meeting booked":
-            return { text: "Convert to Client", icon: Plus, isPrimary: true };
-    }
-};
+interface LeadPipelineProps {
+    leads: Lead[];
+    statusCounts?: {
+        new: number;
+        contacted: number;
+        meeting: number;
+        converted: number;
+        lost: number;
+    };
+    onStatusChange: (leadId: string, nextStatus: LeadStatus) => void;
+    onNoteAdded: () => void;
+}
 
-const getNextStatus = (status: LeadStatus): LeadStatus | null => {
-    switch (status) {
-        case "new":
-            return "contacted";
-        case "contacted":
-            return "meeting booked";
-        case "meeting booked":
-            return null; // Convert to client — disappears
-    }
-};
-
-export const LeadPipeline: React.FC = () => {
+export const LeadPipeline: React.FC<LeadPipelineProps> = ({
+    leads,
+    statusCounts,
+    onStatusChange,
+    onNoteAdded,
+}) => {
     const [activeTab, setActiveTab] = useState<string>("all");
     const [selectedLead, setSelectedLead] = useState<LeadDetailItem | null>(null);
-    const [leads, setLeads] = useState<Lead[]>(initialLeads);
+    const [confirmState, setConfirmState] = useState<{
+        isOpen: boolean;
+        leadId: string;
+        leadCompany: string;
+        nextStatus: LeadStatus;
+    } | null>(null);
 
-    const handleStatusChange = (leadId: string) => {
-        setLeads((prev) => {
-            const targetLead = prev.find((l) => l.id === leadId);
-            if (!targetLead) return prev;
-            const next = getNextStatus(targetLead.status as LeadStatus);
-            if (!next) {
-                // Convert to client — disappear from list
-                console.log("Converting lead to client and removing from list:", targetLead.company);
-                return prev.filter((l) => l.id !== leadId);
-            }
-            return prev.map((l) => (l.id === leadId ? { ...l, status: next } : l));
+    const handleStatusChangeClick = (leadId: string, leadCompany: string, nextStatus: LeadStatus) => {
+        setConfirmState({
+            isOpen: true,
+            leadId,
+            leadCompany,
+            nextStatus,
         });
     };
 
@@ -51,16 +46,13 @@ export const LeadPipeline: React.FC = () => {
         return lead.status === activeTab;
     });
 
-    const getStatusCount = (status: "all" | "new" | "contacted" | "meeting booked") => {
-        if (status === "all") return leads.length;
-        return leads.filter((l) => l.status === status).length;
-    };
-
     const tabOptions: TabOption[] = [
-        { label: `All (${getStatusCount("all")})`, value: "all" },
-        { label: `New (${getStatusCount("new")})`, value: "new" },
-        { label: `Contacted (${getStatusCount("contacted")})`, value: "contacted" },
-        { label: `Meetings (${getStatusCount("meeting booked")})`, value: "meeting booked" },
+        { label: `All (${leads.length})`, value: "all" },
+        { label: `New (${statusCounts?.new ?? 0})`, value: "new" },
+        { label: `Contacted (${statusCounts?.contacted ?? 0})`, value: "contacted" },
+        { label: `Meetings (${statusCounts?.meeting ?? 0})`, value: "meeting" },
+        { label: `Converted (${statusCounts?.converted ?? 0})`, value: "converted" },
+        { label: `Lost (${statusCounts?.lost ?? 0})`, value: "lost" },
     ];
 
     return (
@@ -84,8 +76,6 @@ export const LeadPipeline: React.FC = () => {
                 {/* Lead Items list */}
                 <div className="space-y-3">
                     {filteredLeads.map((lead) => {
-                        const action = getActionConfig(lead.status as LeadStatus);
-                        const ActionIcon = action.icon;
                         return (
                             <div
                                 key={lead.id}
@@ -94,7 +84,7 @@ export const LeadPipeline: React.FC = () => {
                             >
                                 <div className={`w-1.5 h-12 rounded-full ${lead.accentColor}`} />
                                 <div className="flex-1 min-w-0">
-                                    <div className="flex items-center gap-2 mb-1.5">
+                                    <div className="flex items-center gap-2 mb-1.5 text-left">
                                         <Typography variant="body1" className="font-semibold text-text-main">
                                             {lead.company}
                                         </Typography>
@@ -102,9 +92,13 @@ export const LeadPipeline: React.FC = () => {
                                                 ? "bg-slate-100 text-slate-800 border-transparent"
                                                 : lead.status === "contacted"
                                                     ? "bg-blue-50 text-blue-700 border-transparent"
-                                                    : "bg-primary/10 text-primary border-transparent"
+                                                    : lead.status === "meeting"
+                                                        ? "bg-primary/10 text-primary border-transparent"
+                                                        : lead.status === "converted"
+                                                            ? "bg-green-50 text-green-700 border-transparent"
+                                                            : "bg-red-50 text-red-700 border-transparent"
                                             }`}>
-                                            {lead.status}
+                                            {lead.status === "meeting" ? "meeting booked" : lead.status}
                                         </span>
                                         <span className="inline-flex items-center justify-center rounded-md border border-btn-sec-border px-2 py-0.5 text-xs font-medium text-muted-text capitalize">
                                             {lead.priority}
@@ -126,17 +120,85 @@ export const LeadPipeline: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="flex gap-2">
-                                    <Button
-                                        variant={action.isPrimary ? "primary" : "outline"}
-                                        size="sm"
-                                        prefixIcon={ActionIcon}
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            handleStatusChange(lead.id);
-                                        }}
-                                    >
-                                        {action.text}
-                                    </Button>
+                                    {lead.status === "new" && (
+                                        <>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                prefixIcon={Mail}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Placeholder for later
+                                                }}
+                                            >
+                                                Contact
+                                            </Button>
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                prefixIcon={Check}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStatusChangeClick(lead.id, lead.company, "contacted");
+                                                }}
+                                            >
+                                                Mark as Contacted
+                                            </Button>
+                                        </>
+                                    )}
+                                    {lead.status === "contacted" && (
+                                        <>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                prefixIcon={Calendar}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    // Placeholder for later
+                                                }}
+                                            >
+                                                Book Meeting
+                                            </Button>
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                prefixIcon={Check}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStatusChangeClick(lead.id, lead.company, "meeting");
+                                                }}
+                                            >
+                                                Mark as Meeting
+                                            </Button>
+                                        </>
+                                    )}
+                                    {lead.status === "meeting" && (
+                                        <>
+                                            <Button
+                                                variant="primary"
+                                                size="sm"
+                                                prefixIcon={Plus}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStatusChangeClick(lead.id, lead.company, "converted");
+                                                }}
+                                            >
+                                                Convert to Client
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
+                                                prefixIcon={X}
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    handleStatusChangeClick(lead.id, lead.company, "lost");
+                                                }}
+                                                className="text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700"
+                                            >
+                                                Mark as Lost
+                                            </Button>
+                                        </>
+                                    )}
                                 </div>
                             </div>
                         );
@@ -154,7 +216,45 @@ export const LeadPipeline: React.FC = () => {
                 isOpen={!!selectedLead}
                 lead={selectedLead}
                 onClose={() => setSelectedLead(null)}
+                onNoteAdded={onNoteAdded}
             />
+
+            {/* Status Change Confirmation Popup */}
+            {confirmState && confirmState.isOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/30 p-4 animate-in fade-in-0 duration-200">
+                    <div className="absolute inset-0" onClick={() => setConfirmState(null)} />
+                    <div className="bg-white rounded-xl border border-btn-sec-border shadow-xl w-full max-w-md p-6 relative flex flex-col gap-6 animate-in zoom-in-95 duration-200 z-10 text-left">
+                        <div>
+                            <Typography variant="h4" className="text-lg font-bold text-text-main mb-2">
+                                Confirm Status Change
+                            </Typography>
+                            <Typography variant="body2" className="text-muted-text text-sm">
+                                Are you sure you want to change the status of <span className="font-semibold text-text-main">{confirmState.leadCompany}</span> to <span className="font-semibold capitalize text-primary">{confirmState.nextStatus === "meeting" ? "meeting booked" : confirmState.nextStatus}</span>?
+                            </Typography>
+                        </div>
+                        <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                            <Button
+                                type="button"
+                                variant="secondary"
+                                onClick={() => setConfirmState(null)}
+                            >
+                                Cancel
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={confirmState.nextStatus === "lost" ? "outline" : "primary"}
+                                className={confirmState.nextStatus === "lost" ? "text-red-600 border-red-200 hover:bg-red-50 hover:text-red-700 font-semibold" : ""}
+                                onClick={() => {
+                                    onStatusChange(confirmState.leadId, confirmState.nextStatus);
+                                    setConfirmState(null);
+                                }}
+                            >
+                                Confirm
+                            </Button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

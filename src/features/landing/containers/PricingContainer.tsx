@@ -1,60 +1,41 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { LandingHeader, PricingCard } from "../components";
 import { Typography, Button } from "../../../components/ui";
 import { HelpCircle } from "lucide-react";
+import { apiClient } from "../../../shared/api/apiClient";
 
 export const PricingContainer: React.FC = () => {
-  const plans = [
-    {
-      title: "Starter",
-      description: "Perfect for small teams starting with AI recruitment",
-      price: "£99",
-      features: [
-        "Up to 5 users",
-        "100 AI screenings per month",
-        "Basic analytics dashboard",
-        "Email support",
-        "Standard integrations",
-        "Client portal access"
-      ],
-      popular: false
-    },
-    {
-      title: "Professional",
-      description: "For growing agencies ready to scale",
-      price: "£249",
-      features: [
-        "Up to 15 users",
-        "500 AI screenings per month",
-        "Advanced analytics & reporting",
-        "AI lead generation",
-        "Priority email & chat support",
-        "All integrations included",
-        "Custom branding",
-        "API access"
-      ],
-      popular: true
-    },
-    {
-      title: "Enterprise",
-      description: "Unlimited power for established agencies",
-      price: "£599",
-      features: [
-        "Unlimited users",
-        "Unlimited AI screenings",
-        "Full analytics suite",
-        "Unlimited lead generation",
-        "Dedicated account manager",
-        "Custom integrations",
-        "White-label options",
-        "SLA guarantee",
-        "Custom workflows",
-        "Advanced security"
-      ],
-      popular: false
+  const [plans, setPlans] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const fetchPlans = async () => {
+    try {
+      setIsLoading(true);
+      setError(null);
+      const response = await apiClient.get("/api/v1/finance/plans/");
+      // Sort plans by price so that they display in order: e.g. Starter (99), Professional (249), Enterprise (599)
+      const sortedPlans = [...response.data].sort((a, b) => parseFloat(a.price) - parseFloat(b.price));
+      setPlans(sortedPlans);
+    } catch (err: any) {
+      console.error("Failed to fetch plans:", err);
+      setError(err.response?.data?.detail || "Failed to load pricing plans. Please try again later.");
+    } finally {
+      setIsLoading(false);
     }
-  ];
+  };
+
+  useEffect(() => {
+    fetchPlans();
+  }, []);
+
+  const formatPrice = (price: string | number, currency: string) => {
+    const amount = parseFloat(String(price));
+    const symbol = currency === "EUR" ? "€" : currency === "GBP" ? "£" : currency === "USD" ? "$" : currency;
+    const amountStr = amount % 1 === 0 ? amount.toFixed(0) : amount.toFixed(2);
+    return `${symbol}${amountStr}`;
+  };
 
   const faqs = [
     {
@@ -83,6 +64,64 @@ export const PricingContainer: React.FC = () => {
     }
   ];
 
+  if (isLoading) {
+    return (
+      <main className="flex-1">
+        <LandingHeader
+          title="Simple, Transparent Pricing"
+          subtitle="Choose the plan that fits your agency. All plans include a 14-day free trial. No credit card required."
+        />
+        <section className="py-20 px-4 bg-slate-50/50 flex flex-col items-center justify-center min-h-[400px]">
+          <svg
+            className="animate-spin text-primary shrink-0 w-8 h-8"
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+          >
+            <circle
+              className="opacity-25"
+              cx="12"
+              cy="12"
+              r="10"
+              stroke="currentColor"
+              strokeWidth="4"
+            />
+            <path
+              className="opacity-75"
+              fill="currentColor"
+              d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+            />
+          </svg>
+          <Typography variant="body2" className="text-muted-text mt-4">
+            Loading plans...
+          </Typography>
+        </section>
+      </main>
+    );
+  }
+
+  if (error) {
+    return (
+      <main className="flex-1">
+        <LandingHeader
+          title="Simple, Transparent Pricing"
+          subtitle="Choose the plan that fits your agency. All plans include a 14-day free trial. No credit card required."
+        />
+        <section className="py-20 px-4 bg-slate-50/50 flex flex-col items-center justify-center min-h-[400px]">
+          <Typography variant="h5" className="text-red-500 font-semibold mb-2">
+            Failed to load plans
+          </Typography>
+          <Typography variant="body2" className="text-muted-foreground mb-6">
+            {error}
+          </Typography>
+          <Button onClick={fetchPlans} variant="primary">
+            Retry
+          </Button>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="flex-1">
       <LandingHeader
@@ -96,12 +135,12 @@ export const PricingContainer: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 items-stretch">
             {plans.map((plan, index) => (
               <PricingCard
-                key={index}
-                title={plan.title}
+                key={plan.id || index}
+                title={plan.name}
                 description={plan.description}
-                price={plan.price}
-                features={plan.features}
-                popular={plan.popular}
+                price={formatPrice(plan.price, plan.currency)}
+                features={plan.feature_list || []}
+                popular={plan.name.toLowerCase() === "professional" || plan.name.toLowerCase() === "pro"}
               />
             ))}
           </div>

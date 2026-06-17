@@ -37,9 +37,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         try {
             const response = await apiClient.get<UserProfile>("/api/v1/accounts/profile/");
             setUser(response.data);
+            return response.data;
         } catch (error) {
             setUser(null);
             clearTokens();
+            return null;
         }
     };
 
@@ -47,7 +49,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const initializeAuth = async () => {
             const token = getAccessToken();
             if (token) {
-                await loadProfile();
+                const profile = await loadProfile();
+                if (profile?.agency_id && !localStorage.getItem("selected_agency_id")) {
+                    localStorage.setItem("selected_agency_id", String(profile.agency_id));
+                }
             }
             setIsLoading(false);
         };
@@ -57,6 +62,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const handleLogoutEvent = () => {
             setUser(null);
             clearTokens();
+            localStorage.removeItem("selected_agency_id");
         };
 
         window.addEventListener("auth-logout", handleLogoutEvent);
@@ -68,8 +74,11 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const login = async (email: string, password: string) => {
         try {
             const response = await apiClient.post("/api/v1/accounts/login/", { email, password });
-            const { access, refresh } = response.data;
+            const { access, refresh, agency_id } = response.data;
             setTokens(access, refresh);
+            if (agency_id) {
+                localStorage.setItem("selected_agency_id", String(agency_id));
+            }
             await loadProfile();
         } catch (error: any) {
             // Check for non-active account / email not verified
@@ -89,6 +98,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         } finally {
             clearTokens();
             setUser(null);
+            localStorage.removeItem("selected_agency_id");
         }
     };
 

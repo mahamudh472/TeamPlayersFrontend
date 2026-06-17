@@ -3,8 +3,10 @@ import { Link } from "react-router";
 import { LandingHeader } from "../components";
 import { Typography, Button } from "../../../components/ui";
 import { Target, Users, TrendingUp, Heart, ArrowRight } from "lucide-react";
+import { useAuth } from "../../../shared/context/AuthContext";
 
 export const AboutContainer: React.FC = () => {
+  const { isAuthenticated } = useAuth();
   return (
     <main className="flex-1">
       <LandingHeader
@@ -161,12 +163,21 @@ export const AboutContainer: React.FC = () => {
             Whether you're a solo recruiter or a 50-person agency, we're here to help you succeed.
           </Typography>
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Link to="/register">
-              <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
-                Start Free Trial
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </Link>
+            {isAuthenticated ? (
+              <Link to="/dashboard">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Go to Dashboard
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            ) : (
+              <Link to="/register">
+                <Button className="h-11 px-8 font-semibold text-sm rounded-lg bg-primary hover:bg-primary/95 text-white shadow-xs transition-all cursor-pointer flex items-center gap-2">
+                  Start Free Trial
+                  <ArrowRight className="w-4 h-4" />
+                </Button>
+              </Link>
+            )}
             <Link to="/contact">
               <Button variant="secondary" className="h-11 px-8 font-semibold text-sm rounded-lg border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 transition-all cursor-pointer">
                 Get in Touch
