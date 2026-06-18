@@ -32,14 +32,18 @@ export const ClientDetailsSummary: React.FC<ClientDetailsSummaryProps> = ({
                         <CheckCircle className="w-4 h-4 text-green-500" />
                         Collaboration Strengths
                     </h3>
-                    <ul className="space-y-1">
-                        {strengths.map((str, idx) => (
-                            <li key={idx} className="text-sm text-muted-text flex items-start gap-2">
-                                <span className="text-green-500 mt-0.5">•</span>
-                                {str}
-                            </li>
-                        ))}
-                    </ul>
+                    {!strengths || strengths.length === 0 ? (
+                        <p className="text-sm text-muted-text pl-6 italic">No collaboration strengths recorded.</p>
+                    ) : (
+                        <ul className="space-y-1">
+                            {strengths.map((str, idx) => (
+                                <li key={idx} className="text-sm text-muted-text flex items-start gap-2">
+                                    <span className="text-green-500 mt-0.5">•</span>
+                                    {str}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
 
                 <div>
@@ -47,14 +51,18 @@ export const ClientDetailsSummary: React.FC<ClientDetailsSummaryProps> = ({
                         <AlertTriangle className="w-4 h-4 text-yellow-500" />
                         Partnership Risks & Bottlenecks
                     </h3>
-                    <ul className="space-y-1">
-                        {concerns.map((con, idx) => (
-                            <li key={idx} className="text-sm text-muted-text flex items-start gap-2">
-                                <span className="text-yellow-500 mt-0.5">•</span>
-                                {con}
-                            </li>
-                        ))}
-                    </ul>
+                    {!concerns || concerns.length === 0 ? (
+                        <p className="text-sm text-muted-text pl-6 italic">No relationship risks or bottlenecks identified.</p>
+                    ) : (
+                        <ul className="space-y-1">
+                            {concerns.map((con, idx) => (
+                                <li key={idx} className="text-sm text-muted-text flex items-start gap-2">
+                                    <span className="text-yellow-500 mt-0.5">•</span>
+                                    {con}
+                                </li>
+                            ))}
+                        </ul>
+                    )}
                 </div>
             </div>
         </div>

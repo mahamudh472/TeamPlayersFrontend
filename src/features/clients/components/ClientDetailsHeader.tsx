@@ -32,7 +32,11 @@ export const ClientDetailsHeader: React.FC<ClientDetailsHeaderProps> = ({
                             <Typography variant="h2" className="text-2xl font-bold text-text-main leading-tight">
                                 {name}
                             </Typography>
-                            <span className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold w-fit capitalize">
+                            <span className={`inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-semibold w-fit capitalize ${
+                                status === "active" 
+                                    ? "bg-green-50 text-green-700 border-green-200/50" 
+                                    : "bg-gray-100 text-gray-700 border-gray-200"
+                            }`}>
                                 {status}
                             </span>
                         </div>

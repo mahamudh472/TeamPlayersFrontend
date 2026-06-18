@@ -1,99 +1,113 @@
-import React from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useParams } from "react-router";
 import { ClientDetailsHeader } from "../components/ClientDetailsHeader";
 import { ClientDetailsStats } from "../components/ClientDetailsStats";
 import { ClientDetailsTabs } from "../components/ClientDetailsTabs";
 import { ClientDetailsSummary } from "../components/ClientDetailsSummary";
 import { ClientDetailsSidebar } from "../components/ClientDetailsSidebar";
+import { apiClient } from "../../../shared/api/apiClient";
+import { useAuth } from "../../../shared/context/AuthContext";
+import { useToast } from "../../../shared/context/ToastContext";
 
 export const ClientDetailsContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const { user } = useAuth();
+    const { toast } = useToast();
+    const agencyId = localStorage.getItem("selected_agency_id") || user?.agency_id;
 
-    // Mock details based on ID
-    const getClientDetails = (clientId: string | undefined) => {
-        if (clientId === "2") {
-            return {
-                name: "RetailPro Group",
-                status: "active",
-                email: "l.anderson@retailpro.co.uk",
-                phone: "+44 20 2222 3333",
-                jobsPosted: 8,
-                placementsMade: 5,
-                totalRevenue: "£75,000",
-                successRate: "63%",
-                industry: "Retail",
-                contactName: "Lisa Anderson",
-                contactPhone: "+44 20 2222 3333",
-                accountHealth: 88,
-                responseTime: "4 hours",
-                recommendedAction: "Schedule a quarterly review to align on Q3 retail staffing demands.",
-                relationshipSummary: "RetailPro Group is one of the nation's leading retail chains. They leverage our platform for building out their e-commerce digital experience teams as well as warehouse operations management. The partnership has been highly productive, though hiring timelines sometimes stretch due to internal department sign-offs.",
-                strengths: ["Strong brand makes roles highly attractive", "Consistent volume of hiring needs", "Great onboarding program for new hires"],
-                concerns: ["Frequent budget re-approvals cause delays", "Stringent background check protocols"],
-            };
-        }
-        if (clientId === "3") {
-            return {
-                name: "Manufacturing United",
-                status: "active",
-                email: "j.williams@manufunited.com",
-                phone: "+44 20 3333 4444",
-                jobsPosted: 15,
-                placementsMade: 11,
-                totalRevenue: "£165,000",
-                successRate: "73%",
-                industry: "Manufacturing",
-                contactName: "John Williams",
-                contactPhone: "+44 20 3333 4444",
-                accountHealth: 95,
-                responseTime: "1.5 hours",
-                recommendedAction: "Send contract proposal for the new automated logistics warehouse plant roles.",
-                relationshipSummary: "Manufacturing United has worked with us to digitize their operations and hire technical leaders for their smart-factory initiatives. They have an outstanding success rate and clear communication, driven directly by their CTO.",
-                strengths: ["Exceptional response times from hiring managers", "High offer acceptance rate", "Strong commitment to diversity & inclusion"],
-                concerns: ["Relocation constraints for senior plant roles"],
-            };
-        }
-        // Fallback or GlobalTech Industries
-        return {
-            name: "GlobalTech Industries",
-            status: "active",
-            email: "david.smith@globaltech.com",
-            phone: "+44 20 1111 2222",
-            jobsPosted: 12,
-            placementsMade: 8,
-            totalRevenue: "£125,000",
-            successRate: "67%",
-            industry: "Technology",
-            contactName: "David Smith",
-            contactPhone: "+44 20 1111 2222",
-            accountHealth: 92,
-            responseTime: "2 hours",
-            recommendedAction: "Follow up on pending offer for Senior React Developer.",
-            relationshipSummary: "GlobalTech Industries is a premier technology partner with a focus on cutting-edge software engineering. Over the past 12 months, they have consistently engaged our agency for top-tier React, TypeScript, and AWS cloud professionals. Their team offers high-velocity feedback and a structured interview loop, leading to high candidate satisfaction.",
-            strengths: ["Extremely clear role specifications", "Rapid turn-around times on CV reviews", "Highly competitive market compensation"],
-            concerns: ["Lengthy final round culture-fit loop", "Requires 4 days/week on-site at London HQ"],
-        };
-    };
+    const [client, setClient] = useState<any>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
-    const client = getClientDetails(id);
+    const fetchClientDetails = useCallback(async () => {
+        if (!id) return;
+        if (!agencyId) {
+            setError("Agency ID is required.");
+            setIsLoading(false);
+            return;
+        }
+
+        try {
+            setIsLoading(true);
+            const res = await apiClient.get(`/api/v1/agency/clients/${id}/`, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            setClient(res.data);
+            setError(null);
+        } catch (err: any) {
+            console.error("Failed to fetch client details:", err);
+            const errMsg = err.response?.data?.detail || "Failed to load client details";
+            setError(errMsg);
+            toast.error(errMsg);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [id, agencyId, toast]);
+
+    useEffect(() => {
+        fetchClientDetails();
+    }, [fetchClientDetails]);
+
+    if (isLoading) {
+        return (
+            <div className="flex flex-col items-center justify-center p-12 min-h-[400px]">
+                <svg
+                    className="animate-spin text-primary shrink-0 w-8 h-8"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                >
+                    <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                    />
+                    <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                </svg>
+                <span className="text-sm text-muted-text mt-4">Loading client details...</span>
+            </div>
+        );
+    }
+
+    if (error || !client) {
+        return (
+            <div className="bg-red-50/55 border border-red-200/50 p-6 rounded-xl text-center max-w-lg mx-auto mt-12">
+                <h3 className="text-red-800 font-semibold mb-2">Error Loading Client</h3>
+                <p className="text-red-700 text-sm">{error || "Client not found"}</p>
+            </div>
+        );
+    }
+
+    const formattedRevenue = new Intl.NumberFormat("en-GB", {
+        style: "currency",
+        currency: "GBP",
+        maximumFractionDigits: 0,
+    }).format(client.revenue || 0);
 
     return (
         <main className="space-y-6">
             {/* Header info bar */}
             <ClientDetailsHeader
-                id={id || "1"}
-                name={client.name}
-                status={client.status}
-                email={client.email}
-                phone={client.phone}
+                id={id || String(client.id)}
+                name={client.company}
+                status={client.is_active ? "active" : "inactive"}
+                email={client.contact_email}
+                phone={client.contact_phone || "N/A"}
             />
 
             {/* Metrics cards row */}
             <ClientDetailsStats
-                jobsPosted={client.jobsPosted}
-                placementsMade={client.placementsMade}
-                totalRevenue={client.totalRevenue}
-                successRate={client.successRate}
+                jobsPosted={client.jobs || 0}
+                placementsMade={client.placements || 0}
+                totalRevenue={formattedRevenue}
+                successRate={`${client.success_rate || 0}%`}
             />
 
             {/* 3-Column layout */}
@@ -101,9 +115,9 @@ export const ClientDetailsContainer: React.FC = () => {
                 <div className="lg:col-span-2 space-y-6">
                     {/* Screening summary card */}
                     <ClientDetailsSummary
-                        relationshipSummary={client.relationshipSummary}
-                        strengths={client.strengths}
-                        concerns={client.concerns}
+                        relationshipSummary={client.last_ai_summary?.summary || "No AI summary generated for this client yet."}
+                        strengths={client.last_ai_summary?.collabration_strength || []}
+                        concerns={client.last_ai_summary?.risks || []}
                     />
 
                     {/* Tabs details section */}
@@ -112,14 +126,13 @@ export const ClientDetailsContainer: React.FC = () => {
                 <div>
                     {/* Sidebar metrics & recommendations */}
                     <ClientDetailsSidebar
-                        contactName={client.contactName}
-                        contactEmail={client.email}
-                        contactPhone={client.contactPhone}
-                        industry={client.industry}
-                        accountHealth={client.accountHealth}
-                        successRate={client.successRate}
-                        responseTime={client.responseTime}
-                        recommendedAction={client.recommendedAction}
+                        contactName={client.contact_person}
+                        contactEmail={client.contact_email}
+                        contactPhone={client.contact_phone || "N/A"}
+                        industry={client.industry || "N/A"}
+                        clientHealth={client.client_health || "healthy"}
+                        hiringSuccessRate={client.hiring_success_rate || 0}
+                        recommendedActions={client.recommended_actions || []}
                     />
                 </div>
             </div>

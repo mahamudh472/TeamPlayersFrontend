@@ -1,65 +1,39 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import { Typography } from "../../../components/ui";
-import { Search, Building2, Mail } from "lucide-react";
+import { Search, Building2, Mail, MapPin } from "lucide-react";
 
-interface ClientItem {
-    id: string;
-    name: string;
-    status: "active" | "inactive";
-    industry: string;
-    contactName: string;
-    contactEmail: string;
-    jobsCount: number;
-    placementsCount: number;
-    revenue: string;
+interface ClientsListProps {
+    clients: any[];
+    searchQuery: string;
+    onSearchChange: (val: string) => void;
+    page: number;
+    onPageChange: (val: number) => void;
+    hasMore: boolean;
+    hasLess: boolean;
+    isLoading: boolean;
 }
 
-export const ClientsList: React.FC = () => {
-    const [searchQuery, setSearchQuery] = useState("");
+export const ClientsList: React.FC<ClientsListProps> = ({
+    clients,
+    searchQuery,
+    onSearchChange,
+    page,
+    onPageChange,
+    hasMore,
+    hasLess,
+    isLoading,
+}) => {
+    const [localQuery, setLocalQuery] = useState(searchQuery);
 
-    const clients: ClientItem[] = [
-        {
-            id: "1",
-            name: "GlobalTech Industries",
-            status: "active",
-            industry: "Technology",
-            contactName: "David Smith",
-            contactEmail: "david.smith@globaltech.com",
-            jobsCount: 12,
-            placementsCount: 8,
-            revenue: "£125k",
-        },
-        {
-            id: "2",
-            name: "RetailPro Group",
-            status: "active",
-            industry: "Retail",
-            contactName: "Lisa Anderson",
-            contactEmail: "l.anderson@retailpro.co.uk",
-            jobsCount: 8,
-            placementsCount: 5,
-            revenue: "£75k",
-        },
-        {
-            id: "3",
-            name: "Manufacturing United",
-            status: "active",
-            industry: "Manufacturing",
-            contactName: "John Williams",
-            contactEmail: "j.williams@manufunited.com",
-            jobsCount: 15,
-            placementsCount: 11,
-            revenue: "£165k",
-        },
-    ];
+    // Debounce the search input updates to prevent spamming backend API
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            onSearchChange(localQuery);
+        }, 300);
 
-    const filteredClients = clients.filter(
-        (c) =>
-            c.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            c.industry.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            c.contactName.toLowerCase().includes(searchQuery.toLowerCase())
-    );
+        return () => clearTimeout(handler);
+    }, [localQuery, onSearchChange]);
 
     return (
         <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
@@ -72,8 +46,8 @@ export const ClientsList: React.FC = () => {
                         <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-light-text" />
                         <input
                             type="text"
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
+                            value={localQuery}
+                            onChange={(e) => setLocalQuery(e.target.value)}
                             className="flex h-9 w-full rounded-md border border-btn-sec-border px-3 py-1 text-sm bg-white outline-none pl-10 focus:border-primary focus:ring-2 focus:ring-primary/20"
                             placeholder="Search clients..."
                         />
@@ -83,56 +57,103 @@ export const ClientsList: React.FC = () => {
 
             <div className="px-6 pb-6">
                 <div className="space-y-3">
-                    {filteredClients.map((client) => (
-                        <Link
-                            key={client.id}
-                            to={`/dashboard/clients/${client.id}`}
-                            className="flex items-center gap-4 p-4 border border-btn-sec-border rounded-xl hover:bg-slate-50/50 transition-colors"
-                        >
-                            <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                                <Building2 className="w-6 h-6 text-primary" />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-1">
-                                    <Typography variant="body1" className="font-semibold text-text-main">
-                                        {client.name}
-                                    </Typography>
-                                    <span className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold w-fit capitalize">
-                                        {client.status}
-                                    </span>
+                    {clients.map((client) => {
+                        const formattedRevenue = new Intl.NumberFormat("en-GB", {
+                            style: "currency",
+                            currency: "GBP",
+                            maximumFractionDigits: 0,
+                        }).format(client.revenue || 0);
+
+                        return (
+                            <Link
+                                key={client.id}
+                                to={`/dashboard/clients/${client.id}`}
+                                className="flex flex-col md:flex-row md:items-center gap-4 p-4 border border-btn-sec-border rounded-xl hover:bg-slate-50/50 transition-colors"
+                            >
+                                <div className="flex items-center gap-4 flex-1 min-w-0">
+                                    <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                                        <Building2 className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <div className="flex-1 min-w-0">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <Typography variant="body1" className="font-semibold text-text-main">
+                                                {client.company}
+                                            </Typography>
+                                            <span className={`inline-flex items-center justify-center rounded-md border px-2 py-0.5 text-xs font-semibold w-fit capitalize ${
+                                                client.is_active 
+                                                    ? "bg-green-50 text-green-700 border-green-200/50" 
+                                                    : "bg-gray-100 text-gray-700 border-gray-200"
+                                            }`}>
+                                                {client.is_active ? "Active" : "Inactive"}
+                                            </span>
+                                        </div>
+                                        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted-text">
+                                            <span>{client.industry || "No Industry"}</span>
+                                            <span>{client.contact_person}</span>
+                                            <span className="flex items-center gap-1">
+                                                <Mail className="w-3.5 h-3.5" />
+                                                {client.contact_email}
+                                            </span>
+                                            {client.location && (
+                                                <span className="flex items-center gap-1">
+                                                    <MapPin className="w-3.5 h-3.5" />
+                                                    {client.location}
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
                                 </div>
-                                <div className="flex items-center gap-4 text-sm text-muted-text">
-                                    <span>{client.industry}</span>
-                                    <span>{client.contactName}</span>
-                                    <span className="flex items-center gap-1">
-                                        <Mail className="w-3.5 h-3.5" />
-                                        {client.contactEmail}
-                                    </span>
+                                <div className="flex items-center justify-between md:justify-end gap-8 text-sm border-t border-slate-100 pt-3 md:border-0 md:pt-0">
+                                    <div className="text-left md:text-right">
+                                        <p className="text-2xl font-bold text-text-main">{client.jobs || 0}</p>
+                                        <p className="text-xs text-muted-text">Jobs</p>
+                                    </div>
+                                    <div className="text-left md:text-right">
+                                        <p className="text-2xl font-bold text-text-main">{client.placements || 0}</p>
+                                        <p className="text-xs text-muted-text">Placements</p>
+                                    </div>
+                                    <div className="text-left md:text-right">
+                                        <p className="text-2xl font-bold text-green-500">{formattedRevenue}</p>
+                                        <p className="text-xs text-muted-text">Revenue</p>
+                                    </div>
                                 </div>
-                            </div>
-                            <div className="flex items-center gap-8 text-sm text-right">
-                                <div>
-                                    <p className="text-2xl font-bold text-text-main">{client.jobsCount}</p>
-                                    <p className="text-xs text-muted-text">Jobs</p>
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-text-main">{client.placementsCount}</p>
-                                    <p className="text-xs text-muted-text">Placements</p>
-                                </div>
-                                <div>
-                                    <p className="text-2xl font-bold text-green-500">{client.revenue}</p>
-                                    <p className="text-xs text-muted-text">Revenue</p>
-                                </div>
-                            </div>
-                        </Link>
-                    ))}
-                    {filteredClients.length === 0 && (
+                            </Link>
+                        );
+                    })}
+                    {clients.length === 0 && !isLoading && (
                         <div className="p-8 text-center text-muted-text">
                             No clients found matching your search.
                         </div>
                     )}
                 </div>
             </div>
+
+            {/* Pagination Controls */}
+            {(hasLess || hasMore) && (
+                <div className="px-6 pb-6 flex items-center justify-between border-t border-btn-sec-border pt-4">
+                    <Typography variant="body2" className="text-muted-text">
+                        Page {page}
+                    </Typography>
+                    <div className="flex gap-2">
+                        <button
+                            type="button"
+                            disabled={!hasLess || isLoading}
+                            onClick={() => onPageChange(page - 1)}
+                            className="inline-flex items-center justify-center text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 rounded-lg px-3 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                        >
+                            Previous
+                        </button>
+                        <button
+                            type="button"
+                            disabled={!hasMore || isLoading}
+                            onClick={() => onPageChange(page + 1)}
+                            className="inline-flex items-center justify-center text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 rounded-lg px-3 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

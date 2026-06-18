@@ -1,7 +1,23 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-export const ClientStats: React.FC = () => {
+interface ClientStatsProps {
+    activeClients: number;
+    totalRevenue: number;
+    placementRate: number;
+}
+
+export const ClientStats: React.FC<ClientStatsProps> = ({
+    activeClients,
+    totalRevenue,
+    placementRate,
+}) => {
+    const formattedRevenue = new Intl.NumberFormat("en-GB", {
+        style: "currency",
+        currency: "GBP",
+        maximumFractionDigits: 0,
+    }).format(totalRevenue);
+
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
@@ -11,7 +27,7 @@ export const ClientStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">3</div>
+                    <div className="text-2xl font-bold text-text-main">{activeClients}</div>
                 </div>
             </div>
 
@@ -22,18 +38,18 @@ export const ClientStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">£365,000</div>
+                    <div className="text-2xl font-bold text-text-main">{formattedRevenue}</div>
                 </div>
             </div>
 
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
                 <div className="px-6 pt-6 pb-3">
                     <Typography variant="body2" className="text-sm font-medium text-muted-text">
-                        Placements Made
+                        Placement Rate
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">24</div>
+                    <div className="text-2xl font-bold text-text-main">{placementRate.toFixed(1)}%</div>
                 </div>
             </div>
         </div>

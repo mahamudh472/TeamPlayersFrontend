@@ -12,6 +12,8 @@ interface ClientCreateFormProps {
     setContactEmail: (val: string) => void;
     contactPhone: string;
     setContactPhone: (val: string) => void;
+    location: string;
+    setLocation: (val: string) => void;
     status: OptionType | null;
     setStatus: (val: OptionType | null) => void;
     summary: string;
@@ -30,6 +32,8 @@ export const ClientCreateForm: React.FC<ClientCreateFormProps> = ({
     setContactEmail,
     contactPhone,
     setContactPhone,
+    location,
+    setLocation,
     status,
     setStatus,
     summary,
@@ -88,6 +92,15 @@ export const ClientCreateForm: React.FC<ClientCreateFormProps> = ({
                         value={status}
                         onChange={(val) => setStatus(val as OptionType | null)}
                     />
+
+                    {/* Location Field */}
+                    <Input
+                        label="Location"
+                        id="client-location"
+                        placeholder="e.g. London, UK or New York, NY"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                    />
                 </div>
             </div>
 
@@ -134,7 +147,7 @@ export const ClientCreateForm: React.FC<ClientCreateFormProps> = ({
                 </div>
             </div>
 
-            {/* AI Account Summary Card */}
+            {/* AI Account Summary Card
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6">
                 <div>
                     <Typography variant="h4" className="font-bold text-text-main leading-none">
@@ -158,7 +171,7 @@ export const ClientCreateForm: React.FC<ClientCreateFormProps> = ({
                         className="w-full resize-none border border-btn-sec-border rounded-lg bg-white px-3 py-2 text-sm text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                     />
                 </div>
-            </div>
+            </div> */}
         </div>
     );
 };
