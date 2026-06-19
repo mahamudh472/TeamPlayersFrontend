@@ -1,16 +1,23 @@
 import { OptionType } from "../../../shared/types";
 
 export interface JobPosition {
-    id: string;
+    id: number | string;
+    client: number;
+    client_name: string;
     title: string;
-    company: string;
+    description: string;
     location: string;
-    salary: string;
-    status: string;
+    salary_range: string;
+    experince_required: number;
     skills: string[];
+    job_type: string;
+    status: string;
+    description_file?: string | null;
     applicants: number;
     shortlisted: number;
     interviewed: number;
+    created_at?: string;
+    updated_at?: string;
 }
 
 export interface JobCreateFormProps {
@@ -24,6 +31,12 @@ export interface JobCreateFormProps {
     setSalary: (val: string) => void;
     experience: string;
     setExperience: (val: string) => void;
+    skills: string;
+    setSkills: (val: string) => void;
+    jobType: OptionType | null;
+    setJobType: (val: OptionType | null) => void;
+    status: OptionType | null;
+    setStatus: (val: OptionType | null) => void;
     description: string;
     setDescription: (val: string) => void;
     selectedFile: File | null;
@@ -32,6 +45,8 @@ export interface JobCreateFormProps {
     setIsAnalyzing: (val: boolean) => void;
     analysisSuccess: boolean;
     setAnalysisSuccess: (val: boolean) => void;
+    clients: OptionType[];
+    isEdit: boolean;
 }
 
 export interface JobDetailsHeaderProps {

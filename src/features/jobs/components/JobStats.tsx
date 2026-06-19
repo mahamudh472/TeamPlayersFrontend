@@ -1,7 +1,19 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
 
-export const JobStats: React.FC = () => {
+export interface JobStatsProps {
+    activeJobs: number;
+    totalApplicants: number;
+    shortlisted: number;
+    avgTimeToFill: number;
+}
+
+export const JobStats: React.FC<JobStatsProps> = ({
+    activeJobs,
+    totalApplicants,
+    shortlisted,
+    avgTimeToFill,
+}) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
@@ -11,7 +23,7 @@ export const JobStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">4</div>
+                    <div className="text-2xl font-bold text-text-main">{activeJobs}</div>
                 </div>
             </div>
 
@@ -22,7 +34,7 @@ export const JobStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">123</div>
+                    <div className="text-2xl font-bold text-text-main">{totalApplicants}</div>
                 </div>
             </div>
 
@@ -33,7 +45,7 @@ export const JobStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">28</div>
+                    <div className="text-2xl font-bold text-main">{shortlisted}</div>
                 </div>
             </div>
 
@@ -44,7 +56,7 @@ export const JobStats: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">18 days</div>
+                    <div className="text-2xl font-bold text-text-main">{avgTimeToFill} days</div>
                 </div>
             </div>
         </div>

@@ -6,7 +6,21 @@ import { Users, Copy, Check } from "lucide-react";
 import { CandidateItem } from "../types";
 import { candidates } from "../fake-data";
 
-export const JobDetailsMain: React.FC = () => {
+interface JobDetailsMainProps {
+    description?: string;
+    skills?: string[];
+    applicants?: number;
+    shortlisted?: number;
+    interviewed?: number;
+}
+
+export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
+    description,
+    skills,
+    applicants = 0,
+    shortlisted = 0,
+    interviewed = 0,
+}) => {
     const [activeTab, setActiveTab] = useState<string>("candidates");
     const [copied, setCopied] = useState(false);
 
@@ -17,7 +31,7 @@ export const JobDetailsMain: React.FC = () => {
     };
 
     const tabOptions: TabOption[] = [
-        { label: `Candidates (${candidates.length})`, value: "candidates" },
+        { label: `Candidates (${applicants})`, value: "candidates" },
         { label: "Job Details", value: "details" },
         { label: "Pipeline", value: "pipeline" },
     ];
@@ -90,18 +104,20 @@ export const JobDetailsMain: React.FC = () => {
                             Job Description
                         </Typography>
                         <Typography variant="body1" className="text-muted-text">
-                            We are looking for a Senior Software Engineer to join our growing team. You will be responsible for building premium user interfaces, standardizing core components, and designing robust API integration layers.
+                            {description || "No description provided."}
                         </Typography>
-                        <div className="pt-2">
-                            <Typography variant="body2" className="font-semibold text-text-main mb-1.5">
-                                Requirements
-                            </Typography>
-                            <ul className="list-disc pl-5 text-sm text-muted-text space-y-1">
-                                <li>5+ years of experience with React & TypeScript.</li>
-                                <li>Strong styling foundations using vanilla CSS and Tailwind CSS.</li>
-                                <li>Experience with TanStack Query and state management patterns.</li>
-                            </ul>
-                        </div>
+                        {skills && skills.length > 0 && (
+                            <div className="pt-2">
+                                <Typography variant="body2" className="font-semibold text-text-main mb-1.5">
+                                    Requirements / Skills
+                                </Typography>
+                                <ul className="list-disc pl-5 text-sm text-muted-text space-y-1">
+                                    {skills.map((skill) => (
+                                        <li key={skill}>{skill}</li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                     </div>
 
                     <div className="pt-4 border-t border-btn-sec-border flex items-center justify-between gap-4 flex-wrap sm:flex-nowrap">
@@ -135,22 +151,22 @@ export const JobDetailsMain: React.FC = () => {
 
             {/* Pipeline Tab Content */}
             {activeTab === "pipeline" && (
-                <div className="bg-white rounded-xl border border-btn-sec-border p-6">
+                <div className="bg-white rounded-xl border border-btn-sec-border p-6 text-left">
                     <Typography variant="h4" className="font-bold text-text-main mb-4">
                         Hiring Stages
                     </Typography>
                     <div className="grid grid-cols-3 gap-4">
                         <div className="p-4 bg-slate-50 rounded-xl border border-btn-sec-border">
                             <p className="text-sm font-semibold text-text-main mb-1">Applied</p>
-                            <p className="text-2xl font-bold text-text-main">2</p>
+                            <p className="text-2xl font-bold text-text-main">{applicants}</p>
                         </div>
                         <div className="p-4 bg-slate-50 rounded-xl border border-btn-sec-border">
                             <p className="text-sm font-semibold text-text-main mb-1">Interview</p>
-                            <p className="text-2xl font-bold text-primary">2</p>
+                            <p className="text-2xl font-bold text-primary">{interviewed}</p>
                         </div>
                         <div className="p-4 bg-slate-50 rounded-xl border border-btn-sec-border">
-                            <p className="text-sm font-semibold text-text-main mb-1">Offer</p>
-                            <p className="text-2xl font-bold text-green-500">0</p>
+                            <p className="text-sm font-semibold text-text-main mb-1">Shortlisted</p>
+                            <p className="text-2xl font-bold text-green-500">{shortlisted}</p>
                         </div>
                     </div>
                 </div>
