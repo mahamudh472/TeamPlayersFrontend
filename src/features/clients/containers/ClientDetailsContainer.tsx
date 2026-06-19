@@ -121,7 +121,7 @@ export const ClientDetailsContainer: React.FC = () => {
                     />
 
                     {/* Tabs details section */}
-                    <ClientDetailsTabs />
+                    <ClientDetailsTabs clientId={id || String(client.id)} agencyId={String(agencyId)} />
                 </div>
                 <div>
                     {/* Sidebar metrics & recommendations */}
