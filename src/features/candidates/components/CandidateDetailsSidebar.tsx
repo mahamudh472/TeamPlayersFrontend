@@ -14,8 +14,7 @@ export const CandidateDetailsSidebar: React.FC<CandidateDetailsSidebarProps> = (
     experienceMatch,
     salaryMatch,
     locationMatch,
-    recommendationTitle,
-    recommendationText,
+    recommendedActions,
 }) => {
     return (
         <div className="space-y-6">
@@ -103,18 +102,24 @@ export const CandidateDetailsSidebar: React.FC<CandidateDetailsSidebarProps> = (
             {/* Recommended Action Card */}
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6">
                 <Typography variant="h4" className="font-bold text-text-main leading-none">
-                    Recommended Action
+                    Recommended Actions
                 </Typography>
-                <div className="p-3 bg-green-50 border border-green-200 rounded-xl">
-                    <div className="flex items-start gap-2">
-                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
-                        <div>
-                            <p className="font-semibold text-green-900 mb-1">{recommendationTitle}</p>
-                            <p className="text-sm text-green-700">{recommendationText}</p>
-                        </div>
-                    </div>
+                <div className="space-y-3">
+                    {recommendedActions && recommendedActions.length > 0 ? (
+                        recommendedActions.map((action, idx) => (
+                            <div key={idx} className="p-3 bg-green-50 border border-green-200 rounded-xl text-left">
+                                <div className="flex items-start gap-2">
+                                    <CheckCircle className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                                    <p className="text-sm font-semibold text-green-900">{action}</p>
+                                </div>
+                            </div>
+                        ))
+                    ) : (
+                        <p className="text-sm text-muted-text">No recommendations available</p>
+                    )}
                 </div>
             </div>
         </div>
     );
 };
+

@@ -18,6 +18,8 @@ export const JobDetailsContainer: React.FC = () => {
     const [job, setJob] = useState<JobPosition | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [jobCandidates, setJobCandidates] = useState<any[]>([]);
+    const [isLoadingCandidates, setIsLoadingCandidates] = useState(true);
 
     const fetchJobDetails = useCallback(async () => {
         if (!id) return;
@@ -44,9 +46,28 @@ export const JobDetailsContainer: React.FC = () => {
         }
     }, [id, agencyId, toast]);
 
+    const fetchJobCandidates = useCallback(async () => {
+        if (!id) return;
+        if (!agencyId) return;
+
+        try {
+            setIsLoadingCandidates(true);
+            const res = await apiClient.get(`/api/v1/agency/jobs/${id}/candidates/`, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            setJobCandidates(res.data || []);
+        } catch (err: any) {
+            console.error("Failed to fetch job candidates:", err);
+            toast.error("Failed to load candidates for this job");
+        } finally {
+            setIsLoadingCandidates(false);
+        }
+    }, [id, agencyId, toast]);
+
     useEffect(() => {
         fetchJobDetails();
-    }, [fetchJobDetails]);
+        fetchJobCandidates();
+    }, [fetchJobDetails, fetchJobCandidates]);
 
     if (isLoading) {
         return (
@@ -119,6 +140,8 @@ export const JobDetailsContainer: React.FC = () => {
                         applicants={job.applicants || 0}
                         shortlisted={job.shortlisted || 0}
                         interviewed={job.interviewed || 0}
+                        jobCandidates={jobCandidates}
+                        isLoadingCandidates={isLoadingCandidates}
                     />
                 </div>
                 <div>

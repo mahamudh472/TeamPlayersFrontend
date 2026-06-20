@@ -3,16 +3,29 @@ import { Link } from "react-router";
 import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 import { Users, Copy, Check } from "lucide-react";
 
-import { CandidateItem } from "../types";
-import { candidates } from "../fake-data";
-
 interface JobDetailsMainProps {
     description?: string;
     skills?: string[];
     applicants?: number;
     shortlisted?: number;
     interviewed?: number;
+    jobCandidates?: any[];
+    isLoadingCandidates?: boolean;
 }
+
+const getLeftBarColor = (status: string): string => {
+    switch (status?.toLowerCase()) {
+        case "shortlisted":
+            return "bg-green-500";
+        case "interviewing":
+        case "interview_scheduled":
+            return "bg-blue-500";
+        case "rejected":
+            return "bg-red-400";
+        default:
+            return "bg-slate-300";
+    }
+};
 
 export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
     description,
@@ -20,6 +33,8 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
     applicants = 0,
     shortlisted = 0,
     interviewed = 0,
+    jobCandidates = [],
+    isLoadingCandidates = false,
 }) => {
     const [activeTab, setActiveTab] = useState<string>("candidates");
     const [copied, setCopied] = useState(false);
@@ -54,44 +69,77 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
                     </div>
 
                     <div className="px-6 pb-6">
-                        <div className="space-y-3">
-                            {candidates.map((candidate) => (
-                                <Link
-                                    key={candidate.id}
-                                    to={`/dashboard/candidates/${candidate.id}`}
-                                    className="relative flex items-center gap-4 p-4 border border-btn-sec-border rounded-xl hover:bg-slate-50/50 transition-colors overflow-hidden"
+                        {isLoadingCandidates ? (
+                            <div className="flex items-center gap-2 justify-center py-8 text-sm text-muted-text">
+                                <svg
+                                    className="animate-spin text-primary shrink-0 w-6 h-6"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
                                 >
-                                    {/* Green indicator bar on the left edge */}
-                                    <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500" />
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    />
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    />
+                                </svg>
+                                <span>Loading job candidates...</span>
+                            </div>
+                        ) : jobCandidates.length > 0 ? (
+                            <div className="space-y-3">
+                                {jobCandidates.map((candidate) => {
+                                    const matchScore = Math.round(candidate.ai_average_score || 0);
+                                    return (
+                                        <Link
+                                            key={candidate.id}
+                                            to={`/dashboard/candidates/${candidate.id}`}
+                                            className="relative flex items-center gap-4 p-4 border border-btn-sec-border rounded-xl hover:bg-slate-50/50 transition-colors overflow-hidden text-left"
+                                        >
+                                            {/* Status indicator bar on the left edge */}
+                                            <div className={`absolute left-0 top-0 bottom-0 w-1 ${getLeftBarColor(candidate.status)}`} />
 
-                                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 ml-1">
-                                        <Users className="w-5 h-5 text-primary" />
-                                    </div>
-                                    <div className="flex-1 min-w-0">
-                                        <div className="flex items-center gap-2 mb-1">
-                                            <Typography variant="body1" className="font-semibold text-text-main">
-                                                {candidate.name}
-                                            </Typography>
-                                            <span className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold w-fit capitalize">
-                                                {candidate.matchScore}% match
-                                            </span>
-                                            <span className="inline-flex items-center justify-center rounded-md border border-btn-sec-border px-2 py-0.5 text-xs font-medium text-text-main bg-slate-50 capitalize">
-                                                {candidate.status}
-                                            </span>
-                                        </div>
-                                        <p className="text-sm text-muted-text">
-                                            {candidate.location} • {candidate.experience}
-                                        </p>
-                                        <div className="bg-primary/20 relative w-full overflow-hidden rounded-full h-1 mt-2">
-                                            <div
-                                                className="bg-primary h-full rounded-full indicator"
-                                                style={{ width: `${candidate.matchScore}%` }}
-                                            />
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
+                                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0 ml-1">
+                                                <Users className="w-5 h-5 text-primary" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                                                    <Typography variant="body1" className="font-semibold text-text-main">
+                                                        {candidate.name}
+                                                    </Typography>
+                                                    <span className="inline-flex items-center justify-center rounded-md border border-transparent bg-primary/10 text-primary px-2 py-0.5 text-xs font-semibold w-fit capitalize">
+                                                        {matchScore}% match
+                                                    </span>
+                                                    <span className="inline-flex items-center justify-center rounded-md border border-btn-sec-border px-2 py-0.5 text-xs font-medium text-text-main bg-slate-50 capitalize">
+                                                        {candidate.status}
+                                                    </span>
+                                                </div>
+                                                <p className="text-sm text-muted-text">
+                                                    {candidate.location} • {candidate.experience} years experience
+                                                </p>
+                                                <div className="bg-primary/20 relative w-full overflow-hidden rounded-full h-1 mt-2">
+                                                    <div
+                                                        className="bg-primary h-full rounded-full indicator"
+                                                        style={{ width: `${matchScore}%` }}
+                                                    />
+                                                </div>
+                                            </div>
+                                        </Link>
+                                    );
+                                })}
+                            </div>
+                        ) : (
+                            <div className="p-8 text-center text-muted-text text-sm">
+                                No candidates have applied for this job yet.
+                            </div>
+                        )}
                     </div>
                 </div>
             )}
@@ -174,3 +222,4 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
         </div>
     );
 };
+

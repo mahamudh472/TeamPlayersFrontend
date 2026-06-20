@@ -1,4 +1,4 @@
-export type CandidateStatus = "shortlisted" | "interview_scheduled" | "rejected";
+export type CandidateStatus = "new" | "shortlisted" | "interviewing" | "interview_scheduled" | "rejected";
 
 export interface CandidateItem {
     id: string;
@@ -38,8 +38,7 @@ export interface CandidateDetailsSidebarProps {
     experienceMatch: number;
     salaryMatch: number;
     locationMatch: number;
-    recommendationTitle: string;
-    recommendationText: string;
+    recommendedActions: string[];
 }
 
 export interface CandidateDetailsSummaryProps {
@@ -56,4 +55,9 @@ export interface CandidateDetailsTabsProps {
     expectedSalary: string;
     skills: string[];
     appliedDate: string;
+    notes: any[];
+    onAddNote: (content: string) => Promise<void>;
+    isLoadingNotes: boolean;
+    resume?: string;
 }
+
