@@ -49,6 +49,10 @@ import {
 import { InterviewsContainer } from "./features/interviews";
 import { PlacementsContainer } from "./features/placements";
 import { FaqContainer } from "./features/landing/containers/FaqContainer";
+import {
+    PublicJobsContainer,
+    PublicJobDetailsContainer,
+} from "./features/public-jobs";
 
 export const routes = createBrowserRouter([
     {
@@ -74,6 +78,14 @@ export const routes = createBrowserRouter([
             {
                 path: "faq",
                 element: <FaqContainer />,
+            },
+            {
+                path: "jobs",
+                element: <PublicJobsContainer />,
+            },
+            {
+                path: "jobs/:id",
+                element: <PublicJobDetailsContainer />,
             },
 
             {

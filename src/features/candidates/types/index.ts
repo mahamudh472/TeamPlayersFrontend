@@ -1,4 +1,4 @@
-export type CandidateStatus = "new" | "shortlisted" | "interviewing" | "interview_scheduled" | "rejected";
+export type CandidateStatus = "new" | "shortlisted" | "interviewing" | "interview_scheduled" | "offered" | "accepted" | "rejected";
 
 export interface CandidateItem {
     id: string;
@@ -24,9 +24,12 @@ export interface CandidateDetailsHeaderProps {
     interviewTime?: string;
     jobTitle?: string;
     jobId?: string;
-    onReject: () => void;
-    onShortlist: (jobId: string) => void;
-    onScheduleInterview: (date: string, time: string) => void;
+    meetingLink?: string;
+    onReject: () => Promise<void>;
+    onShortlist: (jobId?: string) => Promise<void>;
+    onScheduleInterview: (meetingTime: string, duration: number, agenda: string) => Promise<void>;
+    onSendOffer: (salary: string, noticePeriod: number) => Promise<void>;
+    onAccept: () => Promise<void>;
 }
 
 export interface CandidateDetailsSidebarProps {

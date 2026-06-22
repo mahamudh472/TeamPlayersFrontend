@@ -1,36 +1,30 @@
 import React, { useState } from "react";
 import { Typography, Input, Button } from "../../../components/ui";
-import { Calendar, Clock, X, AlignLeft, Timer } from "lucide-react";
+import { DollarSign, Calendar, X } from "lucide-react";
 
-interface InterviewScheduleModalProps {
+interface SendOfferModalProps {
     isOpen: boolean;
     candidateName: string;
     onClose: () => void;
-    onSchedule: (meetingTime: string, duration: number, agenda: string) => void;
+    onSendOffer: (salary: string, noticePeriod: number) => void;
 }
 
-export const InterviewScheduleModal: React.FC<InterviewScheduleModalProps> = ({
+export const SendOfferModal: React.FC<SendOfferModalProps> = ({
     isOpen,
     candidateName,
     onClose,
-    onSchedule,
+    onSendOffer,
 }) => {
-    const [date, setDate] = useState("");
-    const [time, setTime] = useState("");
-    const [duration, setDuration] = useState("60");
-    const [agenda, setAgenda] = useState("Technical Interview");
+    const [salary, setSalary] = useState("");
+    const [noticePeriod, setNoticePeriod] = useState("30");
 
     if (!isOpen) return null;
 
     const handleSubmit = () => {
-        if (!date || !time || !duration) return;
-        // Construct ISO-8601 formatted meeting time in UTC
-        const meetingTime = `${date}T${time}:00Z`;
-        onSchedule(meetingTime, parseInt(duration, 10), agenda);
-        setDate("");
-        setTime("");
-        setDuration("60");
-        setAgenda("Technical Interview");
+        if (!salary || !noticePeriod) return;
+        onSendOffer(salary, parseInt(noticePeriod, 10));
+        setSalary("");
+        setNoticePeriod("30");
     };
 
     return (
@@ -43,45 +37,30 @@ export const InterviewScheduleModal: React.FC<InterviewScheduleModalProps> = ({
                 {/* Header */}
                 <div className="flex flex-col gap-1 text-left">
                     <Typography variant="h4" className="text-lg font-bold text-text-main leading-none">
-                        Schedule Interview
+                        Send Job Offer
                     </Typography>
                     <Typography variant="body2" className="text-muted-text text-sm">
-                        Set date, time, and meeting details for {candidateName}
+                        Specify the offer salary and notice period for {candidateName}
                     </Typography>
                 </div>
 
                 {/* Form Fields */}
                 <div className="space-y-4 py-2 text-left">
                     <Input
-                        label="Interview Date"
-                        type="date"
-                        value={date}
-                        onChange={(e) => setDate(e.target.value)}
-                        prefixIcon={Calendar}
-                    />
-                    <Input
-                        label="Interview Time"
-                        type="time"
-                        value={time}
-                        onChange={(e) => setTime(e.target.value)}
-                        prefixIcon={Clock}
-                    />
-                    <Input
-                        label="Duration (minutes)"
+                        label="Salary (annual / numeric)"
                         type="number"
-                        min="15"
-                        step="15"
-                        value={duration}
-                        onChange={(e) => setDuration(e.target.value)}
-                        prefixIcon={Timer}
+                        placeholder="e.g. 135000.00"
+                        value={salary}
+                        onChange={(e) => setSalary(e.target.value)}
+                        prefixIcon={DollarSign}
                     />
                     <Input
-                        label="Agenda / Topic"
-                        type="text"
-                        placeholder="e.g. Technical Interview - Django & Architecture"
-                        value={agenda}
-                        onChange={(e) => setAgenda(e.target.value)}
-                        prefixIcon={AlignLeft}
+                        label="Notice Period (days)"
+                        type="number"
+                        min="0"
+                        value={noticePeriod}
+                        onChange={(e) => setNoticePeriod(e.target.value)}
+                        prefixIcon={Calendar}
                     />
                 </div>
 
@@ -97,10 +76,10 @@ export const InterviewScheduleModal: React.FC<InterviewScheduleModalProps> = ({
                     <Button
                         type="button"
                         onClick={handleSubmit}
-                        disabled={!date || !time || !duration}
-                        prefixIcon={Calendar}
+                        disabled={!salary || !noticePeriod}
+                        prefixIcon={DollarSign}
                     >
-                        Schedule Interview
+                        Send Offer
                     </Button>
                 </div>
 
@@ -118,4 +97,3 @@ export const InterviewScheduleModal: React.FC<InterviewScheduleModalProps> = ({
         </div>
     );
 };
-

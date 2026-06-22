@@ -23,6 +23,9 @@ export const Navbar: React.FC = () => {
           <NavItem to="/features">
             Features
           </NavItem>
+          <NavItem to="/jobs">
+            Jobs
+          </NavItem>
           {/* <NavItem to="/how-it-works">
             How It Works
           </NavItem> */}

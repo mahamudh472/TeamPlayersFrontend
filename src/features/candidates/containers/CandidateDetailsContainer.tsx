@@ -33,6 +33,25 @@ export const CandidateDetailsContainer: React.FC = () => {
 
             // Map detail response
             const data = res.data;
+
+            const meetingTimeStr = data.meeting?.meeting_time || data.latest_meeting?.meeting_time || data.meeting_info?.meeting_time;
+            let interviewDate = "";
+            let interviewTime = "";
+            let meetingLink = data.meeting?.meeting_link || data.latest_meeting?.meeting_link || data.meeting_info?.meeting_link;
+
+            if (meetingTimeStr) {
+                const d = new Date(meetingTimeStr);
+                interviewDate = d.toLocaleDateString("en-GB", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                });
+                interviewTime = d.toLocaleTimeString("en-GB", {
+                    hour: "2-digit",
+                    minute: "2-digit",
+                });
+            }
+
             const mappedCandidate = {
                 id: String(data.id),
                 name: data.name,
@@ -68,6 +87,9 @@ export const CandidateDetailsContainer: React.FC = () => {
                 appliedJobs: data.job_info
                     ? [{ id: String(data.job_info.id), title: data.job_info.name }]
                     : [],
+                interviewDate,
+                interviewTime,
+                meetingLink,
             };
 
             setCandidate(mappedCandidate);
@@ -104,37 +126,91 @@ export const CandidateDetailsContainer: React.FC = () => {
         fetchCandidateNotes();
     }, [fetchCandidateDetails, fetchCandidateNotes]);
 
-    const handleReject = () => {
-        setCandidate((prev: any) => (prev ? { ...prev, status: "rejected" } : null));
-        toast.info("Candidate status set to Rejected (local)");
+    const handleReject = async () => {
+        if (!agencyId || !id) return;
+        try {
+            await apiClient.post(`/api/v1/agency/candidates/${id}/reject/`, {}, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            toast.success("Candidate rejected successfully");
+            await fetchCandidateDetails();
+        } catch (err: any) {
+            console.error("Failed to reject candidate:", err);
+            const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to reject candidate";
+            toast.error(errMsg);
+            throw err;
+        }
     };
 
-    const handleShortlist = (jobId: string) => {
-        setCandidate((prev: any) => {
-            if (!prev) return null;
-            const selectedJob = prev.appliedJobs.find((j: any) => j.id === jobId);
-            return {
-                ...prev,
-                status: "shortlisted",
-                jobId: jobId,
-                jobTitle: selectedJob ? selectedJob.title : prev.jobTitle,
-            };
-        });
-        toast.success("Candidate shortlisted successfully (local)");
+    const handleShortlist = async (jobId?: string) => {
+        if (!agencyId || !id) return;
+        try {
+            await apiClient.post(`/api/v1/agency/candidates/${id}/shortlist/`, {}, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            toast.success("Candidate shortlisted successfully");
+            await fetchCandidateDetails();
+        } catch (err: any) {
+            console.error("Failed to shortlist candidate:", err);
+            const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to shortlist candidate";
+            toast.error(errMsg);
+            throw err;
+        }
     };
 
-    const handleScheduleInterview = (date: string, time: string) => {
-        setCandidate((prev: any) =>
-            prev
-                ? {
-                      ...prev,
-                      status: "interview_scheduled",
-                      interviewDate: date,
-                      interviewTime: time,
-                  }
-                : null
-        );
-        toast.success(`Interview scheduled for ${date} at ${time} (local)`);
+    const handleScheduleInterview = async (meetingTime: string, duration: number, agenda: string) => {
+        if (!agencyId || !id) return;
+        try {
+            const res = await apiClient.post(`/api/v1/agency/candidates/${id}/meeting/`, {
+                meeting_time: meetingTime,
+                duration,
+                agenda,
+            }, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            toast.success(res.data?.message || "Interview meeting scheduled and invitation email sent successfully.");
+            await fetchCandidateDetails();
+        } catch (err: any) {
+            console.error("Failed to schedule interview meeting:", err);
+            const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to schedule interview";
+            toast.error(errMsg);
+            throw err;
+        }
+    };
+
+    const handleSendOffer = async (salary: string, noticePeriod: number) => {
+        if (!agencyId || !id) return;
+        try {
+            const res = await apiClient.post(`/api/v1/agency/candidates/${id}/offer/`, {
+                salary,
+                notice_period: noticePeriod,
+            }, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            toast.success(res.data?.message || "Offer sent and placement created successfully.");
+            await fetchCandidateDetails();
+        } catch (err: any) {
+            console.error("Failed to send job offer:", err);
+            const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to send job offer";
+            toast.error(errMsg);
+            throw err;
+        }
+    };
+
+    const handleAccept = async () => {
+        if (!agencyId || !id) return;
+        try {
+            await apiClient.post(`/api/v1/agency/candidates/${id}/accept/`, {}, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            toast.success("Candidate accepted successfully");
+            await fetchCandidateDetails();
+        } catch (err: any) {
+            console.error("Failed to accept candidate:", err);
+            const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to accept candidate";
+            toast.error(errMsg);
+            throw err;
+        }
     };
 
     const handleAddNote = async (content: string) => {
@@ -213,9 +289,12 @@ export const CandidateDetailsContainer: React.FC = () => {
                 interviewTime={candidate.interviewTime}
                 jobTitle={candidate.jobTitle}
                 jobId={candidate.jobId}
+                meetingLink={candidate.meetingLink}
                 onReject={handleReject}
                 onShortlist={handleShortlist}
                 onScheduleInterview={handleScheduleInterview}
+                onSendOffer={handleSendOffer}
+                onAccept={handleAccept}
             />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

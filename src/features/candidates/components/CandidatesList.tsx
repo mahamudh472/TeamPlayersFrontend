@@ -19,9 +19,12 @@ interface CandidatesListProps {
     interviewingCount: number;
     rejectedCount: number;
 }
-
 const getIndicatorColor = (status: CandidateStatus): string => {
     switch (status) {
+        case "accepted":
+            return "bg-emerald-500";
+        case "offered":
+            return "bg-amber-500";
         case "shortlisted":
             return "bg-green-500";
         case "interview_scheduled":
@@ -38,6 +41,10 @@ const getIndicatorColor = (status: CandidateStatus): string => {
 
 const getStatusBadgeStyles = (status: CandidateStatus): string => {
     switch (status) {
+        case "accepted":
+            return "bg-emerald-50 text-emerald-700 border-emerald-200";
+        case "offered":
+            return "bg-amber-50 text-amber-700 border-amber-200";
         case "shortlisted":
             return "bg-green-50 text-green-700 border-green-200";
         case "interview_scheduled":
@@ -54,6 +61,10 @@ const getStatusBadgeStyles = (status: CandidateStatus): string => {
 
 const getStatusLabel = (status: CandidateStatus): string => {
     switch (status) {
+        case "accepted":
+            return "Accepted";
+        case "offered":
+            return "Offered";
         case "shortlisted":
             return "Shortlisted";
         case "interview_scheduled":
