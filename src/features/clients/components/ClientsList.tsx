@@ -103,18 +103,18 @@ export const ClientsList: React.FC<ClientsListProps> = ({
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex items-center justify-between md:justify-end gap-8 text-sm border-t border-slate-100 pt-3 md:border-0 md:pt-0">
-                                    <div className="text-left md:text-right">
+                                <div className="flex items-center justify-between md:justify-end gap-4 md:gap-8 text-sm border-t border-slate-100 pt-3 md:border-0 md:pt-0">
+                                    <div className="text-left md:text-right w-28 md:w-32 flex-shrink-0">
+                                        <p className="text-2xl font-bold text-green-500">{formattedRevenue}</p>
+                                        <p className="text-xs text-muted-text">Revenue</p>
+                                    </div>
+                                    <div className="text-left md:text-right w-16 md:w-20 flex-shrink-0">
                                         <p className="text-2xl font-bold text-text-main">{client.jobs || 0}</p>
                                         <p className="text-xs text-muted-text">Jobs</p>
                                     </div>
-                                    <div className="text-left md:text-right">
+                                    <div className="text-left md:text-right w-24 md:w-28 flex-shrink-0">
                                         <p className="text-2xl font-bold text-text-main">{client.placements || 0}</p>
                                         <p className="text-xs text-muted-text">Placements</p>
-                                    </div>
-                                    <div className="text-left md:text-right">
-                                        <p className="text-2xl font-bold text-green-500">{formattedRevenue}</p>
-                                        <p className="text-xs text-muted-text">Revenue</p>
                                     </div>
                                 </div>
                             </Link>

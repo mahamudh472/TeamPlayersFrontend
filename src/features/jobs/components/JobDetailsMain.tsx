@@ -2,8 +2,11 @@ import React, { useState } from "react";
 import { Link } from "react-router";
 import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 import { Users, Copy, Check } from "lucide-react";
+import { useToast } from "../../../shared/context/ToastContext";
+import { copyToClipboard } from "../../../shared/utils/clipboard";
 
 interface JobDetailsMainProps {
+    jobId?: string | number;
     description?: string;
     skills?: string[];
     applicants?: number;
@@ -28,6 +31,7 @@ const getLeftBarColor = (status: string): string => {
 };
 
 export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
+    jobId,
     description,
     skills,
     applicants = 0,
@@ -38,17 +42,24 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
 }) => {
     const [activeTab, setActiveTab] = useState<string>("candidates");
     const [copied, setCopied] = useState(false);
+    const { toast } = useToast();
 
-    const handleCopy = () => {
-        navigator.clipboard.writeText("https://tally.so/r/dummy-application-form");
-        setCopied(true);
-        setTimeout(() => setCopied(false), 2000);
+    const handleCopy = async () => {
+        if (!jobId) return;
+        const url = `${window.location.origin}/jobs/${jobId}`;
+        const success = await copyToClipboard(url);
+        if (success) {
+            setCopied(true);
+            toast.success("Job application link copied to clipboard!");
+            setTimeout(() => setCopied(false), 2000);
+        } else {
+            toast.error("Failed to copy link. Please copy it manually.");
+        }
     };
 
     const tabOptions: TabOption[] = [
         { label: `Candidates (${applicants})`, value: "candidates" },
         { label: "Job Details", value: "details" },
-        { label: "Pipeline", value: "pipeline" },
     ];
 
     return (
@@ -183,7 +194,7 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
                                 {copied ? "Copied" : "Copy Link"}
                             </Button>
                             <a
-                                href="https://tally.so/r/dummy-application-form"
+                                href={jobId ? `/jobs/${jobId}` : "/jobs"}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="inline-block"
@@ -197,28 +208,7 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
                 </div>
             )}
 
-            {/* Pipeline Tab Content */}
-            {activeTab === "pipeline" && (
-                <div className="bg-white rounded-xl border border-btn-sec-border p-6 text-left">
-                    <Typography variant="h4" className="font-bold text-text-main mb-4">
-                        Hiring Stages
-                    </Typography>
-                    <div className="grid grid-cols-3 gap-4">
-                        <div className="p-4 bg-slate-50 rounded-xl border border-btn-sec-border">
-                            <p className="text-sm font-semibold text-text-main mb-1">Applied</p>
-                            <p className="text-2xl font-bold text-text-main">{applicants}</p>
-                        </div>
-                        <div className="p-4 bg-slate-50 rounded-xl border border-btn-sec-border">
-                            <p className="text-sm font-semibold text-text-main mb-1">Interview</p>
-                            <p className="text-2xl font-bold text-primary">{interviewed}</p>
-                        </div>
-                        <div className="p-4 bg-slate-50 rounded-xl border border-btn-sec-border">
-                            <p className="text-sm font-semibold text-text-main mb-1">Shortlisted</p>
-                            <p className="text-2xl font-bold text-green-500">{shortlisted}</p>
-                        </div>
-                    </div>
-                </div>
-            )}
+
         </div>
     );
 };

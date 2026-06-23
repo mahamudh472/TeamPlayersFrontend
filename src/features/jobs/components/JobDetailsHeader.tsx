@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router";
 import { Typography, BackButton, Button } from "../../../components/ui";
-import { Briefcase, MapPin, DollarSign, UploadCloud } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, UploadCloud, Share2, Check } from "lucide-react";
+import { useToast } from "../../../shared/context/ToastContext";
+import { copyToClipboard } from "../../../shared/utils/clipboard";
 
 import { JobDetailsHeaderProps } from "../types";
 
@@ -14,6 +16,22 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
     salary,
     onUploadCV,
 }) => {
+    const [copied, setCopied] = useState(false);
+    const { toast } = useToast();
+
+    const handleShare = async () => {
+        if (!id) return;
+        const url = `${window.location.origin}/jobs/${id}`;
+        const success = await copyToClipboard(url);
+        if (success) {
+            setCopied(true);
+            toast.success("Job application link copied to clipboard!");
+            setTimeout(() => setCopied(false), 2000);
+        } else {
+            toast.error("Failed to copy link. Please copy it manually.");
+        }
+    };
+
     return (
         <div className="flex flex-col gap-4">
             <BackButton label="Back to Jobs" to="/dashboard/jobs" />
@@ -46,6 +64,13 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
                     </div>
                 </div>
                 <div className="flex items-center gap-2">
+                    <Button
+                        variant="secondary"
+                        prefixIcon={copied ? Check : Share2}
+                        onClick={handleShare}
+                    >
+                        {copied ? "Copied" : "Share Job Link"}
+                    </Button>
                     <Button
                         variant="primary"
                         prefixIcon={UploadCloud}
