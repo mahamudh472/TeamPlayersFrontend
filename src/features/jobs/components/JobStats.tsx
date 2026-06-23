@@ -5,14 +5,14 @@ export interface JobStatsProps {
     activeJobs: number;
     totalApplicants: number;
     shortlisted: number;
-    avgTimeToFill: number;
+    interviewed: number;
 }
 
 export const JobStats: React.FC<JobStatsProps> = ({
     activeJobs,
     totalApplicants,
     shortlisted,
-    avgTimeToFill,
+    interviewed,
 }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -52,11 +52,11 @@ export const JobStats: React.FC<JobStatsProps> = ({
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
                 <div className="px-6 pt-6 pb-3">
                     <Typography variant="body2" className="text-sm font-medium text-muted-text">
-                        Avg. Time to Fill
+                        Interviewed
                     </Typography>
                 </div>
                 <div className="px-6 pb-6">
-                    <div className="text-2xl font-bold text-text-main">{avgTimeToFill} days</div>
+                    <div className="text-2xl font-bold text-text-main">{interviewed}</div>
                 </div>
             </div>
         </div>

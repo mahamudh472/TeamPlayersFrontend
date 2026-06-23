@@ -55,7 +55,7 @@ export const CandidatesContainer: React.FC = () => {
                 name: item.name,
                 role: item.job_name,
                 matchScore: Math.round(item.overall_match_percentage),
-                status: item.status || "shortlisted",
+                status: item.status || "new",
                 location: item.location,
                 experience: `${item.experience} years`,
                 salary: item.expected_salary,

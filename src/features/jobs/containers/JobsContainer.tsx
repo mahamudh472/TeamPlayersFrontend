@@ -27,7 +27,7 @@ export const JobsContainer: React.FC = () => {
     const [activeJobs, setActiveJobs] = useState(0);
     const [totalApplicants, setTotalApplicants] = useState(0);
     const [shortlisted, setShortlisted] = useState(0);
-    const [avgTimeToFill, setAvgTimeToFill] = useState(0);
+    const [interviewed, setInterviewed] = useState(0);
 
     // Pagination info
     const [next, setNext] = useState<string | null>(null);
@@ -59,7 +59,7 @@ export const JobsContainer: React.FC = () => {
             setActiveJobs(res.data.active_jobs || 0);
             setTotalApplicants(res.data.total_applicants || 0);
             setShortlisted(res.data.shortlisted || 0);
-            setAvgTimeToFill(res.data.avg_time_to_fill || 0);
+            setInterviewed(res.data.interviewed || 0);
 
             setError(null);
         } catch (err: any) {
@@ -114,7 +114,7 @@ export const JobsContainer: React.FC = () => {
                 activeJobs={activeJobs}
                 totalApplicants={totalApplicants}
                 shortlisted={shortlisted}
-                avgTimeToFill={avgTimeToFill}
+                interviewed={interviewed}
             />
 
             <JobsList
