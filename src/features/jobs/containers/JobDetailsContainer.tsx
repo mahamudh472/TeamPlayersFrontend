@@ -4,6 +4,7 @@ import { JobDetailsHeader } from "../components/JobDetailsHeader";
 import { JobDetailsStats } from "../components/JobDetailsStats";
 import { JobDetailsMain } from "../components/JobDetailsMain";
 import { JobDetailsSidebar } from "../components/JobDetailsSidebar";
+import { UploadCVModal } from "../components/UploadCVModal";
 import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
@@ -20,6 +21,7 @@ export const JobDetailsContainer: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [jobCandidates, setJobCandidates] = useState<any[]>([]);
     const [isLoadingCandidates, setIsLoadingCandidates] = useState(true);
+    const [isUploadCVOpen, setIsUploadCVOpen] = useState(false);
 
     const fetchJobDetails = useCallback(async () => {
         if (!id) return;
@@ -121,6 +123,7 @@ export const JobDetailsContainer: React.FC = () => {
                 company={job.client_name}
                 location={job.location}
                 salary={job.salary_range}
+                onUploadCV={() => setIsUploadCVOpen(true)}
             />
 
             {/* Stats section */}
@@ -148,6 +151,15 @@ export const JobDetailsContainer: React.FC = () => {
                     <JobDetailsSidebar />
                 </div>
             </div>
+
+            {/* Upload CV Modal */}
+            <UploadCVModal
+                isOpen={isUploadCVOpen}
+                onClose={() => setIsUploadCVOpen(false)}
+                onSuccess={fetchJobCandidates}
+                jobId={job.id}
+                agencyId={String(agencyId)}
+            />
         </main>
     );
 };

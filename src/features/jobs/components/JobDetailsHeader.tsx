@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
 import { Typography, BackButton, Button } from "../../../components/ui";
-import { Briefcase, MapPin, DollarSign } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, UploadCloud } from "lucide-react";
 
 import { JobDetailsHeaderProps } from "../types";
 
@@ -12,6 +12,7 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
     company,
     location,
     salary,
+    onUploadCV,
 }) => {
     return (
         <div className="flex flex-col gap-4">
@@ -44,11 +45,20 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
                         </div>
                     </div>
                 </div>
-                <Link to={`/dashboard/jobs/edit/${id || "1"}`}>
-                    <Button variant="secondary">
-                        Edit Job
+                <div className="flex items-center gap-2">
+                    <Button
+                        variant="primary"
+                        prefixIcon={UploadCloud}
+                        onClick={onUploadCV}
+                    >
+                        Upload CV
                     </Button>
-                </Link>
+                    <Link to={`/dashboard/jobs/edit/${id || "1"}`}>
+                        <Button variant="secondary">
+                            Edit Job
+                        </Button>
+                    </Link>
+                </div>
             </div>
         </div>
     );

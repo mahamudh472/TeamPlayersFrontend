@@ -3,7 +3,7 @@ import { Typography } from "../../../components/ui";
 
 import { InterviewStatsProps } from "../types";
 
-export const InterviewStats: React.FC<InterviewStatsProps> = ({ scheduledCount, completedCount }) => {
+export const InterviewStats: React.FC<InterviewStatsProps> = ({ scheduledCount, completedCount, thisWeekCount }) => {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left">
             <div className="bg-white p-6 rounded-xl border border-btn-sec-border shadow-xs flex flex-col justify-between min-h-[100px]">
@@ -27,9 +27,10 @@ export const InterviewStats: React.FC<InterviewStatsProps> = ({ scheduledCount, 
                     This Week
                 </Typography>
                 <Typography variant="h2" className="font-extrabold text-primary mt-2">
-                    {scheduledCount}
+                    {thisWeekCount ?? scheduledCount}
                 </Typography>
             </div>
         </div>
     );
 };
+

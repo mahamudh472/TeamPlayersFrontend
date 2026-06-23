@@ -6,7 +6,22 @@ export interface PlacementItem {
     position: string;
     client: string;
     salary: string;
-    fee: string;
     placedDate: string;
-    status: "Started" | "Guarantee Period" | "Offer Accepted" | "Offer Sent";
+    status: string;
+}
+
+export interface PlacementListProps {
+    placements: PlacementItem[];
+    activeTab: string;
+    onTabChange: (tab: string) => void;
+    searchQuery: string;
+    onSearchChange: (query: string) => void;
+    page: number;
+    onPageChange: (page: number) => void;
+    hasMore: boolean;
+    hasLess: boolean;
+    isLoading: boolean;
+    allCount: number;
+    offersCount: number;
+    activeCount: number;
 }

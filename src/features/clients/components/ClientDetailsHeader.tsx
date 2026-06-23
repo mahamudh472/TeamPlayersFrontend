@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router";
-import { Typography, BackButton } from "../../../components/ui";
-import { Building2, Mail, Phone } from "lucide-react";
+import { Typography, BackButton, Button } from "../../../components/ui";
+import { Building2, Mail, Phone, Plus } from "lucide-react";
 
 interface ClientDetailsHeaderProps {
     id: string;
@@ -9,6 +9,7 @@ interface ClientDetailsHeaderProps {
     status: string;
     email: string;
     phone: string;
+    onAddRevenue: () => void;
 }
 
 export const ClientDetailsHeader: React.FC<ClientDetailsHeaderProps> = ({
@@ -17,6 +18,7 @@ export const ClientDetailsHeader: React.FC<ClientDetailsHeaderProps> = ({
     status,
     email,
     phone,
+    onAddRevenue,
 }) => {
     return (
         <div className="flex flex-col gap-4">
@@ -52,12 +54,22 @@ export const ClientDetailsHeader: React.FC<ClientDetailsHeaderProps> = ({
                         </div>
                     </div>
                 </div>
-                <Link
-                    to={`/dashboard/clients/edit/${id}`}
-                    className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-10 rounded-lg px-4"
-                >
-                    Edit Client
-                </Link>
+                <div className="flex items-center gap-3">
+                    <Button
+                        type="button"
+                        variant="primary"
+                        onClick={onAddRevenue}
+                        prefixIcon={Plus}
+                    >
+                        Add Revenue
+                    </Button>
+                    <Link
+                        to={`/dashboard/clients/edit/${id}`}
+                        className="inline-flex items-center justify-center whitespace-nowrap text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-10 rounded-lg px-4 shadow-xs"
+                    >
+                        Edit Client
+                    </Link>
+                </div>
             </div>
         </div>
     );

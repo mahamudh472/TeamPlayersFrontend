@@ -136,7 +136,6 @@ export const PublicJobDetailsContainer: React.FC = () => {
             const formData = new FormData();
             formData.append("file", file);
             formData.append("job", id);
-            formData.append("job_id", id);
 
             await apiClient.post("/api/v1/agency/candidates/public/upload-cv/", formData, {
                 headers: {
@@ -156,7 +155,13 @@ export const PublicJobDetailsContainer: React.FC = () => {
             toast.success("CV uploaded and application submitted successfully!");
         } catch (err: any) {
             console.error("Failed to upload CV:", err);
-            const errDetail = err.response?.data?.file?.[0] || err.response?.data?.detail || "Failed to submit application. Please try again.";
+            const data = err.response?.data;
+            let errDetail = "Failed to submit application. Please try again.";
+            if (data && typeof data === "object") {
+                const firstKey = Object.keys(data)[0];
+                const msgs = data[firstKey];
+                errDetail = Array.isArray(msgs) ? msgs[0] : typeof msgs === "string" ? msgs : data.detail || errDetail;
+            }
             setUploadError(errDetail);
             toast.error(errDetail);
         } finally {

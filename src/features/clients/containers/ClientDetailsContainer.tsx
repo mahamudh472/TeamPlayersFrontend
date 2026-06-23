@@ -5,6 +5,7 @@ import { ClientDetailsStats } from "../components/ClientDetailsStats";
 import { ClientDetailsTabs } from "../components/ClientDetailsTabs";
 import { ClientDetailsSummary } from "../components/ClientDetailsSummary";
 import { ClientDetailsSidebar } from "../components/ClientDetailsSidebar";
+import { AddRevenueModal } from "../components/AddRevenueModal";
 import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
@@ -18,6 +19,7 @@ export const ClientDetailsContainer: React.FC = () => {
     const [client, setClient] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [isAddRevenueOpen, setIsAddRevenueOpen] = useState(false);
 
     const fetchClientDetails = useCallback(async () => {
         if (!id) return;
@@ -100,6 +102,7 @@ export const ClientDetailsContainer: React.FC = () => {
                 status={client.is_active ? "active" : "inactive"}
                 email={client.contact_email}
                 phone={client.contact_phone || "N/A"}
+                onAddRevenue={() => setIsAddRevenueOpen(true)}
             />
 
             {/* Metrics cards row */}
@@ -136,6 +139,15 @@ export const ClientDetailsContainer: React.FC = () => {
                     />
                 </div>
             </div>
+
+            {/* Add Revenue Modal */}
+            <AddRevenueModal
+                isOpen={isAddRevenueOpen}
+                onClose={() => setIsAddRevenueOpen(false)}
+                onSuccess={fetchClientDetails}
+                clientId={id || String(client.id)}
+                agencyId={String(agencyId)}
+            />
         </main>
     );
 };

@@ -56,6 +56,7 @@ export interface JobDetailsHeaderProps {
     company: string;
     location: string;
     salary: string;
+    onUploadCV?: () => void;
 }
 
 export interface CandidateItem {
