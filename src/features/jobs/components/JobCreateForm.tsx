@@ -1,6 +1,6 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { Typography, Select, OptionType, Button } from "../../../components/ui";
-import { Upload, Sparkles, CheckCircle2 } from "lucide-react";
+import { Upload, Sparkles, CheckCircle2, FileText, Trash2, AlertCircle, UploadCloud } from "lucide-react";
 
 import { JobCreateFormProps } from "../types";
 
@@ -26,13 +26,16 @@ export const JobCreateForm: React.FC<JobCreateFormProps> = ({
     selectedFile,
     setSelectedFile,
     isAnalyzing,
-    setIsAnalyzing,
     analysisSuccess,
-    setAnalysisSuccess,
+    aiText,
+    setAiText,
+    aiError,
+    onAnalyzeAI,
     clients,
     isEdit,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
+    const [isDragging, setIsDragging] = useState(false);
 
     const jobTypeOptions: OptionType[] = [
         { label: "Remote", value: "remote" },
@@ -48,39 +51,158 @@ export const JobCreateForm: React.FC<JobCreateFormProps> = ({
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
             setSelectedFile(e.target.files[0]);
-            setAnalysisSuccess(false);
         }
     };
 
-    const handleAnalyzeAI = () => {
-        if (!selectedFile) return;
-
-        setIsAnalyzing(true);
-        setAnalysisSuccess(false);
-
-        // Simulate AI extraction timeout
-        setTimeout(() => {
-            setIsAnalyzing(false);
-            setAnalysisSuccess(true);
-            setTitle("Senior React Developer");
-            // Set client to the first client in the dropdown if available
-            if (clients && clients.length > 0) {
-                setClient(clients[0]);
-            }
-            setLocation("London, UK (Hybrid)");
-            setSalary("£75,000 - £85,000");
-            setExperience("5");
-            setSkills("React, TypeScript, Node.js, CSS");
-            setJobType({ label: "Hybrid", value: "hybrid" });
-            setStatus({ label: "Open", value: "open" });
-            setDescription(
-                "We are seeking a Senior React Developer to join our growing engineering team. You will be responsible for building high-performance, responsive web applications using React, TypeScript, and modern state management libraries."
-            );
-        }, 1200);
+    const handleRemoveFile = () => {
+        setSelectedFile(null);
+        if (fileInputRef.current) fileInputRef.current.value = "";
     };
+
+    const handleDragOver = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(true);
+    };
+
+    const handleDragLeave = () => setIsDragging(false);
+
+    const handleDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setIsDragging(false);
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            const file = e.dataTransfer.files[0];
+            const ext = file.name.split(".").pop()?.toLowerCase();
+            if (["pdf", "docx", "doc", "txt"].includes(ext || "")) {
+                setSelectedFile(file);
+            }
+        }
+    };
+
+    const canAnalyze = selectedFile !== null || aiText.trim() !== "";
 
     return (
         <div className="space-y-6">
+            {/* AI Job Description Generator Card — shown first for prominence */}
+            <div className="bg-gradient-to-br from-violet-50/80 via-white to-indigo-50/60 text-text-main flex flex-col gap-5 rounded-xl border border-violet-200/60 p-6 text-left shadow-sm">
+                <div className="flex items-start gap-3">
+                    <div className="inline-flex p-2 rounded-lg bg-gradient-to-br from-violet-500 to-indigo-600 text-white shadow-sm shrink-0">
+                        <Sparkles className="w-5 h-5" />
+                    </div>
+                    <div>
+                        <Typography variant="h4" className="font-bold text-text-main leading-none">
+                            AI Job Description Generator
+                        </Typography>
+                        <p className="text-sm text-muted-text mt-1.5">
+                            Upload a document and/or describe the role — AI will extract and structure all job details automatically
+                        </p>
+                    </div>
+                </div>
+
+                {/* File Upload Area */}
+                <div>
+                    <label className="text-sm font-semibold text-text-main select-none mb-2 block">
+                        Upload Document
+                    </label>
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={handleFileChange}
+                        className="hidden"
+                        accept=".pdf,.doc,.docx,.txt"
+                    />
+
+                    {selectedFile ? (
+                        <div className="flex items-center justify-between p-3.5 bg-white border border-btn-sec-border rounded-xl">
+                            <div className="flex items-center gap-2.5 min-w-0">
+                                <FileText className="w-5 h-5 text-violet-600 shrink-0" />
+                                <div className="min-w-0">
+                                    <p className="text-xs font-semibold text-text-main truncate">{selectedFile.name}</p>
+                                    <p className="text-[10px] text-muted-text font-medium">
+                                        {(selectedFile.size / 1024).toFixed(1)} KB
+                                    </p>
+                                </div>
+                            </div>
+                            <button
+                                type="button"
+                                onClick={handleRemoveFile}
+                                className="text-muted-text hover:text-red-500 p-1 hover:bg-slate-100 rounded-lg transition-colors cursor-pointer"
+                            >
+                                <Trash2 className="w-4 h-4" />
+                            </button>
+                        </div>
+                    ) : (
+                        <div
+                            onDragOver={handleDragOver}
+                            onDragLeave={handleDragLeave}
+                            onDrop={handleDrop}
+                            onClick={() => fileInputRef.current?.click()}
+                            className={`
+                                border-2 border-dashed rounded-xl p-5 text-center cursor-pointer transition-all duration-200
+                                flex flex-col items-center justify-center gap-2
+                                ${isDragging
+                                    ? "border-violet-500 bg-violet-50/50"
+                                    : "border-btn-sec-border hover:border-violet-400/60 bg-white/60"
+                                }
+                            `}
+                        >
+                            <UploadCloud className={`w-8 h-8 ${isDragging ? "text-violet-500" : "text-muted-text"}`} />
+                            <div>
+                                <p className="text-sm font-semibold text-text-main">Drag & drop or click to upload</p>
+                                <p className="text-xs text-muted-text mt-0.5">PDF, DOCX, or TXT files supported</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Freeform Text Area */}
+                <div className="flex flex-col gap-1.5">
+                    <label htmlFor="ai-text" className="text-sm font-semibold text-text-main select-none">
+                        Or Describe the Role
+                    </label>
+                    <textarea
+                        id="ai-text"
+                        placeholder="e.g. We need a senior React developer with 5+ years experience, remote work, $150k-$200k salary range, must know TypeScript and Node.js..."
+                        value={aiText}
+                        onChange={(e) => setAiText(e.target.value)}
+                        rows={3}
+                        className="w-full resize-none border border-btn-sec-border rounded-lg bg-white px-3 py-2 text-sm text-text-main outline-none focus:border-violet-500 focus:ring-2 focus:ring-violet-500/20 transition-all placeholder:text-muted-text/60"
+                    />
+                    <p className="text-[11px] text-muted-text">
+                        Provide either a document, text description, or both for best results
+                    </p>
+                </div>
+
+                {/* Error Display */}
+                {aiError && (
+                    <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 text-red-700 rounded-xl text-xs">
+                        <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                        <span>{aiError}</span>
+                    </div>
+                )}
+
+                {/* Success Banner */}
+                {analysisSuccess && (
+                    <div className="flex items-center gap-2 p-3 bg-emerald-50 border border-emerald-200 rounded-xl text-xs text-emerald-700 font-semibold">
+                        <CheckCircle2 className="w-4 h-4 shrink-0" />
+                        AI successfully extracted and populated job details! Review and edit below.
+                    </div>
+                )}
+
+                {/* Generate Button */}
+                <div>
+                    <Button
+                        type="button"
+                        onClick={onAnalyzeAI}
+                        loading={isAnalyzing}
+                        disabled={!canAnalyze}
+                        prefixIcon={!isAnalyzing ? Sparkles : undefined}
+                        className="w-full sm:w-auto font-semibold"
+                    >
+                        {isAnalyzing ? "Generating..." : "Generate with AI"}
+                    </Button>
+                </div>
+            </div>
+
             {/* Job Details Card */}
             <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6 text-left">
                 <div>
@@ -208,64 +330,6 @@ export const JobCreateForm: React.FC<JobCreateFormProps> = ({
                             className="w-full resize-none border border-btn-sec-border rounded-lg bg-white px-3 py-2 text-sm text-text-main outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
                         />
                     </div>
-                </div>
-            </div>
-
-            {/* Upload Job Description Card */}
-            <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6 text-left">
-                <div>
-                    <Typography variant="h4" className="font-bold text-text-main leading-none">
-                        Upload Job Description
-                    </Typography>
-                    <p className="text-sm text-muted-text mt-1.5">Let AI extract requirements from your JD</p>
-                </div>
-
-                <div className="border-2 border-dashed rounded-xl p-6 text-center border-btn-sec-border bg-slate-50/20 flex flex-col items-center justify-center">
-                    <input
-                        type="file"
-                        ref={fileInputRef}
-                        onChange={handleFileChange}
-                        className="hidden"
-                        accept=".pdf,.doc,.docx,.txt"
-                    />
-                    <Upload className="w-10 h-10 mx-auto mb-3 text-muted-text" />
-                    {selectedFile ? (
-                        <div className="mb-4">
-                            <p className="text-sm font-semibold text-text-main">{selectedFile.name}</p>
-                            <p className="text-xs text-muted-text">
-                                {(selectedFile.size / 1024).toFixed(1)} KB
-                            </p>
-                        </div>
-                    ) : (
-                        <p className="mb-4 text-sm text-muted-text">Upload a job description file (PDF, DOC, TXT)</p>
-                    )}
-
-                    <div className="flex gap-2">
-                        <Button
-                            type="button"
-                            variant="secondary"
-                            onClick={() => fileInputRef.current?.click()}
-                        >
-                            Select File
-                        </Button>
-                        {selectedFile && (
-                            <Button
-                                type="button"
-                                onClick={handleAnalyzeAI}
-                                loading={isAnalyzing}
-                                prefixIcon={!isAnalyzing ? Sparkles : undefined}
-                            >
-                                Analyze with AI
-                            </Button>
-                        )}
-                    </div>
-
-                    {analysisSuccess && (
-                        <div className="mt-4 flex items-center gap-1.5 text-xs text-green-600 font-semibold">
-                            <CheckCircle2 className="w-4 h-4" />
-                            AI successfully extracted details!
-                        </div>
-                    )}
                 </div>
             </div>
         </div>

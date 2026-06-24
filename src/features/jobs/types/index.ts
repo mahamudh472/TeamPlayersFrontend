@@ -20,6 +20,34 @@ export interface JobPosition {
     updated_at?: string;
 }
 
+export interface AIGeneratedJobDescription {
+    success: boolean;
+    error_message: string | null;
+    job_title: string;
+    company_name: string;
+    department: string;
+    industry: string;
+    employment_type: string;
+    work_mode: string;
+    location: string;
+    minimum_experience: number;
+    maximum_experience: number;
+    minimum_salary: string;
+    maximum_salary: string;
+    currency: string;
+    required_skills: string[];
+    preferred_skills: string[];
+    required_languages: string[];
+    required_certifications: string[];
+    required_degree: string;
+    preferred_degree: string;
+    summary: string;
+    responsibilities: string[];
+    requirements: string[];
+    benefits: string[];
+    full_description: string;
+}
+
 export interface JobCreateFormProps {
     title: string;
     setTitle: (val: string) => void;
@@ -42,9 +70,11 @@ export interface JobCreateFormProps {
     selectedFile: File | null;
     setSelectedFile: (val: File | null) => void;
     isAnalyzing: boolean;
-    setIsAnalyzing: (val: boolean) => void;
     analysisSuccess: boolean;
-    setAnalysisSuccess: (val: boolean) => void;
+    aiText: string;
+    setAiText: (val: string) => void;
+    aiError: string | null;
+    onAnalyzeAI: () => void;
     clients: OptionType[];
     isEdit: boolean;
 }

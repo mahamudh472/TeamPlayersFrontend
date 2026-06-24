@@ -5,6 +5,7 @@ import { JobCreateForm, JobCreateSidebar } from "../components";
 import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
+import { AIGeneratedJobDescription } from "../types";
 
 export const JobCreateContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -29,6 +30,8 @@ export const JobCreateContainer: React.FC = () => {
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
     const [isAnalyzing, setIsAnalyzing] = useState(false);
     const [analysisSuccess, setAnalysisSuccess] = useState(false);
+    const [aiText, setAiText] = useState("");
+    const [aiError, setAiError] = useState<string | null>(null);
 
     // Dynamic clients options state
     const [clients, setClients] = useState<OptionType[]>([]);
@@ -93,6 +96,112 @@ export const JobCreateContainer: React.FC = () => {
 
         fetchJobDetails();
     }, [id, isEdit, agencyId, toast]);
+
+    // AI Job Description Generation
+    const handleAnalyzeAI = async () => {
+        if (!selectedFile && !aiText.trim()) return;
+        if (!agencyId) {
+            toast.error("Agency selection is required");
+            return;
+        }
+
+        setIsAnalyzing(true);
+        setAnalysisSuccess(false);
+        setAiError(null);
+
+        try {
+            const formData = new FormData();
+            if (selectedFile) {
+                formData.append("document", selectedFile);
+            }
+            if (aiText.trim()) {
+                formData.append("text", aiText.trim());
+            }
+
+            const res = await apiClient.post<AIGeneratedJobDescription>(
+                "/api/v1/agency/jobs/generate-description/",
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                        "X-Agency-ID": String(agencyId),
+                    },
+                }
+            );
+
+            const data = res.data;
+
+            // Map AI response fields to form state
+            if (data.job_title) setTitle(data.job_title);
+            if (data.location) setLocation(data.location);
+
+            // Build salary range string from min/max
+            if (data.minimum_salary || data.maximum_salary) {
+                const currency = data.currency || "";
+                const parts = [];
+                if (data.minimum_salary) parts.push(`${currency} ${data.minimum_salary}`);
+                if (data.maximum_salary) parts.push(`${currency} ${data.maximum_salary}`);
+                setSalary(parts.join(" - ").trim());
+            }
+
+            // Map experience
+            if (data.minimum_experience !== undefined && data.minimum_experience !== null) {
+                setExperience(String(Math.round(data.minimum_experience)));
+            }
+
+            // Combine required and preferred skills
+            const allSkills = [
+                ...(data.required_skills || []),
+                ...(data.preferred_skills || []),
+            ];
+            if (allSkills.length > 0) {
+                setSkills(allSkills.join(", "));
+            }
+
+            // Map work_mode to jobType dropdown
+            if (data.work_mode) {
+                const modeMap: Record<string, OptionType> = {
+                    "Remote": { label: "Remote", value: "remote" },
+                    "remote": { label: "Remote", value: "remote" },
+                    "Hybrid": { label: "Hybrid", value: "hybrid" },
+                    "hybrid": { label: "Hybrid", value: "hybrid" },
+                    "On-site": { label: "On-site", value: "onsite" },
+                    "onsite": { label: "On-site", value: "onsite" },
+                    "on-site": { label: "On-site", value: "onsite" },
+                };
+                const matched = modeMap[data.work_mode];
+                if (matched) setJobType(matched);
+            }
+
+            // Build full description from structured data or use full_description
+            if (data.full_description) {
+                setDescription(data.full_description);
+            } else if (data.summary) {
+                setDescription(data.summary);
+            }
+
+            setAnalysisSuccess(true);
+            toast.success("AI successfully generated job description!");
+        } catch (err: any) {
+            console.error("AI generation failed:", err);
+            const status = err.response?.status;
+            const errData = err.response?.data;
+
+            if (status === 422 && errData?.error) {
+                setAiError(errData.error);
+                toast.error(errData.error);
+            } else if (status === 400 && errData?.detail) {
+                setAiError(errData.detail);
+                toast.error(errData.detail);
+            } else {
+                const msg = errData?.detail || "Failed to generate job description. Please try again.";
+                setAiError(msg);
+                toast.error(msg);
+            }
+        } finally {
+            setIsAnalyzing(false);
+        }
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -225,9 +334,11 @@ export const JobCreateContainer: React.FC = () => {
                         selectedFile={selectedFile}
                         setSelectedFile={setSelectedFile}
                         isAnalyzing={isAnalyzing}
-                        setIsAnalyzing={setIsAnalyzing}
                         analysisSuccess={analysisSuccess}
-                        setAnalysisSuccess={setAnalysisSuccess}
+                        aiText={aiText}
+                        setAiText={setAiText}
+                        aiError={aiError}
+                        onAnalyzeAI={handleAnalyzeAI}
                         clients={clients}
                         isEdit={isEdit}
                     />
