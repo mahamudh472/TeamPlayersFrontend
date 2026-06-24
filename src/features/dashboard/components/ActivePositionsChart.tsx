@@ -10,32 +10,36 @@ import {
     YAxis,
     ResponsiveContainer,
 } from "recharts";
+import { ActivePositions } from "../types";
 
-export const ActivePositionsChart: React.FC = () => {
-    const barData = [
-        { name: "Jan", y: 4000 },
-        { name: "Feb", y: 3000 },
-        { name: "Mar", y: 2000 },
-        { name: "Apr", y: 2780 },
-        { name: "May", y: 1890 },
-        { name: "Jun", y: 2390 },
-    ];
+interface ActivePositionsChartProps {
+    data?: ActivePositions;
+}
+
+export const ActivePositionsChart: React.FC<ActivePositionsChartProps> = ({ data }) => {
+    const chartData = data?.monthly_data.map(item => ({
+        name: item.month,
+        y: item.pipeline_load
+    })) || [];
+
+    const openJobsCount = data?.open_jobs_count ?? 0;
+    const trend = data?.trend || "0%";
 
     return (
         <ChartWrapper
             title="Active Positions"
             subtitle="Monthly recruitment pipeline load"
-            value="12"
+            value={openJobsCount}
             valuelabel="Open Jobs"
             badge={{
                 icon: TrendingUp,
-                text: "+15% MoM",
+                text: `${trend} MoM`,
             }}
         >
             <div className="w-full h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <BarChart
-                        data={barData}
+                        data={chartData}
                         margin={{
                             top: 10,
                             right: 10,
@@ -63,6 +67,7 @@ export const ActivePositionsChart: React.FC = () => {
                             dx={-5}
                         />
                         <Tooltip
+                            formatter={(value: any) => [value, "Pipeline Load"]}
                             contentStyle={{
                                 backgroundColor: "#ffffff",
                                 borderColor: "#e2e8f0",

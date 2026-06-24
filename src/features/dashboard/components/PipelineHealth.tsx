@@ -1,17 +1,21 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
+import { PipelineHealthData } from "../types";
 
-import { FunnelStep } from "../types";
+interface PipelineHealthProps {
+    data?: PipelineHealthData;
+}
 
-export const PipelineHealth: React.FC = () => {
-  const steps: FunnelStep[] = [
-    { label: "Applications", value: 4 },
-    { label: "Shortlisted", value: 2 },
-    { label: "Interview Stage", value: 1 },
-    { label: "Placed", value: 0 },
+export const PipelineHealth: React.FC<PipelineHealthProps> = ({ data }) => {
+  const steps = [
+    { label: "Applications", value: data?.applications ?? 0 },
+    { label: "Shortlisted", value: data?.shortlisted ?? 0 },
+    { label: "Interview Stage", value: data?.interview_stage ?? 0 },
+    { label: "Placed", value: data?.placed ?? 0 },
   ];
 
-  const maxValue = 4;
+  // Maximum value is either the max value in the steps, or at least 1 (to avoid division by 0)
+  const maxValue = Math.max(1, ...steps.map(s => s.value));
 
   return (
     <div className="bg-white p-6 rounded-xl border border-btn-sec-border shadow-xs flex flex-col gap-6">
@@ -25,7 +29,7 @@ export const PipelineHealth: React.FC = () => {
       </div>
       <div className="space-y-4">
         {steps.map((step) => {
-          const percentage = maxValue > 0 ? (step.value / maxValue) * 100 : 0;
+          const percentage = (step.value / maxValue) * 100;
           return (
             <div key={step.label}>
               <div className="flex items-center justify-between mb-2">

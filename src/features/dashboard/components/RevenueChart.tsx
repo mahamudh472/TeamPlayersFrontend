@@ -10,32 +10,45 @@ import {
     YAxis,
     ResponsiveContainer,
 } from "recharts";
+import { RevenueOverview } from "../types";
 
-export const RevenueChart: React.FC = () => {
-    const data = [
-        { name: "Jan", revenue: 10000 },
-        { name: "Feb", revenue: 45000 },
-        { name: "Mar", revenue: 35000 },
-        { name: "Apr", revenue: 85000 },
-        { name: "May", revenue: 70000 },
-        { name: "Jun", revenue: 140000 },
-    ];
+interface RevenueChartProps {
+    data?: RevenueOverview;
+}
+
+export const RevenueChart: React.FC<RevenueChartProps> = ({ data }) => {
+    // Map monthly data to recharts expected format
+    const chartData = data?.monthly_data.map(item => ({
+        name: item.month,
+        revenue: item.revenue
+    })) || [];
+
+    const currencySymbol = data?.currency_symbol || "£";
+    const totalRevenueYtd = data?.total_revenue_ytd || 0;
+    const trendYtd = data?.trend_ytd || "0%";
+
+    // Dynamically calculate domain and ticks based on max revenue
+    const maxRevenue = chartData.length > 0 ? Math.max(...chartData.map(d => d.revenue)) : 10000;
+    // Round up maxRevenue to nice increments
+    const upperLimit = Math.max(10000, Math.ceil(maxRevenue / 10000) * 10000);
+    const tickStep = upperLimit / 4;
+    const ticks = [0, tickStep, tickStep * 2, tickStep * 3, upperLimit];
 
     return (
         <ChartWrapper
             title="Revenue Overview"
             subtitle="Monthly revenue from placements"
-            value="£365,000"
+            value={`${currencySymbol}${totalRevenueYtd.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}`}
             valuelabel="Total revenue (YTD)"
             badge={{
                 icon: TrendingUp,
-                text: "+34% YTD",
+                text: `${trendYtd} YTD`,
             }}
         >
             <div className="w-full h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                     <LineChart
-                        data={data}
+                        data={chartData}
                         margin={{
                             top: 10,
                             right: 10,
@@ -61,10 +74,12 @@ export const RevenueChart: React.FC = () => {
                             tickLine={true}
                             axisLine={true}
                             dx={-5}
-                            domain={[0, 140000]}
-                            ticks={[0, 35000, 70000, 105000, 140000]}
+                            domain={[0, upperLimit]}
+                            ticks={ticks}
+                            tickFormatter={(value) => `${currencySymbol}${value.toLocaleString()}`}
                         />
                         <Tooltip
+                            formatter={(value: any) => [`${currencySymbol}${value.toLocaleString()}`, "Revenue"]}
                             contentStyle={{
                                 backgroundColor: "#ffffff",
                                 borderColor: "#e2e8f0",
