@@ -50,6 +50,17 @@ export const Header: React.FC = () => {
         if (user) {
             fetchAgencies();
         }
+
+        const handleAgencyUpdate = () => {
+            if (user) {
+                fetchAgencies();
+            }
+        };
+
+        window.addEventListener("agency-updated", handleAgencyUpdate);
+        return () => {
+            window.removeEventListener("agency-updated", handleAgencyUpdate);
+        };
     }, [user]);
 
     const selectedAgency = agencies.find(a => String(a.agency_id) === String(selectedAgencyId)) || agencies[0];
