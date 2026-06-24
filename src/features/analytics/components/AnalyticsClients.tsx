@@ -1,9 +1,22 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
+import { AnalyticsClientsResponse } from "../types";
 
-export const AnalyticsClients: React.FC = () => {
+interface AnalyticsClientsProps {
+    clients?: AnalyticsClientsResponse;
+}
+
+export const AnalyticsClients: React.FC<AnalyticsClientsProps> = ({ clients }) => {
+    const totalClients = clients?.total_clients ?? 0;
+    const avgJobs = clients?.avg_jobs_per_client !== undefined ? clients.avg_jobs_per_client.toFixed(1) : "0.0";
+    const avgSuccess = clients?.avg_client_success_rate !== undefined ? Math.round(clients.avg_client_success_rate) : 0;
+    const topClients = clients?.top_clients || [];
+
+    // Sort top clients by revenue descending
+    const sortedClients = [...topClients].sort((a, b) => b.revenue - a.revenue);
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-left">
             {/* Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="bg-white rounded-xl border border-btn-sec-border p-6 flex flex-col gap-2 shadow-xs">
@@ -11,7 +24,7 @@ export const AnalyticsClients: React.FC = () => {
                         Total Clients
                     </Typography>
                     <Typography variant="h2" className="text-2xl font-bold text-text-main mt-1">
-                        3
+                        {totalClients}
                     </Typography>
                 </div>
                 <div className="bg-white rounded-xl border border-btn-sec-border p-6 flex flex-col gap-2 shadow-xs">
@@ -19,15 +32,15 @@ export const AnalyticsClients: React.FC = () => {
                         Avg. Jobs per Client
                     </Typography>
                     <Typography variant="h2" className="text-2xl font-bold text-text-main mt-1">
-                        11.7
+                        {avgJobs}
                     </Typography>
                 </div>
                 <div className="bg-white rounded-xl border border-btn-sec-border p-6 flex flex-col gap-2 shadow-xs">
                     <Typography variant="body2" className="text-sm font-semibold text-muted-text">
-                        Client Retention
+                        Avg. Client Success Rate
                     </Typography>
-                    <Typography variant="h2" className="text-2xl font-bold text-green-500 mt-1">
-                        94%
+                    <Typography variant="h2" className={`text-2xl font-bold mt-1 ${avgSuccess >= 80 ? "text-green-500" : "text-text-main"}`}>
+                        {avgSuccess}%
                     </Typography>
                 </div>
             </div>
@@ -40,62 +53,42 @@ export const AnalyticsClients: React.FC = () => {
                     </Typography>
                 </div>
                 <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-sm shrink-0">
-                            #1
+                    {sortedClients.length === 0 ? (
+                        <div className="text-center py-8 text-muted-text text-sm">
+                            No clients data available.
                         </div>
-                        <div className="flex-1">
-                            <Typography variant="body1" className="font-semibold text-text-main">
-                                Manufacturing United
-                            </Typography>
-                            <Typography variant="body2" className="text-xs text-muted-text">
-                                11 placements
-                            </Typography>
-                        </div>
-                        <div className="text-right">
-                            <Typography variant="body1" className="font-bold text-green-500">
-                                £165,000
-                            </Typography>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-sm shrink-0">
-                            #2
-                        </div>
-                        <div className="flex-1">
-                            <Typography variant="body1" className="font-semibold text-text-main">
-                                GlobalTech Industries
-                            </Typography>
-                            <Typography variant="body2" className="text-xs text-muted-text">
-                                8 placements
-                            </Typography>
-                        </div>
-                        <div className="text-right">
-                            <Typography variant="body1" className="font-bold text-green-500">
-                                £125,000
-                            </Typography>
-                        </div>
-                    </div>
-
-                    <div className="flex items-center gap-4">
-                        <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-sm shrink-0">
-                            #3
-                        </div>
-                        <div className="flex-1">
-                            <Typography variant="body1" className="font-semibold text-text-main">
-                                RetailPro Group
-                            </Typography>
-                            <Typography variant="body2" className="text-xs text-muted-text">
-                                5 placements
-                            </Typography>
-                        </div>
-                        <div className="text-right">
-                            <Typography variant="body1" className="font-bold text-green-500">
-                                £75,000
-                            </Typography>
-                        </div>
-                    </div>
+                    ) : (
+                        sortedClients.map((client, idx) => (
+                            <div key={client.id} className="flex items-center gap-4">
+                                <div className="w-8 h-8 rounded-full bg-primary-light text-primary flex items-center justify-center font-bold text-sm shrink-0">
+                                    #{idx + 1}
+                                </div>
+                                <div className="flex-1">
+                                    <Typography variant="body1" className="font-semibold text-text-main">
+                                        {client.company}
+                                    </Typography>
+                                    <div className="flex items-center gap-3 mt-0.5">
+                                        <Typography variant="body2" className="text-xs text-muted-text">
+                                            {client.placements_count} placements
+                                        </Typography>
+                                        <span className="text-[10px] text-muted-text">•</span>
+                                        <Typography variant="body2" className="text-xs text-muted-text">
+                                            {client.industry}
+                                        </Typography>
+                                        <span className="text-[10px] text-muted-text">•</span>
+                                        <Typography variant="body2" className="text-xs text-muted-text">
+                                            {client.success_rate}% success rate
+                                        </Typography>
+                                    </div>
+                                </div>
+                                <div className="text-right">
+                                    <Typography variant="body1" className="font-bold text-green-500">
+                                        £{client.revenue.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 })}
+                                    </Typography>
+                                </div>
+                            </div>
+                        ))
+                    )}
                 </div>
             </div>
         </div>

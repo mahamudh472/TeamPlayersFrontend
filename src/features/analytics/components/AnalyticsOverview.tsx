@@ -18,10 +18,10 @@ import {
     PieSectorShapeProps,
 } from "recharts";
 import { RechartsDevtools } from "@recharts/devtools";
-import { statCards, lineData, pieData, industryData } from "../fake-data";
+import { AnalyticsOverviewData } from "../types";
 
 const RADIAN = Math.PI / 180;
-const COLORS = ["#14b8a6", "#1e293b", "#64748b", "#0ea5e9"];
+const COLORS = ["#14b8a6", "#1e293b", "#64748b", "#0ea5e9", "#10b981", "#ef4444"];
 
 const renderCustomizedLabel = ({ cx, cy, midAngle, outerRadius, name, value, index }: PieLabelRenderProps) => {
     if (cx == null || cy == null || outerRadius == null) {
@@ -52,9 +52,74 @@ const MyCustomPie = (props: PieSectorShapeProps) => {
     return <Sector {...props} fill={COLORS[(props.index ?? 0) % COLORS.length]} />;
 };
 
-export const AnalyticsOverview: React.FC = () => {
+interface AnalyticsOverviewProps {
+    data?: AnalyticsOverviewData;
+}
+
+export const AnalyticsOverview: React.FC<AnalyticsOverviewProps> = ({ data }) => {
+    const currencySymbol = data?.currency_symbol || "£";
+
+    const statCards = [
+        {
+            title: "Placement Rate",
+            value: data ? `${data.placement_rate}%` : "0%",
+            desc: "Successful match ratio",
+            icon: Award,
+            iconColor: "text-green-500",
+        },
+        {
+            title: "Avg. Days to Fill",
+            value: data ? `${data.avg_days_to_fill} Days` : "0 Days",
+            desc: "From posting to offer",
+            icon: Hourglass,
+            iconColor: "text-blue-500",
+        },
+        {
+            title: "Active Pipelines",
+            value: data ? `${data.active_pipelines} Active` : "0 Active",
+            desc: "In-progress job roles",
+            icon: Calendar,
+            iconColor: "text-purple-500",
+        },
+        {
+            title: "Interviews Booked",
+            value: data ? `${data.interviews_booked} Total` : "0 Total",
+            desc: "Conducted in selected range",
+            icon: Users,
+            iconColor: "text-primary",
+        },
+    ];
+
+    // Map line data
+    const lineChartData = data?.revenue_placements_trend || [];
+    const maxRevenue = lineChartData.length > 0 ? Math.max(...lineChartData.map(d => d.revenue)) : 10000;
+    const revenueUpperLimit = Math.max(10000, Math.ceil(maxRevenue / 10000) * 10000);
+    const revenueStep = revenueUpperLimit / 4;
+    const revenueTicks = [0, revenueStep, revenueStep * 2, revenueStep * 3, revenueUpperLimit];
+
+    // Map pie data
+    const pieChartData = data ? [
+        { name: "New", value: data.pipeline_distribution.new },
+        { name: "Shortlisted", value: data.pipeline_distribution.shortlisted },
+        { name: "Interviewing", value: data.pipeline_distribution.interviewing },
+        { name: "Offered", value: data.pipeline_distribution.offered },
+        { name: "Accepted", value: data.pipeline_distribution.accepted },
+        { name: "Rejected", value: data.pipeline_distribution.rejected },
+    ].filter(item => item.value > 0) : [];
+
+    // Map bar data
+    const barChartData = data?.placements_by_industry.map(item => ({
+        name: item.industry,
+        placements: item.count
+    })) || [];
+
+    const maxPlacements = barChartData.length > 0 ? Math.max(...barChartData.map(d => d.placements)) : 8;
+    const placementsUpperLimit = Math.max(4, Math.ceil(maxPlacements / 2) * 2);
+    const placementsStep = placementsUpperLimit / 4;
+    const placementsTicks = [0, placementsStep, placementsStep * 2, placementsStep * 3, placementsUpperLimit];
+
     return (
-        <div className="space-y-6">
+        <div className="space-y-6 text-left">
             {/* Stats Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {statCards.map((card, idx) => {
@@ -82,48 +147,67 @@ export const AnalyticsOverview: React.FC = () => {
 
             {/* Two half-width charts */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                {/* Line Chart */}
+                {/* Dual Axis Line Chart */}
                 <ChartWrapper
                     title="Revenue & Placements Trend"
                     subtitle="Monthly performance overview"
-                    chartBottom={["Revenue (£)", "Placements"]}
+                    chartBottom={[`Revenue (${currencySymbol})`, "Placements"]}
                 >
                     <div className="w-full h-[300px] flex items-center justify-center">
                         <ResponsiveContainer width="100%" height="100%">
                             <LineChart
-                                data={lineData}
+                                data={lineChartData}
                                 margin={{
                                     top: 10,
-                                    right: 30,
-                                    left: 0,
+                                    right: 5,
+                                    left: 5,
                                     bottom: 0,
                                 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-3)" />
-                                <XAxis dataKey="name" stroke="var(--color-text-3)" />
-                                <YAxis stroke="var(--color-text-3)" domain={[0, 140000]} ticks={[0, 35000, 70000, 105000, 140000]} />
+                                <XAxis dataKey="month" stroke="var(--color-text-3)" />
+                                <YAxis 
+                                    yAxisId="left" 
+                                    stroke="#14b8a6" 
+                                    domain={[0, revenueUpperLimit]} 
+                                    ticks={revenueTicks}
+                                    tickFormatter={(val) => `${currencySymbol}${val.toLocaleString()}`}
+                                />
+                                <YAxis 
+                                    yAxisId="right" 
+                                    orientation="right" 
+                                    stroke="#0ea5e9"
+                                    tickFormatter={(val) => Math.round(val).toString()}
+                                />
                                 <Tooltip
                                     cursor={{ stroke: "var(--color-border-2)" }}
                                     contentStyle={{ backgroundColor: "var(--color-surface-base)", borderColor: "var(--color-border-2)" }}
+                                    formatter={(value: any, name: string) => {
+                                        if (name === "Revenue") {
+                                            return [`${currencySymbol}${value.toLocaleString()}`, name];
+                                        }
+                                        return [value, name];
+                                    }}
                                 />
                                 <Line
-                                    connectNulls
+                                    yAxisId="left"
                                     type="monotone"
-                                    dataKey="uv"
+                                    dataKey="revenue"
+                                    name="Revenue"
                                     stroke="#14b8a6"
                                     strokeWidth={3}
-                                    dot={{
-                                        r: 4,
-                                        stroke: "#14b8a6",
-                                        strokeWidth: 2,
-                                        fill: "#14b8a6",
-                                    }}
-                                    activeDot={{
-                                        r: 6,
-                                        stroke: "#14b8a6",
-                                        strokeWidth: 2,
-                                        fill: "#ffffff",
-                                    }}
+                                    dot={{ r: 4, stroke: "#14b8a6", strokeWidth: 2, fill: "#14b8a6" }}
+                                    activeDot={{ r: 6, stroke: "#14b8a6", strokeWidth: 2, fill: "#ffffff" }}
+                                />
+                                <Line
+                                    yAxisId="right"
+                                    type="monotone"
+                                    dataKey="placements"
+                                    name="Placements"
+                                    stroke="#0ea5e9"
+                                    strokeWidth={2}
+                                    dot={{ r: 4, stroke: "#0ea5e9", strokeWidth: 2, fill: "#0ea5e9" }}
+                                    activeDot={{ r: 6, stroke: "#0ea5e9", strokeWidth: 2, fill: "#ffffff" }}
                                 />
                             </LineChart>
                         </ResponsiveContainer>
@@ -139,7 +223,7 @@ export const AnalyticsOverview: React.FC = () => {
                         <ResponsiveContainer width="100%" height="100%">
                             <PieChart margin={{ top: 20, right: 20, bottom: 20, left: 20 }}>
                                 <Pie
-                                    data={pieData}
+                                    data={pieChartData}
                                     labelLine={false}
                                     label={renderCustomizedLabel}
                                     fill="#8884d8"
@@ -163,7 +247,7 @@ export const AnalyticsOverview: React.FC = () => {
                 <div className="w-full h-[300px]">
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart
-                            data={industryData}
+                            data={barChartData}
                             margin={{
                                 top: 10,
                                 right: 10,
@@ -186,8 +270,8 @@ export const AnalyticsOverview: React.FC = () => {
                                 tickLine={true}
                                 axisLine={true}
                                 dx={-5}
-                                domain={[0, 8]}
-                                ticks={[0, 2, 4, 6, 8]}
+                                domain={[0, placementsUpperLimit]}
+                                ticks={placementsTicks}
                             />
                             <Tooltip
                                 contentStyle={{
