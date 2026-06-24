@@ -1,13 +1,21 @@
-import React from "react";
-import { useNavigate } from "react-router";
+import React, { useEffect } from "react";
+import { useNavigate, useSearchParams } from "react-router";
 import { LoginForm } from "../components";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
 
 export const LoginContainer: React.FC = () => {
     const navigate = useNavigate();
+    const [searchParams] = useSearchParams();
     const { login } = useAuth();
     const { toast } = useToast();
+
+    useEffect(() => {
+        if (searchParams.get("invite_accepted") === "true") {
+            toast.success("Invitation accepted successfully! Please log in.");
+            navigate("/login", { replace: true });
+        }
+    }, [searchParams, toast, navigate]);
 
     const handleLogin = async (email: string, password: string, remember: boolean) => {
         try {
