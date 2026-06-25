@@ -14,6 +14,8 @@ export const CandidateDetailsTabs: React.FC<CandidateDetailsTabsProps> = ({
     onAddNote,
     isLoadingNotes,
     resume,
+    activities,
+    isLoadingActivities,
 }) => {
     const [activeTab, setActiveTab] = useState<string>("profile");
     const [newNote, setNewNote] = useState("");
@@ -38,7 +40,7 @@ export const CandidateDetailsTabs: React.FC<CandidateDetailsTabsProps> = ({
         { label: "Profile", value: "profile" },
         { label: "CV", value: "cv" },
         { label: `Notes (${notes.length})`, value: "notes" },
-        { label: "Activity", value: "activity" },
+        { label: `Activity (${activities.length})`, value: "activity" },
     ];
 
     return (
@@ -202,19 +204,71 @@ export const CandidateDetailsTabs: React.FC<CandidateDetailsTabsProps> = ({
 
             {/* Activity Content */}
             {activeTab === "activity" && (
-                <div className="bg-white rounded-xl border border-btn-sec-border p-6">
-                    <Typography variant="h4" className="font-bold text-text-main mb-4">
+                <div className="bg-white rounded-xl border border-btn-sec-border p-6 flex flex-col gap-6">
+                    <Typography variant="h4" className="font-bold text-text-main">
                         Applicant History
                     </Typography>
-                    <div className="border-l-2 border-slate-100 pl-4 space-y-4 py-1">
-                        <div>
-                            <p className="text-sm font-semibold text-text-main">Applied online</p>
-                            <p className="text-xs text-muted-text">{appliedDate}</p>
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-text-main">AI Screening completed</p>
-                            <p className="text-xs text-muted-text">{appliedDate}</p>
-                        </div>
+                    
+                    <div className="relative border-l-2 border-slate-100 pl-6 ml-2 space-y-6 py-2">
+                        {isLoadingActivities ? (
+                            <div className="flex items-center gap-2 justify-center py-4 text-sm text-muted-text">
+                                <svg
+                                    className="animate-spin text-primary shrink-0 w-5 h-5"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <circle
+                                        className="opacity-25"
+                                        cx="12"
+                                        cy="12"
+                                        r="10"
+                                        stroke="currentColor"
+                                        strokeWidth="4"
+                                    />
+                                    <path
+                                        className="opacity-75"
+                                        fill="currentColor"
+                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                    />
+                                </svg>
+                                <span>Loading history...</span>
+                            </div>
+                        ) : activities.length > 0 ? (
+                            activities.map((activity) => (
+                                <div key={activity.id} className="relative">
+                                    {/* Dot Indicator */}
+                                    <div className="absolute -left-[31px] top-1.5 w-3 h-3 rounded-full bg-primary border-2 border-white ring-4 ring-slate-50" />
+                                    
+                                    <div>
+                                        <p className="text-sm font-semibold text-text-main leading-snug">
+                                            {activity.summary}
+                                        </p>
+                                        <p className="text-xs text-muted-text mt-1 flex items-center gap-1.5 flex-wrap">
+                                            {activity.user && (
+                                                <span className="font-medium text-slate-600">
+                                                    by {activity.user.full_name || activity.user.email}
+                                                </span>
+                                            )}
+                                            {activity.user && <span>•</span>}
+                                            <span>
+                                                {new Date(activity.created_at).toLocaleString("en-GB", {
+                                                    day: "numeric",
+                                                    month: "short",
+                                                    year: "numeric",
+                                                    hour: "2-digit",
+                                                    minute: "2-digit",
+                                                })}
+                                            </span>
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-6 -ml-6">
+                                <p className="text-sm text-muted-text">No activity history recorded for this candidate.</p>
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

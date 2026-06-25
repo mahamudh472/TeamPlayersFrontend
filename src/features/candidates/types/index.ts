@@ -51,6 +51,21 @@ export interface CandidateDetailsSummaryProps {
     concerns: string[];
 }
 
+export interface CandidateActivityUser {
+    id: string;
+    email: string;
+    full_name: string;
+}
+
+export interface CandidateActivity {
+    id: number;
+    candidate: number;
+    user: CandidateActivityUser | null;
+    summary: string;
+    created_at: string;
+    updated_at: string;
+}
+
 export interface CandidateDetailsTabsProps {
     experience: string;
     location: string;
@@ -62,5 +77,8 @@ export interface CandidateDetailsTabsProps {
     onAddNote: (content: string) => Promise<void>;
     isLoadingNotes: boolean;
     resume?: string;
+    activities: CandidateActivity[];
+    isLoadingActivities: boolean;
 }
+
 

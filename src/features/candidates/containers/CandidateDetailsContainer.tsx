@@ -18,8 +18,10 @@ export const CandidateDetailsContainer: React.FC = () => {
     // States
     const [candidate, setCandidate] = useState<any>(null);
     const [notes, setNotes] = useState<any[]>([]);
+    const [activities, setActivities] = useState<any[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingNotes, setIsLoadingNotes] = useState(true);
+    const [isLoadingActivities, setIsLoadingActivities] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
     const fetchCandidateDetails = useCallback(async () => {
@@ -121,10 +123,28 @@ export const CandidateDetailsContainer: React.FC = () => {
         }
     }, [agencyId, id, toast]);
 
+    const fetchCandidateActivities = useCallback(async () => {
+        if (!agencyId || !id) return;
+
+        try {
+            setIsLoadingActivities(true);
+            const res = await apiClient.get(`/api/v1/agency/candidates/${id}/activities/`, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            setActivities(res.data || []);
+        } catch (err: any) {
+            console.error("Failed to fetch candidate activities:", err);
+            toast.error("Failed to load candidate activity history");
+        } finally {
+            setIsLoadingActivities(false);
+        }
+    }, [agencyId, id, toast]);
+
     useEffect(() => {
         fetchCandidateDetails();
         fetchCandidateNotes();
-    }, [fetchCandidateDetails, fetchCandidateNotes]);
+        fetchCandidateActivities();
+    }, [fetchCandidateDetails, fetchCandidateNotes, fetchCandidateActivities]);
 
     const handleReject = async () => {
         if (!agencyId || !id) return;
@@ -134,6 +154,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             });
             toast.success("Candidate rejected successfully");
             await fetchCandidateDetails();
+            await fetchCandidateActivities();
         } catch (err: any) {
             console.error("Failed to reject candidate:", err);
             const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to reject candidate";
@@ -150,6 +171,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             });
             toast.success("Candidate shortlisted successfully");
             await fetchCandidateDetails();
+            await fetchCandidateActivities();
         } catch (err: any) {
             console.error("Failed to shortlist candidate:", err);
             const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to shortlist candidate";
@@ -170,6 +192,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             });
             toast.success(res.data?.message || "Interview meeting scheduled and invitation email sent successfully.");
             await fetchCandidateDetails();
+            await fetchCandidateActivities();
         } catch (err: any) {
             console.error("Failed to schedule interview meeting:", err);
             const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to schedule interview";
@@ -189,6 +212,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             });
             toast.success(res.data?.message || "Offer sent and placement created successfully.");
             await fetchCandidateDetails();
+            await fetchCandidateActivities();
         } catch (err: any) {
             console.error("Failed to send job offer:", err);
             const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to send job offer";
@@ -205,6 +229,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             });
             toast.success("Candidate accepted successfully");
             await fetchCandidateDetails();
+            await fetchCandidateActivities();
         } catch (err: any) {
             console.error("Failed to accept candidate:", err);
             const errMsg = err.response?.data?.non_field_errors?.[0] || err.response?.data?.detail || "Failed to accept candidate";
@@ -227,6 +252,7 @@ export const CandidateDetailsContainer: React.FC = () => {
             // Prepend new note since they are ordered newest first
             setNotes((prev) => [res.data, ...prev]);
             toast.success("Note added successfully");
+            await fetchCandidateActivities();
         } catch (err: any) {
             console.error("Failed to add note:", err);
             const errMsg = err.response?.data?.error || err.response?.data?.detail || "Failed to add note";
@@ -306,7 +332,7 @@ export const CandidateDetailsContainer: React.FC = () => {
                         concerns={candidate.concerns}
                     />
 
-                    <CandidateDetailsTabs
+                     <CandidateDetailsTabs
                         experience={candidate.experience}
                         location={candidate.location}
                         currentSalary={candidate.currentSalary}
@@ -317,6 +343,8 @@ export const CandidateDetailsContainer: React.FC = () => {
                         onAddNote={handleAddNote}
                         isLoadingNotes={isLoadingNotes}
                         resume={candidate.resume}
+                        activities={activities}
+                        isLoadingActivities={isLoadingActivities}
                     />
                 </div>
                 <div>
