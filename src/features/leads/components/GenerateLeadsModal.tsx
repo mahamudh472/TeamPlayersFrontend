@@ -13,17 +13,30 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
     const [industry, setIndustry] = useState<OptionType | null>(null);
     const [companySize, setCompanySize] = useState<OptionType | null>(null);
     const [hiringActivity, setHiringActivity] = useState<OptionType | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     if (!isOpen) return null;
 
-    const handleSubmit = () => {
-        onGenerate({
-            country: country?.value || "",
-            industry: industry?.value || "",
-            companySize: companySize?.value || "",
-            hiringActivity: hiringActivity?.value || "",
-        });
-        onClose();
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        try {
+            await onGenerate({
+                country: country?.value || "",
+                industry: industry?.value || "",
+                companySize: companySize?.value || "",
+                hiringActivity: hiringActivity?.value || "",
+            });
+            onClose();
+            // Reset filters on success
+            setCountry(null);
+            setIndustry(null);
+            setCompanySize(null);
+            setHiringActivity(null);
+        } catch (error) {
+            // Error is handled/toasted in parent
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     const countries: OptionType[] = [
@@ -60,7 +73,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in-0 duration-200">
             {/* Backdrop */}
-            <div className="absolute inset-0" onClick={onClose} />
+            <div className="absolute inset-0" onClick={isSubmitting ? undefined : onClose} />
 
             {/* Modal Body */}
             <div className="bg-white rounded-xl border border-btn-sec-border shadow-xl w-full max-w-lg p-6 relative flex flex-col gap-6 animate-in zoom-in-95 duration-200 z-10">
@@ -86,6 +99,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                             options={countries}
                             value={country}
                             onChange={(val) => setCountry(val as OptionType | null)}
+                            isDisabled={isSubmitting}
                         />
 
                         {/* Industry Select */}
@@ -95,6 +109,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                             options={industries}
                             value={industry}
                             onChange={(val) => setIndustry(val as OptionType | null)}
+                            isDisabled={isSubmitting}
                         />
 
                         {/* Company Size Select */}
@@ -104,6 +119,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                             options={sizes}
                             value={companySize}
                             onChange={(val) => setCompanySize(val as OptionType | null)}
+                            isDisabled={isSubmitting}
                         />
 
                         {/* Hiring Activity Select */}
@@ -113,6 +129,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                             options={activities}
                             value={hiringActivity}
                             onChange={(val) => setHiringActivity(val as OptionType | null)}
+                            isDisabled={isSubmitting}
                         />
 
                     </div>
@@ -140,6 +157,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                         type="button"
                         variant="secondary"
                         onClick={onClose}
+                        disabled={isSubmitting}
                     >
                         Cancel
                     </Button>
@@ -147,6 +165,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                         type="button"
                         onClick={handleSubmit}
                         prefixIcon={Search}
+                        loading={isSubmitting}
                     >
                         Generate Leads
                     </Button>
@@ -157,6 +176,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
                     type="button"
                     variant="icon"
                     onClick={onClose}
+                    disabled={isSubmitting}
                     className="absolute top-4 right-4"
                 >
                     <X className="w-5 h-5" />

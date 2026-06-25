@@ -45,7 +45,7 @@ export interface GenerateLeadsModalProps {
         industry: string;
         companySize: string;
         hiringActivity: string;
-    }) => void;
+    }) => Promise<void>;
 }
 
 export type LeadStatus = "new" | "contacted" | "meeting" | "converted" | "lost";

@@ -99,16 +99,68 @@ export const LeadGenerationContainer: React.FC = () => {
         }
     };
 
-    const handleGenerate = (filters: {
+    const handleGenerate = async (filters: {
         country: string;
         industry: string;
         companySize: string;
         hiringActivity: string;
     }) => {
-        console.log("Generating leads with filters:", filters);
-        // Display premium toast indicating AI is finding leads
-        toast.info("AI leads generation started in background...");
+        if (!agencyId) {
+            toast.error("Agency selection is required. Please select or join an agency.");
+            return;
+        }
+
+        try {
+            const companySizeMap: Record<string, string> = {
+                "1-10 employees": "1-10",
+                "10-50 employees": "10-50",
+                "50-200 employees": "50-200",
+                "200-500 employees": "200-500",
+                "500+ employees": "500+",
+            };
+
+            const hiringActivityMap: Record<string, string> = {
+                "High": "active",
+                "Medium": "medium",
+                "Low": "low",
+                "None": "none",
+            };
+
+            const payload = {
+                country: filters.country,
+                industry: filters.industry,
+                company_size: companySizeMap[filters.companySize] || filters.companySize,
+                hiring_activity: hiringActivityMap[filters.hiringActivity] || filters.hiringActivity.toLowerCase(),
+            };
+
+            await apiClient.post("/api/v1/agency/leads/generate/", payload, {
+                headers: { "X-Agency-ID": String(agencyId) }
+            });
+
+            toast.success("AI leads generation started successfully!");
+            fetchLeads();
+        } catch (err: any) {
+            console.error("Failed to generate leads:", err);
+            
+            let errMsg = "Failed to generate leads";
+            if (err.response?.data) {
+                if (err.response.data.detail) {
+                    errMsg = err.response.data.detail;
+                } else if (typeof err.response.data === "object") {
+                    const fields = Object.entries(err.response.data)
+                        .map(([key, val]) => {
+                            const valStr = Array.isArray(val) ? val.join(" ") : String(val);
+                            return `${key}: ${valStr}`;
+                        })
+                        .join("; ");
+                    if (fields) errMsg = fields;
+                }
+            }
+            toast.error(errMsg);
+            throw err;
+        }
     };
+
 
     if (isLoading && leads.length === 0) {
         return (
