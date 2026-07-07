@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Typography, Button } from "../../../components/ui";
 import { apiClient } from "../../../shared/api/apiClient";
 import { useToast } from "../../../shared/context/ToastContext";
+import { useNotifications } from "../../../shared/context/NotificationsContext";
 
 const Switch: React.FC<{ checked: boolean; onChange: (checked: boolean) => void }> = ({ checked, onChange }) => {
     return (
@@ -33,6 +34,7 @@ interface NotificationSettingsResponse {
 
 export const NotificationSettings: React.FC = () => {
     const { toast } = useToast();
+    const { sendTestNotification } = useNotifications();
     const [isLoading, setIsLoading] = useState(true);
     const [isSavingNotifications, setIsSavingNotifications] = useState(false);
     const [notificationsPrefs, setNotificationsPrefs] = useState({
@@ -209,7 +211,21 @@ export const NotificationSettings: React.FC = () => {
             </div>
 
             {/* Footer */}
-            <div className="p-6 bg-slate-50/50 border-t border-btn-sec-border flex justify-end">
+            <div className="p-6 bg-slate-50/50 border-t border-btn-sec-border flex justify-between items-center">
+                <Button
+                    type="button"
+                    variant="outline"
+                    onClick={async () => {
+                        try {
+                            await sendTestNotification();
+                            toast.success("Test notification request sent");
+                        } catch (err) {
+                            toast.error("Failed to send test notification");
+                        }
+                    }}
+                >
+                    Send Test Notification
+                </Button>
                 <Button type="submit" variant="primary" loading={isSavingNotifications}>
                     Save Preferences
                 </Button>

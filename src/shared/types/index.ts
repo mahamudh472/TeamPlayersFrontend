@@ -8,3 +8,5 @@ export interface TabOption {
     label: string;
     count?: number;
 }
+
+export * from "./notifications";

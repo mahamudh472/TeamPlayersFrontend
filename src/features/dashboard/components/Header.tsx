@@ -6,6 +6,7 @@ import { NotificationModal } from "./NotificationModal";
 import { SearchModal } from "./SearchModal";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { apiClient } from "../../../shared/api/apiClient";
+import { useNotifications } from "../../../shared/context/NotificationsContext";
 
 interface Agency {
     agency_id: number | string;
@@ -21,6 +22,7 @@ export const Header: React.FC = () => {
     const notificationRef = useRef<HTMLDivElement>(null);
     const navigate = useNavigate();
     const { user, logout } = useAuth();
+    const { unreadCount } = useNotifications();
     const [agencies, setAgencies] = useState<Agency[]>([]);
     const [showAllAgencies, setShowAllAgencies] = useState(false);
     const [selectedAgencyId, setSelectedAgencyId] = useState<number | string>("");
@@ -120,9 +122,14 @@ export const Header: React.FC = () => {
                         <Button
                             variant="icon"
                             onClick={() => setIsNotificationOpen(!isNotificationOpen)}
-                            className="cursor-pointer"
+                            className="cursor-pointer relative"
                         >
                             <Bell size={18} />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[9px] font-bold text-white ring-1 ring-white">
+                                    {unreadCount}
+                                </span>
+                            )}
                         </Button>
                         <NotificationModal
                             isOpen={isNotificationOpen}
