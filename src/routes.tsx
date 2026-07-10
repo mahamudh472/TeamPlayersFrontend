@@ -30,7 +30,7 @@ import {
     DashboardOverviewContainer,
 } from "./features/dashboard";
 import { AnalyticsContainer } from "./features/analytics";
-import { SettingsContainer } from "./features/settings";
+import { SettingsContainer, IntegrationsCallbackContainer } from "./features/settings";
 import { LeadGenerationContainer } from "./features/leads";
 import {
     ClientsContainer,
@@ -243,6 +243,10 @@ export const routes = createBrowserRouter([
                 element: <SettingsContainer />,
             },
         ],
+    },
+    {
+        path: "integrations",
+        element: <IntegrationsCallbackContainer />,
     },
     {
         path: "*",
