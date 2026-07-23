@@ -76,10 +76,10 @@ export const JobsContainer: React.FC = () => {
         fetchJobs();
     }, [fetchJobs]);
 
-    const handleSearchChange = (q: string) => {
+    const handleSearchChange = useCallback((q: string) => {
         setSearchQuery(q);
         setPage(1); // Reset to page 1 on new search
-    };
+    }, []);
 
     if (error) {
         return (

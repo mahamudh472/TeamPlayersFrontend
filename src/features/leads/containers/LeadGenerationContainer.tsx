@@ -32,6 +32,12 @@ export const LeadGenerationContainer: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
 
+    // Pagination states
+    const [page, setPage] = useState(1);
+    const [activeTab, setActiveTab] = useState("all");
+    const [next, setNext] = useState<string | null>(null);
+    const [previous, setPrevious] = useState<string | null>(null);
+
     const mapBackendLeadToFrontend = (b: any): Lead => ({
         id: String(b.id),
         company: b.company,
@@ -57,10 +63,17 @@ export const LeadGenerationContainer: React.FC = () => {
         try {
             setIsLoading(true);
             const res = await apiClient.get("/api/v1/agency/leads/", {
-                headers: { "X-Agency-ID": String(agencyId) }
+                headers: { "X-Agency-ID": String(agencyId) },
+                params: {
+                    status: activeTab !== "all" ? activeTab : undefined,
+                    page: page,
+                    page_size: 10,
+                }
             });
             const backendLeads = res.data.results || [];
             setLeads(backendLeads.map(mapBackendLeadToFrontend));
+            setNext(res.data.next);
+            setPrevious(res.data.previous);
             setStatusCounts(res.data.status_counts || {
                 new: 0,
                 contacted: 0,
@@ -77,11 +90,16 @@ export const LeadGenerationContainer: React.FC = () => {
         } finally {
             setIsLoading(false);
         }
-    }, [agencyId, toast]);
+    }, [agencyId, page, activeTab, toast]);
 
     useEffect(() => {
         fetchLeads();
     }, [fetchLeads]);
+
+    const handleTabChange = useCallback((tab: string) => {
+        setActiveTab(tab);
+        setPage(1); // Reset page on tab change
+    }, []);
 
     const handleStatusChange = async (leadId: string, nextStatus: LeadStatus) => {
         if (!agencyId) return;
@@ -233,6 +251,13 @@ export const LeadGenerationContainer: React.FC = () => {
                 statusCounts={statusCounts}
                 onStatusChange={handleStatusChange}
                 onNoteAdded={fetchLeads}
+                page={page}
+                onPageChange={setPage}
+                hasMore={!!next}
+                hasLess={!!previous}
+                isLoading={isLoading}
+                activeTab={activeTab}
+                onTabChange={handleTabChange}
             />
 
             {/* Generate Leads AI Modal */}

@@ -35,6 +35,11 @@ export const ClientsList: React.FC<ClientsListProps> = ({
         return () => clearTimeout(handler);
     }, [localQuery, onSearchChange]);
 
+    // Sync local query if parent query changes externally
+    useEffect(() => {
+        setLocalQuery(searchQuery);
+    }, [searchQuery]);
+
     return (
         <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border">
             <div className="px-6 pt-6 pb-2">
@@ -43,7 +48,30 @@ export const ClientsList: React.FC<ClientsListProps> = ({
                         All Clients
                     </Typography>
                     <div className="relative w-64">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-light-text" />
+                        {isLoading ? (
+                            <svg
+                                className="animate-spin absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-primary shrink-0"
+                                xmlns="http://www.w3.org/2000/svg"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                            >
+                                <circle
+                                    className="opacity-25"
+                                    cx="12"
+                                    cy="12"
+                                    r="10"
+                                    stroke="currentColor"
+                                    strokeWidth="4"
+                                />
+                                <path
+                                    className="opacity-75"
+                                    fill="currentColor"
+                                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                                />
+                            </svg>
+                        ) : (
+                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-light-text" />
+                        )}
                         <input
                             type="text"
                             value={localQuery}
@@ -56,8 +84,33 @@ export const ClientsList: React.FC<ClientsListProps> = ({
             </div>
 
             <div className="px-6 pb-6">
-                <div className="space-y-3">
-                    {clients.map((client) => {
+                {isLoading && clients.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center p-12 min-h-[200px]">
+                        <svg
+                            className="animate-spin text-primary shrink-0 w-8 h-8"
+                            xmlns="http://www.w3.org/2000/svg"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <circle
+                                className="opacity-25"
+                                cx="12"
+                                cy="12"
+                                r="10"
+                                stroke="currentColor"
+                                strokeWidth="4"
+                            />
+                            <path
+                                className="opacity-75"
+                                fill="currentColor"
+                                d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                            />
+                        </svg>
+                        <span className="text-sm text-muted-text mt-4">Loading clients...</span>
+                    </div>
+                ) : (
+                    <div className={`space-y-3 transition-opacity duration-200 ${isLoading ? "opacity-50 pointer-events-none" : ""}`}>
+                        {clients.map((client) => {
                         const formattedRevenue = new Intl.NumberFormat("en-GB", {
                             style: "currency",
                             currency: "GBP",
@@ -125,7 +178,8 @@ export const ClientsList: React.FC<ClientsListProps> = ({
                             No clients found matching your search.
                         </div>
                     )}
-                </div>
+                    </div>
+                )}
             </div>
 
             {/* Pagination Controls */}

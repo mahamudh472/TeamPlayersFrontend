@@ -15,6 +15,13 @@ interface LeadPipelineProps {
     };
     onStatusChange: (leadId: string, nextStatus: LeadStatus) => void;
     onNoteAdded: () => void;
+    page: number;
+    onPageChange: (val: number) => void;
+    hasMore: boolean;
+    hasLess: boolean;
+    isLoading: boolean;
+    activeTab: string;
+    onTabChange: (val: string) => void;
 }
 
 export const LeadPipeline: React.FC<LeadPipelineProps> = ({
@@ -22,8 +29,14 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
     statusCounts,
     onStatusChange,
     onNoteAdded,
+    page,
+    onPageChange,
+    hasMore,
+    hasLess,
+    isLoading,
+    activeTab,
+    onTabChange,
 }) => {
-    const [activeTab, setActiveTab] = useState<string>("all");
     const [selectedLead, setSelectedLead] = useState<LeadDetailItem | null>(null);
     const [confirmState, setConfirmState] = useState<{
         isOpen: boolean;
@@ -41,13 +54,12 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
         });
     };
 
-    const filteredLeads = leads.filter((lead) => {
-        if (activeTab === "all") return true;
-        return lead.status === activeTab;
-    });
+    const totalLeads = statusCounts
+        ? ((statusCounts.new || 0) + (statusCounts.contacted || 0) + (statusCounts.meeting || 0) + (statusCounts.converted || 0) + (statusCounts.lost || 0))
+        : 0;
 
     const tabOptions: TabOption[] = [
-        { label: `All (${leads.length})`, value: "all" },
+        { label: `All (${totalLeads})`, value: "all" },
         { label: `New (${statusCounts?.new ?? 0})`, value: "new" },
         { label: `Contacted (${statusCounts?.contacted ?? 0})`, value: "contacted" },
         { label: `Meetings (${statusCounts?.meeting ?? 0})`, value: "meeting" },
@@ -69,13 +81,13 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
                 <Tabs
                     options={tabOptions}
                     value={activeTab}
-                    onChange={setActiveTab}
+                    onChange={onTabChange}
                     className="mb-6"
                 />
 
                 {/* Lead Items list */}
                 <div className="space-y-3">
-                    {filteredLeads.map((lead) => {
+                    {leads.map((lead) => {
                         return (
                             <div
                                 key={lead.id}
@@ -203,12 +215,39 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
                             </div>
                         );
                     })}
-                    {filteredLeads.length === 0 && (
+                    {leads.length === 0 && (
                         <div className="p-8 text-center text-muted-text">
                             No leads in this stage of the pipeline.
                         </div>
                     )}
                 </div>
+
+                {/* Pagination Controls */}
+                {(hasLess || hasMore) && (
+                    <div className="flex items-center justify-between border-t border-btn-sec-border pt-4 mt-6">
+                        <Typography variant="body2" className="text-muted-text font-medium">
+                            Page {page}
+                        </Typography>
+                        <div className="flex gap-2">
+                            <button
+                                type="button"
+                                disabled={!hasLess || isLoading}
+                                onClick={() => onPageChange(page - 1)}
+                                className="inline-flex items-center justify-center text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 rounded-lg px-3 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                            >
+                                Previous
+                            </button>
+                            <button
+                                type="button"
+                                disabled={!hasMore || isLoading}
+                                onClick={() => onPageChange(page + 1)}
+                                className="inline-flex items-center justify-center text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 rounded-lg px-3 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                            >
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
 
             {/* Selected Lead Details Modal */}

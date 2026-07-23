@@ -85,15 +85,15 @@ export const PlacementsContainer: React.FC = () => {
         fetchPlacements();
     }, [fetchPlacements]);
 
-    const handleTabChange = (tab: string) => {
+    const handleTabChange = useCallback((tab: string) => {
         setActiveTab(tab);
         setPage(1); // Reset page on tab change
-    };
+    }, []);
 
-    const handleSearchChange = (query: string) => {
+    const handleSearchChange = useCallback((query: string) => {
         setSearchQuery(query);
         setPage(1); // Reset page on search change
-    };
+    }, []);
 
     if (error) {
         return (
