@@ -14,6 +14,10 @@ interface JobDetailsMainProps {
     interviewed?: number;
     jobCandidates?: any[];
     isLoadingCandidates?: boolean;
+    page?: number;
+    onPageChange?: (val: number) => void;
+    hasMore?: boolean;
+    hasLess?: boolean;
 }
 
 const getLeftBarColor = (status: string): string => {
@@ -39,6 +43,10 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
     interviewed = 0,
     jobCandidates = [],
     isLoadingCandidates = false,
+    page = 1,
+    onPageChange,
+    hasMore = false,
+    hasLess = false,
 }) => {
     const [activeTab, setActiveTab] = useState<string>("candidates");
     const [copied, setCopied] = useState(false);
@@ -152,6 +160,33 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
                             </div>
                         )}
                     </div>
+
+                    {/* Pagination Controls */}
+                    {(hasLess || hasMore) && (
+                        <div className="px-6 pb-6 flex items-center justify-between border-t border-btn-sec-border pt-4">
+                            <Typography variant="body2" className="text-muted-text">
+                                Page {page}
+                            </Typography>
+                            <div className="flex gap-2">
+                                <button
+                                    type="button"
+                                    disabled={!hasLess || isLoadingCandidates}
+                                    onClick={() => onPageChange?.(page - 1)}
+                                    className="inline-flex items-center justify-center text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 rounded-lg px-3 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                                >
+                                    Previous
+                                </button>
+                                <button
+                                    type="button"
+                                    disabled={!hasMore || isLoadingCandidates}
+                                    onClick={() => onPageChange?.(page + 1)}
+                                    className="inline-flex items-center justify-center text-sm font-medium transition-all outline-none border border-btn-sec-border bg-white text-text-main hover:bg-slate-50 h-9 rounded-lg px-3 disabled:opacity-50 disabled:pointer-events-none cursor-pointer"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
 

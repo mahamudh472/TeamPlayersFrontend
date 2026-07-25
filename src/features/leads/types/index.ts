@@ -27,6 +27,15 @@ export interface LeadDetailItem {
     contactPhone: string;
     notes?: string;
     notesList?: LeadNote[];
+    website?: string;
+    companyDomain?: string;
+    linkedin?: string;
+    companySize?: string;
+    employeeCount?: number;
+    hiringActivity?: string;
+    description?: string;
+    detectedAt?: string;
+    domainSource?: string;
 }
 
 export interface LeadDetailsModalProps {

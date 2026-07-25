@@ -24,6 +24,10 @@ export const JobDetailsContainer: React.FC = () => {
     const [isUploadCVOpen, setIsUploadCVOpen] = useState(false);
     const [isGathering, setIsGathering] = useState(false);
 
+    const [page, setPage] = useState(1);
+    const [hasMore, setHasMore] = useState(false);
+    const [hasLess, setHasLess] = useState(false);
+
     const fetchJobDetails = useCallback(async () => {
         if (!id) return;
         if (!agencyId) {
@@ -57,8 +61,14 @@ export const JobDetailsContainer: React.FC = () => {
             setIsLoadingCandidates(true);
             const res = await apiClient.get(`/api/v1/agency/jobs/${id}/candidates/`, {
                 headers: { "X-Agency-ID": String(agencyId) },
+                params: {
+                    page: page,
+                    page_size: 10,
+                },
             });
-            setJobCandidates(res.data || []);
+            setJobCandidates(res.data.results || res.data || []);
+            setHasMore(!!res.data.next);
+            setHasLess(!!res.data.previous);
         } catch (err: any) {
             console.error("Failed to fetch job candidates:", err);
             toast.error("Failed to load candidates for this job");
@@ -171,6 +181,10 @@ export const JobDetailsContainer: React.FC = () => {
                         interviewed={job.interviewed || 0}
                         jobCandidates={jobCandidates}
                         isLoadingCandidates={isLoadingCandidates}
+                        page={page}
+                        onPageChange={setPage}
+                        hasMore={hasMore}
+                        hasLess={hasLess}
                     />
                 </div>
                 <div>
