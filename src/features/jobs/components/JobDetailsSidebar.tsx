@@ -1,7 +1,17 @@
 import React from "react";
 import { Typography, Button } from "../../../components/ui";
 
-export const JobDetailsSidebar: React.FC = () => {
+interface JobDetailsSidebarProps {
+    highFit?: number;
+    mediumFit?: number;
+    lowFit?: number;
+}
+
+export const JobDetailsSidebar: React.FC<JobDetailsSidebarProps> = ({
+    highFit = 0,
+    mediumFit = 0,
+    lowFit = 0
+}) => {
     return (
         <div className="space-y-6">
             {/* AI Screening Stats Card */}
@@ -14,15 +24,15 @@ export const JobDetailsSidebar: React.FC = () => {
                 <div className="px-6 pb-6 space-y-3">
                     <div className="flex justify-between items-center">
                         <span className="text-sm">High Fit</span>
-                        <span className="font-bold text-green-500">2</span>
+                        <span className="font-bold text-green-500">{highFit}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-sm">Medium Fit</span>
-                        <span className="font-bold text-yellow-500">0</span>
+                        <span className="font-bold text-yellow-500">{mediumFit}</span>
                     </div>
                     <div className="flex justify-between items-center">
                         <span className="text-sm">Low Fit</span>
-                        <span className="font-bold text-gray-500">0</span>
+                        <span className="font-bold text-gray-500">{lowFit}</span>
                     </div>
                 </div>
             </div>

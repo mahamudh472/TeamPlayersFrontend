@@ -16,6 +16,9 @@ export interface JobPosition {
     applicants: number;
     shortlisted: number;
     interviewed: number;
+    high_fit?: number;
+    medium_fit?: number;
+    low_fit?: number;
     created_at?: string;
     updated_at?: string;
 }

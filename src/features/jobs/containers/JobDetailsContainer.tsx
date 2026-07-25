@@ -149,7 +149,11 @@ export const JobDetailsContainer: React.FC = () => {
                     />
                 </div>
                 <div>
-                    <JobDetailsSidebar />
+                    <JobDetailsSidebar
+                        highFit={job.high_fit ?? 0}
+                        mediumFit={job.medium_fit ?? 0}
+                        lowFit={job.low_fit ?? 0}
+                    />
                 </div>
             </div>
 
