@@ -3,6 +3,7 @@ import { Typography, Select, OptionType, Button } from "../../../components/ui";
 import { Sparkles, Search, X } from "lucide-react";
 
 import { GenerateLeadsModalProps } from "../types";
+import { COUNTRIES } from "../constants/countries";
 
 export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
     isOpen,
@@ -39,13 +40,7 @@ export const GenerateLeadsModal: React.FC<GenerateLeadsModalProps> = ({
         }
     };
 
-    const countries: OptionType[] = [
-        { label: "United Kingdom", value: "United Kingdom" },
-        { label: "United States", value: "United States" },
-        { label: "Canada", value: "Canada" },
-        { label: "Germany", value: "Germany" },
-        { label: "France", value: "France" },
-    ];
+    const countries = COUNTRIES;
 
     const industries: OptionType[] = [
         { label: "Technology", value: "Technology" },
