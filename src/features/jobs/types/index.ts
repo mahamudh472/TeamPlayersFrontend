@@ -90,7 +90,10 @@ export interface JobDetailsHeaderProps {
     location: string;
     salary: string;
     onUploadCV?: () => void;
+    onGatherCandidates?: () => void;
+    isGathering?: boolean;
 }
+
 
 export interface CandidateItem {
     id: string;

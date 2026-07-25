@@ -22,6 +22,7 @@ export const JobDetailsContainer: React.FC = () => {
     const [jobCandidates, setJobCandidates] = useState<any[]>([]);
     const [isLoadingCandidates, setIsLoadingCandidates] = useState(true);
     const [isUploadCVOpen, setIsUploadCVOpen] = useState(false);
+    const [isGathering, setIsGathering] = useState(false);
 
     const fetchJobDetails = useCallback(async () => {
         if (!id) return;
@@ -65,6 +66,28 @@ export const JobDetailsContainer: React.FC = () => {
             setIsLoadingCandidates(false);
         }
     }, [id, agencyId, toast]);
+
+    const handleGatherCandidates = async () => {
+        if (!id) return;
+        if (!agencyId) {
+            toast.error("Agency ID is required.");
+            return;
+        }
+
+        try {
+            setIsGathering(true);
+            await apiClient.post(`/api/v1/agency/jobs/${id}/gather-candidates/`, {}, {
+                headers: { "X-Agency-ID": String(agencyId) },
+            });
+            toast.success("Candidate gathering process initiated successfully!");
+        } catch (err: any) {
+            console.error("Failed to initiate candidate gathering:", err);
+            const errMsg = err.response?.data?.detail || "Failed to initiate candidate gathering";
+            toast.error(errMsg);
+        } finally {
+            setIsGathering(false);
+        }
+    };
 
     useEffect(() => {
         fetchJobDetails();
@@ -124,6 +147,8 @@ export const JobDetailsContainer: React.FC = () => {
                 location={job.location}
                 salary={job.salary_range}
                 onUploadCV={() => setIsUploadCVOpen(true)}
+                onGatherCandidates={handleGatherCandidates}
+                isGathering={isGathering}
             />
 
             {/* Stats section */}

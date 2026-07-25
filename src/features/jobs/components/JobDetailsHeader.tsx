@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router";
 import { Typography, BackButton, Button } from "../../../components/ui";
-import { Briefcase, MapPin, DollarSign, UploadCloud, Share2, Check } from "lucide-react";
+import { Briefcase, MapPin, DollarSign, UploadCloud, Share2, Check, DownloadCloud } from "lucide-react";
 import { useToast } from "../../../shared/context/ToastContext";
 import { copyToClipboard } from "../../../shared/utils/clipboard";
 
@@ -15,6 +15,8 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
     location,
     salary,
     onUploadCV,
+    onGatherCandidates,
+    isGathering = false,
 }) => {
     const [copied, setCopied] = useState(false);
     const { toast } = useToast();
@@ -70,6 +72,14 @@ export const JobDetailsHeader: React.FC<JobDetailsHeaderProps> = ({
                         onClick={handleShare}
                     >
                         {copied ? "Copied" : "Share Job Link"}
+                    </Button>
+                    <Button
+                        variant="secondary"
+                        prefixIcon={DownloadCloud}
+                        onClick={onGatherCandidates}
+                        loading={isGathering}
+                    >
+                        Gather Candidates
                     </Button>
                     <Button
                         variant="primary"
