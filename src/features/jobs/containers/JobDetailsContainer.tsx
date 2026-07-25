@@ -75,7 +75,7 @@ export const JobDetailsContainer: React.FC = () => {
         } finally {
             setIsLoadingCandidates(false);
         }
-    }, [id, agencyId, toast]);
+    }, [id, agencyId, page, toast]);
 
     const handleGatherCandidates = async () => {
         if (!id) return;
