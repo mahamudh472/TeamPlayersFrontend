@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router";
 import {
     Sparkles,
@@ -10,12 +10,11 @@ import {
     CheckCircle2,
     Users,
     ChevronRight,
-    Bell,
     ArrowRight,
 } from "lucide-react";
 import { Button } from "../../../components/ui";
-
-import { RECOMMENDATIONS, HOT_CANDIDATES, FOLLOW_UPS } from "../fake-data";
+import { useAuth } from "../../../shared/context/AuthContext";
+import { apiClient } from "../../../shared/api/apiClient";
 import { AIAssistantProps, RecommendationCardProps } from "../types";
 
 const RecommendationCard: React.FC<RecommendationCardProps> = ({
@@ -43,7 +42,7 @@ const RecommendationCard: React.FC<RecommendationCardProps> = ({
         },
     };
 
-    const config = configMap[type];
+    const config = configMap[type] || configMap.check;
     const Icon = config.icon;
 
     return (
@@ -110,35 +109,33 @@ const CandidateCard: React.FC<CandidateCardProps> = ({
     );
 };
 
-// Sub-component for Follow-up Cards
-interface FollowUpCardProps {
-    name: string;
-    status: string;
-    link: string;
-}
-
-const FollowUpCard: React.FC<FollowUpCardProps> = ({
-    name,
-    status,
-    link,
-}) => {
-    return (
-        <Link to={link} className="block">
-            <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border hover:bg-slate-50 transition-colors cursor-pointer border-primary-light">
-                <div className="p-3">
-                    <div className="flex items-start justify-between">
-                        <div className="flex-1 min-w-0">
-                            <p className="text-sm font-medium text-text-main">{name}</p>
-                            <p className="text-xs text-muted-text capitalize">{status}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </Link>
-    );
-};
-
 export const AIAssistant: React.FC<AIAssistantProps> = ({ state, onChangeState }) => {
+    const { user } = useAuth();
+    const agencyId = localStorage.getItem("selected_agency_id") || user?.agency_id;
+    const [recommendations, setRecommendations] = useState<any[]>([]);
+    const [hotCandidates, setHotCandidates] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const fetchRecommendations = async () => {
+            if (!agencyId) return;
+            try {
+                setLoading(true);
+                const res = await apiClient.get("/api/v1/agency/recommendations/", {
+                    headers: { "X-Agency-ID": String(agencyId) },
+                });
+                setRecommendations(res.data.recommendations || []);
+                setHotCandidates(res.data.hot_candidates || []);
+            } catch (err) {
+                console.error("Failed to fetch recommendations:", err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchRecommendations();
+    }, [agencyId]);
+
     if (state === "closed") {
         return (
             <Button
@@ -182,7 +179,7 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ state, onChangeState }
                         </div>
                     </div>
                     <div data-slot="card-content" className="px-6 pb-6">
-                        <p className="text-xs text-muted-text">{RECOMMENDATIONS.length} recommendations waiting</p>
+                        <p className="text-xs text-muted-text">{recommendations.length} recommendations waiting</p>
                     </div>
                 </div>
             </div>
@@ -231,21 +228,27 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ state, onChangeState }
                             <Sparkles className="w-4 h-4 text-primary" />
                             <h3 className="font-semibold text-sm text-text-main">AI Recommendations</h3>
                             <span className="inline-flex items-center justify-center rounded-md border border-btn-sec-border px-2 py-0.5 font-medium bg-slate-100 text-text-main text-xs">
-                                {RECOMMENDATIONS.length}
+                                {recommendations.length}
                             </span>
                         </div>
-                        <div className="space-y-2">
-                            {RECOMMENDATIONS.map((rec) => (
-                                <RecommendationCard
-                                    key={rec.id}
-                                    type={rec.type}
-                                    title={rec.title}
-                                    description={rec.description}
-                                    actionText={rec.actionText}
-                                    actionLink={rec.actionLink}
-                                />
-                            ))}
-                        </div>
+                        {loading ? (
+                            <div className="text-xs text-muted-text animate-pulse py-2 text-center">Loading recommendations...</div>
+                        ) : recommendations.length === 0 ? (
+                            <div className="text-xs text-muted-text py-2 text-center">No recommendations found.</div>
+                        ) : (
+                            <div className="space-y-2">
+                                {recommendations.map((rec) => (
+                                    <RecommendationCard
+                                        key={rec.id}
+                                        type={rec.type}
+                                        title={rec.title}
+                                        description={rec.description}
+                                        actionText={rec.actionText}
+                                        actionLink={rec.actionLink}
+                                    />
+                                ))}
+                            </div>
+                        )}
                     </div>
 
                     {/* Hot Candidates */}
@@ -266,37 +269,23 @@ export const AIAssistant: React.FC<AIAssistantProps> = ({ state, onChangeState }
                                 </Button>
                             </Link>
                         </div>
-                        <div className="space-y-2">
-                            {HOT_CANDIDATES.map((cand) => (
-                                <CandidateCard
-                                    key={cand.id}
-                                    name={cand.name}
-                                    role={cand.role}
-                                    matchScore={cand.matchScore}
-                                    link={cand.link}
-                                />
-                            ))}
-                        </div>
-                    </div>
-
-                    {/* Follow-ups Due */}
-                    <div>
-                        <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-2">
-                                <Bell className="w-4 h-4 text-purple-500" />
-                                <h3 className="font-semibold text-sm text-text-main">Follow-ups Due</h3>
+                        {loading ? (
+                            <div className="text-xs text-muted-text animate-pulse py-2 text-center">Loading hot candidates...</div>
+                        ) : hotCandidates.length === 0 ? (
+                            <div className="text-xs text-muted-text py-2 text-center">No hot candidates found.</div>
+                        ) : (
+                            <div className="space-y-2">
+                                {hotCandidates.map((cand) => (
+                                    <CandidateCard
+                                        key={cand.id}
+                                        name={cand.name}
+                                        role={cand.role}
+                                        matchScore={cand.matchScore}
+                                        link={cand.link}
+                                    />
+                                ))}
                             </div>
-                        </div>
-                        <div className="space-y-2">
-                            {FOLLOW_UPS.map((follow) => (
-                                <FollowUpCard
-                                    key={follow.id}
-                                    name={follow.name}
-                                    status={follow.status}
-                                    link={follow.link}
-                                />
-                            ))}
-                        </div>
+                        )}
                     </div>
                 </div>
             </div>
