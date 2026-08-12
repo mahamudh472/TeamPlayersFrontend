@@ -90,6 +90,7 @@ export interface JobDetailsHeaderProps {
     location: string;
     salary: string;
     onUploadCV?: () => void;
+    onImportText?: () => void;
     onGatherCandidates?: () => void;
     isGathering?: boolean;
 }

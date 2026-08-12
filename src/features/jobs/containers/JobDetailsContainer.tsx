@@ -5,15 +5,18 @@ import { JobDetailsStats } from "../components/JobDetailsStats";
 import { JobDetailsMain } from "../components/JobDetailsMain";
 import { JobDetailsSidebar } from "../components/JobDetailsSidebar";
 import { UploadCVModal } from "../components/UploadCVModal";
+import { ImportTextModal } from "../components/ImportTextModal";
 import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
+import { useNotifications } from "../../../shared/context/NotificationsContext";
 import { JobPosition } from "../types";
 
 export const JobDetailsContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
     const { user } = useAuth();
     const { toast } = useToast();
+    const { notifications } = useNotifications();
     const agencyId = localStorage.getItem("selected_agency_id") || user?.agency_id;
 
     const [job, setJob] = useState<JobPosition | null>(null);
@@ -22,6 +25,7 @@ export const JobDetailsContainer: React.FC = () => {
     const [jobCandidates, setJobCandidates] = useState<any[]>([]);
     const [isLoadingCandidates, setIsLoadingCandidates] = useState(true);
     const [isUploadCVOpen, setIsUploadCVOpen] = useState(false);
+    const [isImportTextOpen, setIsImportTextOpen] = useState(false);
     const [isGathering, setIsGathering] = useState(false);
 
     const [page, setPage] = useState(1);
@@ -104,6 +108,20 @@ export const JobDetailsContainer: React.FC = () => {
         fetchJobCandidates();
     }, [fetchJobDetails, fetchJobCandidates]);
 
+    useEffect(() => {
+        if (notifications.length > 0) {
+            const latest = notifications[0];
+            const latestJobId = latest.source && typeof latest.source === 'object' && 'job_id' in latest.source
+                ? Number(latest.source.job_id)
+                : null;
+
+            if (latest.notification_type === "candidate_processed" && latestJobId === Number(id)) {
+                fetchJobCandidates();
+                fetchJobDetails();
+            }
+        }
+    }, [notifications, id, fetchJobCandidates, fetchJobDetails]);
+
     if (isLoading) {
         return (
             <div className="flex flex-col items-center justify-center p-12 min-h-[400px]">
@@ -157,6 +175,7 @@ export const JobDetailsContainer: React.FC = () => {
                 location={job.location}
                 salary={job.salary_range}
                 onUploadCV={() => setIsUploadCVOpen(true)}
+                onImportText={() => setIsImportTextOpen(true)}
                 onGatherCandidates={handleGatherCandidates}
                 isGathering={isGathering}
             />
@@ -200,6 +219,15 @@ export const JobDetailsContainer: React.FC = () => {
             <UploadCVModal
                 isOpen={isUploadCVOpen}
                 onClose={() => setIsUploadCVOpen(false)}
+                onSuccess={fetchJobCandidates}
+                jobId={job.id}
+                agencyId={String(agencyId)}
+            />
+
+            {/* Import Text Modal */}
+            <ImportTextModal
+                isOpen={isImportTextOpen}
+                onClose={() => setIsImportTextOpen(false)}
                 onSuccess={fetchJobCandidates}
                 jobId={job.id}
                 agencyId={String(agencyId)}
