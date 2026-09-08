@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams, useLocation } from "react-router";
 import { CandidateDetailsHeader } from "../components/CandidateDetailsHeader";
 import { CandidateDetailsSummary } from "../components/CandidateDetailsSummary";
 import { CandidateDetailsTabs } from "../components/CandidateDetailsTabs";
@@ -11,6 +11,9 @@ import { BackButton } from "../../../components/ui";
 
 export const CandidateDetailsContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
+    const [searchParams] = useSearchParams();
+    const location = useLocation();
+    const fromJobId = searchParams.get("jobId") || (location.state as any)?.fromJobId;
     const { user } = useAuth();
     const { toast } = useToast();
     const agencyId = localStorage.getItem("selected_agency_id") || user?.agency_id;
@@ -293,7 +296,10 @@ export const CandidateDetailsContainer: React.FC = () => {
     if (error || !candidate) {
         return (
             <main className="space-y-6 text-left">
-                <BackButton label="Back to Candidates" to="/dashboard/candidates" />
+                <BackButton
+                    label={fromJobId ? "Back to Job" : "Back to Candidates"}
+                    to={fromJobId ? `/dashboard/jobs/${fromJobId}` : "/dashboard/candidates"}
+                />
                 <div className="bg-red-50/55 border border-red-200/50 p-6 rounded-xl text-center max-w-lg mx-auto mt-12">
                     <h3 className="text-red-800 font-semibold mb-2">Error Loading Candidate</h3>
                     <p className="text-red-700 text-sm">{error || "Candidate not found"}</p>

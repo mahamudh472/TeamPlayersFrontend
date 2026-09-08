@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useSearchParams, Link } from "react-router";
+import { useSearchParams, useLocation, Link } from "react-router";
 import { Typography, BackButton, Button } from "../../../components/ui";
 import { Users, Mail, Phone, MapPin, X, Calendar, Check, Briefcase, DollarSign } from "lucide-react";
 import { InterviewScheduleModal } from "./InterviewScheduleModal";
@@ -77,6 +77,8 @@ export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
     const [isShortlistConfirmOpen, setIsShortlistConfirmOpen] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [searchParams, setSearchParams] = useSearchParams();
+    const locationHook = useLocation();
+    const fromJobId = searchParams.get("jobId") || (locationHook.state as any)?.fromJobId;
 
     useEffect(() => {
         if (searchParams.get("schedule") === "true") {
@@ -140,7 +142,10 @@ export const CandidateDetailsHeader: React.FC<CandidateDetailsHeaderProps> = ({
 
     return (
         <div className="flex flex-col gap-4">
-            <BackButton label="Back to Candidates" to="/dashboard/candidates" />
+            <BackButton
+                label={fromJobId ? "Back to Job" : "Back to Candidates"}
+                to={fromJobId ? `/dashboard/jobs/${fromJobId}` : "/dashboard/candidates"}
+            />
 
             <div className="flex flex-col gap-4">
                 <div className="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">

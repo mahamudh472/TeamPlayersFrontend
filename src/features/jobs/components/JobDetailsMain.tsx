@@ -139,7 +139,8 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
                                     return (
                                         <Link
                                             key={candidate.id}
-                                            to={`/dashboard/candidates/${candidate.id}`}
+                                            to={jobId ? `/dashboard/candidates/${candidate.id}?jobId=${jobId}` : `/dashboard/candidates/${candidate.id}`}
+                                            state={{ fromJobId: jobId }}
                                             className="relative flex items-center gap-4 p-4 border border-btn-sec-border rounded-xl hover:bg-slate-50/50 transition-colors overflow-hidden text-left"
                                         >
                                             {/* Status indicator bar on the left edge */}
