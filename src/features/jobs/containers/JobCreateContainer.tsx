@@ -5,7 +5,7 @@ import { JobCreateForm, JobCreateSidebar } from "../components";
 import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
-import { AIGeneratedJobDescription } from "../types";
+import { AIGeneratedJobDescription, JobPriorityWeights } from "../types";
 
 export const JobCreateContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -25,6 +25,16 @@ export const JobCreateContainer: React.FC = () => {
     const [jobType, setJobType] = useState<OptionType | null>({ label: "Remote", value: "remote" });
     const [status, setStatus] = useState<OptionType | null>({ label: "Open", value: "open" });
     const [description, setDescription] = useState("");
+
+    // Custom AI Priority Weights state
+    const [weights, setWeights] = useState<JobPriorityWeights>({
+        skills_weight: 20.0,
+        experience_weight: 20.0,
+        salary_weight: 20.0,
+        location_weight: 20.0,
+        certification_weight: 20.0,
+    });
+    const [customWeightsEnabled, setCustomWeightsEnabled] = useState(false);
 
     // AI Upload/Parse states
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
@@ -86,6 +96,23 @@ export const JobCreateContainer: React.FC = () => {
                     value: job.status || "open",
                 });
                 setDescription(job.description || "");
+
+                if (
+                    job.skills_weight !== undefined ||
+                    job.experience_weight !== undefined ||
+                    job.salary_weight !== undefined ||
+                    job.location_weight !== undefined ||
+                    job.certification_weight !== undefined
+                ) {
+                    setWeights({
+                        skills_weight: job.skills_weight ?? 20.0,
+                        experience_weight: job.experience_weight ?? 20.0,
+                        salary_weight: job.salary_weight ?? 20.0,
+                        location_weight: job.location_weight ?? 20.0,
+                        certification_weight: job.certification_weight ?? 20.0,
+                    });
+                    setCustomWeightsEnabled(true);
+                }
             } catch (err: any) {
                 console.error("Failed to load job details for editing:", err);
                 toast.error("Failed to load job details for editing");
@@ -228,6 +255,28 @@ export const JobCreateContainer: React.FC = () => {
             status: status?.value || "open",
         };
 
+        if (customWeightsEnabled) {
+            const totalWeightSum = Math.round(
+                (weights.skills_weight +
+                    weights.experience_weight +
+                    weights.salary_weight +
+                    weights.location_weight +
+                    weights.certification_weight) *
+                    10
+            ) / 10;
+
+            if (Math.abs(totalWeightSum - 100) >= 0.1) {
+                toast.error(`The sum of all 5 priority weights must equal 100% (currently ${totalWeightSum}%).`);
+                return;
+            }
+
+            payload.skills_weight = weights.skills_weight;
+            payload.experience_weight = weights.experience_weight;
+            payload.salary_weight = weights.salary_weight;
+            payload.location_weight = weights.location_weight;
+            payload.certification_weight = weights.certification_weight;
+        }
+
         try {
             setIsLoading(true);
             if (isEdit) {
@@ -259,7 +308,17 @@ export const JobCreateContainer: React.FC = () => {
         }
     };
 
-    const isFormValid = title.trim() !== "" && client !== null && description.trim() !== "";
+    const totalWeightSum = Math.round(
+        (weights.skills_weight +
+            weights.experience_weight +
+            weights.salary_weight +
+            weights.location_weight +
+            weights.certification_weight) *
+            10
+    ) / 10;
+    const isWeightsValid = !customWeightsEnabled || Math.abs(totalWeightSum - 100) < 0.1;
+
+    const isFormValid = title.trim() !== "" && client !== null && description.trim() !== "" && isWeightsValid;
 
     if (isLoading && isEdit && title === "") {
         return (
@@ -341,12 +400,19 @@ export const JobCreateContainer: React.FC = () => {
                         onAnalyzeAI={handleAnalyzeAI}
                         clients={clients}
                         isEdit={isEdit}
+                        weights={weights}
+                        setWeights={setWeights}
+                        customWeightsEnabled={customWeightsEnabled}
+                        setCustomWeightsEnabled={setCustomWeightsEnabled}
                     />
                 </div>
 
                 {/* Right Column: AI screening criteria and action buttons */}
                 <div className="space-y-6">
-                    <JobCreateSidebar />
+                    <JobCreateSidebar
+                        weights={weights}
+                        customWeightsEnabled={customWeightsEnabled}
+                    />
 
                     {/* Submit & Cancel triggers */}
                     <div className="space-y-3">

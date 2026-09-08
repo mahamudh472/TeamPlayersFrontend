@@ -76,6 +76,7 @@ export const getCandidateDetails = (candidateId: string | undefined) => {
             experienceMatch: 85,
             salaryMatch: 90,
             locationMatch: 100,
+            certificationMatch: 95,
             recommendationTitle: "Highly Fit Candidate",
             recommendationText:
                 "Highly recommend moving forward to technical panel interview.",
@@ -115,6 +116,7 @@ export const getCandidateDetails = (candidateId: string | undefined) => {
             experienceMatch: 80,
             salaryMatch: 85,
             locationMatch: 100,
+            certificationMatch: 90,
             recommendationTitle: "Fit Candidate",
             recommendationText:
                 "Recommend for cultural and strategy assessment call.",
@@ -153,6 +155,7 @@ export const getCandidateDetails = (candidateId: string | undefined) => {
             experienceMatch: 75,
             salaryMatch: 80,
             locationMatch: 100,
+            certificationMatch: 70,
             recommendationTitle: "Potential Fit",
             recommendationText:
                 "Recommend scheduling initial screening interview call.",
@@ -190,6 +193,7 @@ export const getCandidateDetails = (candidateId: string | undefined) => {
         experienceMatch: 90,
         salaryMatch: 85,
         locationMatch: 100,
+        certificationMatch: 92,
         recommendationTitle: "High Fit Candidate",
         recommendationText:
             "Recommend to shortlist and schedule interview immediately.",

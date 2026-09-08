@@ -6,3 +6,4 @@ export * from "./JobDetailsSidebar";
 export * from "./JobDetailsStats";
 export * from "./JobStats";
 export * from "./JobsList";
+export * from "./JobPriorityWeightsSection";

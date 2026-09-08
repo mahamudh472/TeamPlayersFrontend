@@ -19,8 +19,21 @@ export interface JobPosition {
     high_fit?: number;
     medium_fit?: number;
     low_fit?: number;
+    skills_weight?: number;
+    experience_weight?: number;
+    salary_weight?: number;
+    location_weight?: number;
+    certification_weight?: number;
     created_at?: string;
     updated_at?: string;
+}
+
+export interface JobPriorityWeights {
+    skills_weight: number;
+    experience_weight: number;
+    salary_weight: number;
+    location_weight: number;
+    certification_weight: number;
 }
 
 export interface AIGeneratedJobDescription {
@@ -80,6 +93,10 @@ export interface JobCreateFormProps {
     onAnalyzeAI: () => void;
     clients: OptionType[];
     isEdit: boolean;
+    weights?: JobPriorityWeights;
+    setWeights?: React.Dispatch<React.SetStateAction<JobPriorityWeights>>;
+    customWeightsEnabled?: boolean;
+    setCustomWeightsEnabled?: (val: boolean) => void;
 }
 
 export interface JobDetailsHeaderProps {

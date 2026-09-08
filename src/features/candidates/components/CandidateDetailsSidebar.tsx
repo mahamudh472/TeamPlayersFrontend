@@ -14,6 +14,7 @@ export const CandidateDetailsSidebar: React.FC<CandidateDetailsSidebarProps> = (
     experienceMatch,
     salaryMatch,
     locationMatch,
+    certificationMatch,
     recommendedActions,
 }) => {
     return (
@@ -96,6 +97,21 @@ export const CandidateDetailsSidebar: React.FC<CandidateDetailsSidebarProps> = (
                             />
                         </div>
                     </div>
+
+                    {certificationMatch !== undefined && (
+                        <div>
+                            <div className="flex justify-between mb-1 text-sm text-text-main">
+                                <span>Certifications Match</span>
+                                <span className="font-medium">{certificationMatch}%</span>
+                            </div>
+                            <div className="bg-primary/20 relative w-full overflow-hidden rounded-full h-1.5">
+                                <div
+                                    className="bg-primary h-full rounded-full transition-all"
+                                    style={{ width: `${certificationMatch}%` }}
+                                />
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
 

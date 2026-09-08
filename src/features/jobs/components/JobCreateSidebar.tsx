@@ -1,7 +1,22 @@
 import React from "react";
 import { Typography } from "../../../components/ui";
+import { JobPriorityWeights } from "../types";
 
-export const JobCreateSidebar: React.FC = () => {
+interface JobCreateSidebarProps {
+    weights?: JobPriorityWeights;
+    customWeightsEnabled?: boolean;
+}
+
+export const JobCreateSidebar: React.FC<JobCreateSidebarProps> = ({
+    weights,
+    customWeightsEnabled = false,
+}) => {
+    const skillsW = weights?.skills_weight ?? 20;
+    const expW = weights?.experience_weight ?? 20;
+    const salW = weights?.salary_weight ?? 20;
+    const locW = weights?.location_weight ?? 20;
+    const certW = weights?.certification_weight ?? 20;
+
     return (
         <div className="bg-white text-text-main flex flex-col gap-6 rounded-xl border border-btn-sec-border p-6 text-left">
             <div>
@@ -9,7 +24,9 @@ export const JobCreateSidebar: React.FC = () => {
                     AI Screening Criteria
                 </Typography>
                 <p className="text-sm text-muted-text mt-1.5">
-                    Automatically generated from job requirements
+                    {customWeightsEnabled
+                        ? "Custom priority weights configured"
+                        : "Optimal weights auto-tuned by AI"}
                 </p>
             </div>
 
@@ -19,19 +36,23 @@ export const JobCreateSidebar: React.FC = () => {
                     <div className="space-y-2 text-sm text-text-main">
                         <div className="flex justify-between">
                             <span className="text-muted-text">Skills</span>
-                            <span className="font-semibold">40%</span>
+                            <span className="font-semibold">{skillsW}%</span>
                         </div>
                         <div className="flex justify-between">
                             <span className="text-muted-text">Experience</span>
-                            <span className="font-semibold">30%</span>
+                            <span className="font-semibold">{expW}%</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-muted-text">Education</span>
-                            <span className="font-semibold">20%</span>
+                            <span className="text-muted-text">Salary Alignment</span>
+                            <span className="font-semibold">{salW}%</span>
                         </div>
                         <div className="flex justify-between">
-                            <span className="text-muted-text">Location</span>
-                            <span className="font-semibold">10%</span>
+                            <span className="text-muted-text">Location Fit</span>
+                            <span className="font-semibold">{locW}%</span>
+                        </div>
+                        <div className="flex justify-between">
+                            <span className="text-muted-text">Certifications</span>
+                            <span className="font-semibold">{certW}%</span>
                         </div>
                     </div>
                 </div>

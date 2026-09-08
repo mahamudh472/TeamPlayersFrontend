@@ -5,6 +5,9 @@ import { Users, Copy, Check } from "lucide-react";
 import { useToast } from "../../../shared/context/ToastContext";
 import { copyToClipboard } from "../../../shared/utils/clipboard";
 
+import { JobPriorityWeights } from "../types";
+import { JobPriorityWeightsSection } from "./JobPriorityWeightsSection";
+
 interface JobDetailsMainProps {
     jobId?: string | number;
     description?: string;
@@ -18,6 +21,11 @@ interface JobDetailsMainProps {
     onPageChange?: (val: number) => void;
     hasMore?: boolean;
     hasLess?: boolean;
+    weights?: Partial<JobPriorityWeights>;
+    onSaveWeights?: (weights: JobPriorityWeights) => Promise<void>;
+    isSavingWeights?: boolean;
+    activeTab?: string;
+    onTabChange?: (tab: string) => void;
 }
 
 const getLeftBarColor = (status: string): string => {
@@ -47,8 +55,19 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
     onPageChange,
     hasMore = false,
     hasLess = false,
+    weights,
+    onSaveWeights,
+    isSavingWeights = false,
+    activeTab: controlledActiveTab,
+    onTabChange,
 }) => {
-    const [activeTab, setActiveTab] = useState<string>("candidates");
+    const [internalActiveTab, setInternalActiveTab] = useState<string>("candidates");
+    const activeTab = controlledActiveTab ?? internalActiveTab;
+    const setActiveTab = (tab: string) => {
+        setInternalActiveTab(tab);
+        onTabChange?.(tab);
+    };
+
     const [copied, setCopied] = useState(false);
     const { toast } = useToast();
 
@@ -68,6 +87,7 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
     const tabOptions: TabOption[] = [
         { label: `Candidates (${applicants})`, value: "candidates" },
         { label: "Job Details", value: "details" },
+        { label: "AI Score Priorities", value: "scoring" },
     ];
 
     return (
@@ -243,7 +263,15 @@ export const JobDetailsMain: React.FC<JobDetailsMainProps> = ({
                 </div>
             )}
 
-
+            {/* AI Score Priorities Tab Content */}
+            {activeTab === "scoring" && onSaveWeights && (
+                <JobPriorityWeightsSection
+                    jobId={jobId}
+                    initialWeights={weights}
+                    onSaveWeights={onSaveWeights}
+                    isSaving={isSavingWeights}
+                />
+            )}
         </div>
     );
 };

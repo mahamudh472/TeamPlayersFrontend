@@ -81,6 +81,7 @@ export const CandidateDetailsContainer: React.FC = () => {
                 experienceMatch: Math.round(data.ai_analysis?.experience_match || 0),
                 salaryMatch: Math.round(data.ai_analysis?.salary_match || 0),
                 locationMatch: Math.round(data.ai_analysis?.location_match || 0),
+                certificationMatch: Math.round(data.ai_analysis?.certification_match || 0),
                 jobTitle: data.job_info?.name || "N/A",
                 jobLocation: data.job_info?.location || "N/A",
                 jobSalary: data.job_info?.salary_range || "N/A",
@@ -357,6 +358,7 @@ export const CandidateDetailsContainer: React.FC = () => {
                         experienceMatch={candidate.experienceMatch}
                         salaryMatch={candidate.salaryMatch}
                         locationMatch={candidate.locationMatch}
+                        certificationMatch={candidate.certificationMatch}
                         recommendedActions={candidate.recommendedActions}
                     />
                 </div>

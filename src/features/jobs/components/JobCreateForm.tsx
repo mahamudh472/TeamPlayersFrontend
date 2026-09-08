@@ -1,8 +1,29 @@
 import React, { useRef, useState } from "react";
 import { Typography, Select, OptionType, Button } from "../../../components/ui";
-import { Upload, Sparkles, CheckCircle2, FileText, Trash2, AlertCircle, UploadCloud } from "lucide-react";
+import {
+    Sparkles,
+    CheckCircle2,
+    FileText,
+    Trash2,
+    AlertCircle,
+    UploadCloud,
+    Sliders,
+    Code,
+    Briefcase,
+    DollarSign,
+    MapPin,
+    Award,
+    RotateCcw,
+    Percent,
+} from "lucide-react";
 
-import { JobCreateFormProps } from "../types";
+import { JobCreateFormProps, JobPriorityWeights } from "../types";
+import {
+    DEFAULT_WEIGHTS,
+    calculateTotalWeightSum,
+    adjustWeightsWithFixedSum,
+    normalizeWeightsTo100,
+} from "../utils/weights";
 
 export const JobCreateForm: React.FC<JobCreateFormProps> = ({
     title,
@@ -33,9 +54,31 @@ export const JobCreateForm: React.FC<JobCreateFormProps> = ({
     onAnalyzeAI,
     clients,
     isEdit,
+    weights,
+    setWeights,
+    customWeightsEnabled = false,
+    setCustomWeightsEnabled,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [isDragging, setIsDragging] = useState(false);
+
+    const currentWeights = weights || DEFAULT_WEIGHTS;
+
+    const totalWeightSum = calculateTotalWeightSum(currentWeights);
+    const isSum100 = Math.abs(totalWeightSum - 100) < 0.1;
+
+    const handleWeightChange = (key: keyof JobPriorityWeights, val: number) => {
+        if (!setWeights) return;
+        setWeights((prev) => ({
+            ...(prev || DEFAULT_WEIGHTS),
+            [key]: Math.max(0, Math.min(100, Math.round(val * 10) / 10)),
+        }));
+    };
+
+    const normalizeTo100 = () => {
+        if (!setWeights) return;
+        setWeights((prev) => normalizeWeightsTo100(prev || DEFAULT_WEIGHTS));
+    };
 
     const jobTypeOptions: OptionType[] = [
         { label: "Remote", value: "remote" },
@@ -331,6 +374,225 @@ export const JobCreateForm: React.FC<JobCreateFormProps> = ({
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* AI Priority Weights Configuration Card */}
+            <div className="bg-white text-text-main flex flex-col gap-5 rounded-xl border border-btn-sec-border p-6 text-left shadow-sm">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-btn-sec-border">
+                    <div className="flex items-start gap-3">
+                        <div className="p-2.5 rounded-xl bg-violet-50 text-violet-600 shrink-0">
+                            <Sliders className="w-5 h-5" />
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-2">
+                                <Typography variant="h4" className="font-bold text-text-main leading-tight">
+                                    AI Scoring Priorities & Weights
+                                </Typography>
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-xs font-semibold bg-violet-100 text-violet-700">
+                                    <Sparkles className="w-3 h-3" /> Optional
+                                </span>
+                            </div>
+                            <p className="text-sm text-muted-text mt-1">
+                                {customWeightsEnabled
+                                    ? "Custom weights will be applied directly when scoring applicants."
+                                    : "AI will automatically analyze the role and generate optimal priority weights."}
+                            </p>
+                        </div>
+                    </div>
+
+                    {/* Toggle Switch */}
+                    {setCustomWeightsEnabled && (
+                        <div className="flex items-center gap-2">
+                            <label className="relative inline-flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={customWeightsEnabled}
+                                    onChange={(e) => setCustomWeightsEnabled(e.target.checked)}
+                                    className="sr-only peer"
+                                />
+                                <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                            </label>
+                            <span className="text-xs font-semibold text-text-main select-none">
+                                {customWeightsEnabled ? "Custom Weights" : "Auto AI"}
+                            </span>
+                        </div>
+                    )}
+                </div>
+
+                {customWeightsEnabled ? (
+                    <div className="space-y-5">
+                        {/* Balance helper & visual bar */}
+                        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs font-medium">
+                            <div className="flex items-center gap-2">
+                                <div
+                                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-semibold border ${
+                                        isSum100
+                                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                                            : "bg-amber-50 text-amber-700 border-amber-200"
+                                    }`}
+                                >
+                                    {isSum100 ? (
+                                        <>
+                                            <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                                            <span>Sum: 100%</span>
+                                        </>
+                                    ) : (
+                                        <>
+                                            <AlertCircle className="w-3.5 h-3.5 text-amber-600" />
+                                            <span>Sum: {totalWeightSum}% (Target: 100%)</span>
+                                        </>
+                                    )}
+                                </div>
+                                {!isSum100 && (
+                                    <button
+                                        type="button"
+                                        onClick={normalizeTo100}
+                                        className="inline-flex items-center gap-1 px-2 py-1 rounded-lg text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-text-main border border-btn-sec-border transition-colors cursor-pointer"
+                                    >
+                                        <Percent className="w-3 h-3" /> Auto-Balance
+                                    </button>
+                                )}
+                            </div>
+                            <button
+                                type="button"
+                                onClick={() => setWeights?.(defaultWeights)}
+                                className="text-xs text-muted-text hover:text-primary flex items-center gap-1 cursor-pointer self-start sm:self-auto"
+                            >
+                                <RotateCcw className="w-3 h-3" /> Reset (20% each)
+                            </button>
+                        </div>
+
+                        {/* Sliders Grid */}
+                        <div className="grid grid-cols-1 gap-3">
+                            {/* Skills */}
+                            <div className="p-3.5 rounded-xl border border-btn-sec-border bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5 min-w-[180px]">
+                                    <div className="p-1.5 rounded-lg bg-violet-100 text-violet-600">
+                                        <Code className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-semibold text-sm text-text-main">Skills Match</span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-1 sm:max-w-xs">
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={currentWeights.skills_weight}
+                                        onChange={(e) => handleWeightChange("skills_weight", parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                                    />
+                                    <span className="text-sm font-semibold text-text-main w-12 text-right">
+                                        {currentWeights.skills_weight}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Experience */}
+                            <div className="p-3.5 rounded-xl border border-btn-sec-border bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5 min-w-[180px]">
+                                    <div className="p-1.5 rounded-lg bg-blue-100 text-blue-600">
+                                        <Briefcase className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-semibold text-sm text-text-main">Experience</span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-1 sm:max-w-xs">
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={currentWeights.experience_weight}
+                                        onChange={(e) => handleWeightChange("experience_weight", parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                                    />
+                                    <span className="text-sm font-semibold text-text-main w-12 text-right">
+                                        {currentWeights.experience_weight}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Salary */}
+                            <div className="p-3.5 rounded-xl border border-btn-sec-border bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5 min-w-[180px]">
+                                    <div className="p-1.5 rounded-lg bg-emerald-100 text-emerald-600">
+                                        <DollarSign className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-semibold text-sm text-text-main">Salary Alignment</span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-1 sm:max-w-xs">
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={currentWeights.salary_weight}
+                                        onChange={(e) => handleWeightChange("salary_weight", parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                                    />
+                                    <span className="text-sm font-semibold text-text-main w-12 text-right">
+                                        {currentWeights.salary_weight}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Location */}
+                            <div className="p-3.5 rounded-xl border border-btn-sec-border bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5 min-w-[180px]">
+                                    <div className="p-1.5 rounded-lg bg-amber-100 text-amber-600">
+                                        <MapPin className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-semibold text-sm text-text-main">Location Fit</span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-1 sm:max-w-xs">
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={currentWeights.location_weight}
+                                        onChange={(e) => handleWeightChange("location_weight", parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                                    />
+                                    <span className="text-sm font-semibold text-text-main w-12 text-right">
+                                        {currentWeights.location_weight}%
+                                    </span>
+                                </div>
+                            </div>
+
+                            {/* Certifications */}
+                            <div className="p-3.5 rounded-xl border border-btn-sec-border bg-slate-50/50 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                                <div className="flex items-center gap-2.5 min-w-[180px]">
+                                    <div className="p-1.5 rounded-lg bg-rose-100 text-rose-600">
+                                        <Award className="w-4 h-4" />
+                                    </div>
+                                    <span className="font-semibold text-sm text-text-main">Certifications</span>
+                                </div>
+                                <div className="flex items-center gap-3 flex-1 sm:max-w-xs">
+                                    <input
+                                        type="range"
+                                        min={0}
+                                        max={100}
+                                        step={1}
+                                        value={currentWeights.certification_weight}
+                                        onChange={(e) => handleWeightChange("certification_weight", parseFloat(e.target.value))}
+                                        className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-primary"
+                                    />
+                                    <span className="text-sm font-semibold text-text-main w-12 text-right">
+                                        {currentWeights.certification_weight}%
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                ) : (
+                    <div className="p-4 rounded-xl bg-violet-50/50 border border-violet-100 flex items-center gap-3 text-xs text-violet-800">
+                        <Sparkles className="w-4 h-4 shrink-0 text-violet-600" />
+                        <span>
+                            AI will automatically analyze the job title, requirements, description, and seniority level to set optimized weights.
+                        </span>
+                    </div>
+                )}
             </div>
         </div>
     );

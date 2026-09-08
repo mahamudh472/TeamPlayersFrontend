@@ -41,6 +41,7 @@ export interface CandidateDetailsSidebarProps {
     experienceMatch: number;
     salaryMatch: number;
     locationMatch: number;
+    certificationMatch?: number;
     recommendedActions: string[];
 }
 

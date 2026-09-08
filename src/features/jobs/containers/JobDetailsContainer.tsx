@@ -10,7 +10,7 @@ import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
 import { useNotifications } from "../../../shared/context/NotificationsContext";
-import { JobPosition } from "../types";
+import { JobPosition, JobPriorityWeights } from "../types";
 
 export const JobDetailsContainer: React.FC = () => {
     const { id } = useParams<{ id: string }>();
@@ -27,6 +27,8 @@ export const JobDetailsContainer: React.FC = () => {
     const [isUploadCVOpen, setIsUploadCVOpen] = useState(false);
     const [isImportTextOpen, setIsImportTextOpen] = useState(false);
     const [isGathering, setIsGathering] = useState(false);
+    const [isSavingWeights, setIsSavingWeights] = useState(false);
+    const [activeTab, setActiveTab] = useState<string>("candidates");
 
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(false);
@@ -103,6 +105,42 @@ export const JobDetailsContainer: React.FC = () => {
         }
     };
 
+    const handleSaveWeights = async (newWeights: JobPriorityWeights) => {
+        if (!id) return;
+        if (!agencyId) {
+            toast.error("Agency ID is required.");
+            return;
+        }
+
+        try {
+            setIsSavingWeights(true);
+            const res = await apiClient.patch(
+                `/api/v1/agency/jobs/${id}/`,
+                {
+                    skills_weight: newWeights.skills_weight,
+                    experience_weight: newWeights.experience_weight,
+                    salary_weight: newWeights.salary_weight,
+                    location_weight: newWeights.location_weight,
+                    certification_weight: newWeights.certification_weight,
+                },
+                {
+                    headers: { "X-Agency-ID": String(agencyId) },
+                }
+            );
+            setJob(res.data);
+            toast.success("AI priority weights updated successfully. Candidate rankings recalculated.");
+            // Refetch candidates to get the freshly recalculated match scores in real time
+            await fetchJobCandidates();
+        } catch (err: any) {
+            console.error("Failed to update priority weights:", err);
+            const errMsg = err.response?.data?.detail || "Failed to update AI priority weights";
+            toast.error(errMsg);
+            throw err;
+        } finally {
+            setIsSavingWeights(false);
+        }
+    };
+
     useEffect(() => {
         fetchJobDetails();
         fetchJobCandidates();
@@ -164,6 +202,14 @@ export const JobDetailsContainer: React.FC = () => {
         ? Math.max(1, Math.ceil((new Date().getTime() - new Date(job.created_at).getTime()) / (1000 * 3600 * 24)))
         : 1;
 
+    const weights: JobPriorityWeights = {
+        skills_weight: job.skills_weight ?? 20.0,
+        experience_weight: job.experience_weight ?? 20.0,
+        salary_weight: job.salary_weight ?? 20.0,
+        location_weight: job.location_weight ?? 20.0,
+        certification_weight: job.certification_weight ?? 20.0,
+    };
+
     return (
         <main className="space-y-6">
             {/* Header section */}
@@ -204,6 +250,11 @@ export const JobDetailsContainer: React.FC = () => {
                         onPageChange={setPage}
                         hasMore={hasMore}
                         hasLess={hasLess}
+                        weights={weights}
+                        onSaveWeights={handleSaveWeights}
+                        isSavingWeights={isSavingWeights}
+                        activeTab={activeTab}
+                        onTabChange={setActiveTab}
                     />
                 </div>
                 <div>
@@ -211,6 +262,8 @@ export const JobDetailsContainer: React.FC = () => {
                         highFit={job.high_fit ?? 0}
                         mediumFit={job.medium_fit ?? 0}
                         lowFit={job.low_fit ?? 0}
+                        weights={weights}
+                        onConfigureWeights={() => setActiveTab("scoring")}
                     />
                 </div>
             </div>
