@@ -1,25 +1,56 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { Typography, AppBadge, Button } from "../../../components/ui";
-import { Mail, Calendar, Video, Zap, Eye, X } from "lucide-react";
-import { apiClient } from "../../../shared/api/apiClient";
+import { Zap, Eye, X, CheckCircle2, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
+import { integrationsApi, Integration } from "../../../shared/api/integrations";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
 
-interface Integration {
-    id: string | null;
-    provider: string;
-    name: string;
-    is_connected: boolean;
-    connected_at: string | null;
-    metadata: {
-        email?: string;
-        display_name?: string;
-        [key: string]: any;
-    };
-    created_at: string | null;
-    updated_at: string | null;
-}
+const MicrosoftIcon: React.FC<{ className?: string; isConnected?: boolean }> = ({
+    className = "w-8 h-8 shrink-0",
+    isConnected = true,
+}) => (
+    <svg className={`${className} ${!isConnected ? "grayscale opacity-60" : ""}`} viewBox="0 0 24 24" fill="none">
+        <rect x="2" y="2" width="9.5" height="9.5" rx="1.5" fill="#F25022" />
+        <rect x="12.5" y="2" width="9.5" height="9.5" rx="1.5" fill="#7FBA00" />
+        <rect x="2" y="12.5" width="9.5" height="9.5" rx="1.5" fill="#00A4EF" />
+        <rect x="12.5" y="12.5" width="9.5" height="9.5" rx="1.5" fill="#FFB900" />
+    </svg>
+);
+
+const ZoomIcon: React.FC<{ className?: string; isConnected?: boolean }> = ({
+    className = "w-8 h-8 shrink-0",
+    isConnected = true,
+}) => (
+    <svg className={`${className} ${!isConnected ? "grayscale opacity-60" : ""}`} viewBox="0 0 24 24" fill="none">
+        <rect width="24" height="24" rx="6" fill="#2D8CFF" />
+        <path
+            d="M5.5 8.75C5.5 7.7835 6.2835 7 7.25 7H13.75C14.7165 7 15.5 7.7835 15.5 8.75V15.25C15.5 16.2165 14.7165 17 13.75 17H7.25C6.2835 17 5.5 16.2165 5.5 15.25V8.75Z"
+            fill="white"
+        />
+        <path
+            d="M16.5 10.1519L19.0557 8.32639C19.5215 7.99369 20.1667 8.32646 20.1667 8.89531V15.1047C20.1667 15.6735 19.5215 16.0063 19.0557 15.6736L16.5 13.8481V10.1519Z"
+            fill="white"
+        />
+    </svg>
+);
+
+const GoogleCalendarIcon: React.FC<{ className?: string; isConnected?: boolean }> = ({
+    className = "w-8 h-8 shrink-0",
+    isConnected = true,
+}) => (
+    <svg className={`${className} ${!isConnected ? "grayscale opacity-60" : ""}`} viewBox="0 0 24 24" fill="none">
+        <rect width="24" height="24" rx="6" fill="#4285F4" />
+        <rect x="5" y="6" width="14" height="13" rx="2" fill="white" />
+        <path d="M5 6H19V9H5V6Z" fill="#EA4335" />
+        <circle cx="8.5" cy="12" r="1" fill="#4285F4" />
+        <circle cx="12" cy="12" r="1" fill="#FBBC04" />
+        <circle cx="15.5" cy="12" r="1" fill="#34A853" />
+        <circle cx="8.5" cy="15" r="1" fill="#34A853" />
+        <circle cx="12" cy="15" r="1" fill="#4285F4" />
+        <circle cx="15.5" cy="15" r="1" fill="#EA4335" />
+    </svg>
+);
 
 export const IntegrationsSettings: React.FC = () => {
     const { user } = useAuth();
@@ -40,10 +71,8 @@ export const IntegrationsSettings: React.FC = () => {
         }
         try {
             setIsLoading(true);
-            const response = await apiClient.get<Integration[]>("/api/v1/integrations/available/", {
-                headers: { "X-Agency-ID": String(agencyId) },
-            });
-            setIntegrations(response.data);
+            const data = await integrationsApi.getAvailableIntegrations(agencyId);
+            setIntegrations(data);
         } catch (error: any) {
             console.error("Failed to fetch integrations:", error);
             toast.error(error.response?.data?.detail || error.response?.data?.error || "Failed to load integrations");
@@ -62,9 +91,20 @@ export const IntegrationsSettings: React.FC = () => {
         const message = searchParams.get("message");
 
         if (status) {
-            const providerName = provider ? (provider === "google_calendar" ? "Google Calendar" : provider.charAt(0).toUpperCase() + provider.slice(1)) : "Integration";
+            const formatProviderName = (p: string | null) => {
+                if (!p) return "Integration";
+                if (p === "google_calendar") return "Google Calendar";
+                if (p === "microsoft") return "Microsoft";
+                if (p === "zoom") return "Zoom";
+                return p.charAt(0).toUpperCase() + p.slice(1);
+            };
+
+            const providerName = formatProviderName(provider);
             if (status === "success") {
                 toast.success(`${providerName} connected successfully!`);
+                if (agencyId) {
+                    integrationsApi.getAvailableIntegrations(agencyId).then(setIntegrations).catch(console.error);
+                }
             } else if (status === "error") {
                 toast.error(message ? `Failed to connect ${providerName}: ${message}` : `Failed to connect ${providerName}.`);
             }
@@ -76,10 +116,10 @@ export const IntegrationsSettings: React.FC = () => {
             newParams.delete("message");
             setSearchParams(newParams, { replace: true });
         }
-    }, [searchParams, setSearchParams, toast]);
+    }, [searchParams, setSearchParams, toast, agencyId]);
 
     const handleConnect = async (provider: string, name: string) => {
-        if (provider !== "zoom") {
+        if (!["zoom", "microsoft"].includes(provider)) {
             toast.info(`${name} integration is coming soon!`);
             return;
         }
@@ -91,11 +131,17 @@ export const IntegrationsSettings: React.FC = () => {
 
         setActionLoading((prev) => ({ ...prev, [provider]: true }));
         try {
-            const response = await apiClient.get<{ auth_url: string }>(`/api/v1/integrations/${provider}/connect/`, {
-                headers: { "X-Agency-ID": String(agencyId) },
-            });
-            if (response.data.auth_url) {
-                window.location.href = response.data.auth_url;
+            let res: { auth_url: string };
+            if (provider === "zoom") {
+                res = await integrationsApi.getZoomAuthUrl(agencyId);
+            } else if (provider === "microsoft") {
+                res = await integrationsApi.getMicrosoftAuthUrl(agencyId);
+            } else {
+                res = await integrationsApi.getConnectAuthUrl(provider, agencyId);
+            }
+
+            if (res.auth_url) {
+                window.location.href = res.auth_url;
             } else {
                 toast.error("Could not retrieve connection link.");
             }
@@ -109,7 +155,7 @@ export const IntegrationsSettings: React.FC = () => {
     };
 
     const handleDisconnect = async (provider: string, name: string) => {
-        if (provider !== "zoom") {
+        if (!["zoom", "microsoft"].includes(provider)) {
             toast.info(`Disconnecting ${name} is not supported yet.`);
             return;
         }
@@ -121,16 +167,20 @@ export const IntegrationsSettings: React.FC = () => {
 
         setActionLoading((prev) => ({ ...prev, [provider]: true }));
         try {
-            await apiClient.post(`/api/v1/integrations/${provider}/disconnect/`, {}, {
-                headers: { "X-Agency-ID": String(agencyId) },
-            });
-            toast.success(`${name} disconnected successfully!`);
+            let res;
+            if (provider === "zoom") {
+                res = await integrationsApi.disconnectZoom(agencyId);
+            } else if (provider === "microsoft") {
+                res = await integrationsApi.disconnectMicrosoft(agencyId);
+            } else {
+                res = await integrationsApi.disconnectProvider(provider, agencyId);
+            }
+
+            toast.success(res?.message || `${name} disconnected successfully!`);
             
             // Refresh list
-            const response = await apiClient.get<Integration[]>("/api/v1/integrations/available/", {
-                headers: { "X-Agency-ID": String(agencyId) },
-            });
-            setIntegrations(response.data);
+            const updated = await integrationsApi.getAvailableIntegrations(agencyId);
+            setIntegrations(updated);
         } catch (error: any) {
             console.error(`Failed to disconnect ${name}:`, error);
             const detail = error.response?.data?.detail || error.response?.data?.error || `Failed to disconnect ${name}.`;
@@ -141,21 +191,30 @@ export const IntegrationsSettings: React.FC = () => {
     };
 
     const getIcon = (provider: string, isConnected: boolean) => {
-        const colorClass = isConnected ? "text-primary" : "text-slate-400";
         switch (provider) {
             case "zoom":
-                return <Video className={`w-8 h-8 shrink-0 ${colorClass}`} />;
+                return <ZoomIcon className="w-8 h-8 shrink-0" isConnected={isConnected} />;
+            case "microsoft":
             case "outlook":
-                return <Mail className={`w-8 h-8 shrink-0 ${colorClass}`} />;
+                return <MicrosoftIcon className="w-8 h-8 shrink-0" isConnected={isConnected} />;
             case "google_calendar":
-                return <Calendar className={`w-8 h-8 shrink-0 ${colorClass}`} />;
+                return <GoogleCalendarIcon className="w-8 h-8 shrink-0" isConnected={isConnected} />;
             default:
-                return <Zap className={`w-8 h-8 shrink-0 ${colorClass}`} />;
+                return <Zap className={`w-8 h-8 shrink-0 ${isConnected ? "text-primary" : "text-slate-400"}`} />;
         }
     };
 
     const getDescription = (integration: Integration) => {
         if (!integration.is_connected) {
+            if (integration.provider === "google_calendar") {
+                return "Sync meetings and schedules with Google Calendar";
+            }
+            if (integration.provider === "microsoft") {
+                return "Sync Outlook emails, calendars, and Microsoft Graph";
+            }
+            if (integration.provider === "zoom") {
+                return "Create and manage Zoom video interview links";
+            }
             return "Not connected";
         }
 
@@ -170,7 +229,7 @@ export const IntegrationsSettings: React.FC = () => {
         if (parts.length > 0) {
             return `Connected as ${parts.join(" - ")}`;
         }
-        return "Connected";
+        return "Connected and active";
     };
 
     const formatKey = (key: string) => {
@@ -224,27 +283,45 @@ export const IntegrationsSettings: React.FC = () => {
 
     return (
         <div className="bg-white p-6 rounded-xl border border-btn-sec-border shadow-xs space-y-6 text-left">
-            <div>
-                <Typography variant="h4" className="font-bold text-text-main">
-                    Connected Integrations
-                </Typography>
-                <Typography variant="body2" className="text-muted-text">
-                    Manage your third-party connections
-                </Typography>
+            <div className="flex items-center justify-between">
+                <div>
+                    <Typography variant="h4" className="font-bold text-text-main">
+                        Connected Integrations
+                    </Typography>
+                    <Typography variant="body2" className="text-muted-text">
+                        Connect and manage your third-party communication and calendar accounts
+                    </Typography>
+                </div>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    className="h-8 px-2.5 text-xs text-slate-600 gap-1.5"
+                    onClick={fetchIntegrations}
+                    loading={isLoading}
+                    prefixIcon={RefreshCw}
+                >
+                    Refresh
+                </Button>
             </div>
+
             <div className="space-y-4">
                 {integrations.map((integration) => (
                     <div
                         key={integration.provider}
-                        className="flex items-center justify-between p-4 border border-btn-sec-border rounded-lg bg-slate-50/50"
+                        className="flex items-center justify-between p-4 border border-btn-sec-border rounded-lg bg-slate-50/50 hover:bg-slate-50 transition-colors"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-3.5">
                             {getIcon(integration.provider, integration.is_connected)}
                             <div>
-                                <Typography variant="body1" className="font-semibold text-text-main text-sm">
-                                    {integration.name}
-                                </Typography>
-                                <Typography variant="body2" className="text-xs text-muted-text">
+                                <div className="flex items-center gap-2">
+                                    <Typography variant="body1" className="font-semibold text-text-main text-sm">
+                                        {integration.name}
+                                    </Typography>
+                                    {integration.is_connected && (
+                                        <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+                                    )}
+                                </div>
+                                <Typography variant="body2" className="text-xs text-muted-text mt-0.5">
                                     {getDescription(integration)}
                                 </Typography>
                             </div>
@@ -257,7 +334,7 @@ export const IntegrationsSettings: React.FC = () => {
                                     onClick={() => setSelectedIntegration(integration)}
                                     title="View integration details"
                                 >
-                                    <Eye className="w-5 h-5 shrink-0" />
+                                    <Eye className="w-4 h-4 shrink-0" />
                                 </button>
                             )}
                             <AppBadge variant={integration.is_connected ? "primary" : "neutral"}>
@@ -275,11 +352,14 @@ export const IntegrationsSettings: React.FC = () => {
                             ) : (
                                 <Button
                                     variant="outline"
-                                    className="text-xs py-1 px-2.5 h-8"
+                                    className="text-xs py-1 px-2.5 h-8 gap-1"
                                     onClick={() => handleConnect(integration.provider, integration.name)}
                                     loading={actionLoading[integration.provider]}
                                 >
-                                    Connect
+                                    <span>Connect</span>
+                                    {["zoom", "microsoft"].includes(integration.provider) && (
+                                        <ExternalLink className="w-3 h-3 text-slate-400" />
+                                    )}
                                 </Button>
                             )}
                         </div>
@@ -293,17 +373,20 @@ export const IntegrationsSettings: React.FC = () => {
                     <div className="absolute inset-0" onClick={() => setSelectedIntegration(null)} />
                     <div className="bg-white rounded-xl border border-btn-sec-border shadow-xl w-full max-w-lg p-6 relative flex flex-col gap-6 animate-in zoom-in-95 duration-200 z-10 text-left">
                         {/* Header */}
-                        <div className="flex flex-col gap-1 pr-8">
-                            <Typography variant="h4" className="text-lg font-bold text-text-main leading-none">
-                                {selectedIntegration.name} Integration Details
-                            </Typography>
-                            <Typography variant="body2" className="text-muted-text text-sm">
-                                Stored attributes and connection details from the server.
-                            </Typography>
+                        <div className="flex items-center gap-3 pr-8">
+                            {getIcon(selectedIntegration.provider, true)}
+                            <div className="flex flex-col gap-0.5">
+                                <Typography variant="h4" className="text-lg font-bold text-text-main leading-tight">
+                                    {selectedIntegration.name} Integration Details
+                                </Typography>
+                                <Typography variant="body2" className="text-muted-text text-xs">
+                                    Stored attributes and connection status from provider
+                                </Typography>
+                            </div>
                         </div>
 
                         {/* Details content */}
-                        <div className="space-y-4 py-2 border-t border-b border-slate-100/50 max-h-[400px] overflow-y-auto pr-1">
+                        <div className="space-y-4 py-2 border-t border-b border-slate-100 max-h-[400px] overflow-y-auto pr-1">
                             {/* Standard Fields */}
                             <div>
                                 <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider block mb-1">
@@ -319,7 +402,7 @@ export const IntegrationsSettings: React.FC = () => {
                                     <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider block mb-1">
                                         Connected At
                                     </label>
-                                    <Typography variant="body2" className="text-text-main text-xs">
+                                    <Typography variant="body2" className="text-text-main text-xs font-medium">
                                         {formatDate(selectedIntegration.connected_at)}
                                     </Typography>
                                 </div>
@@ -339,23 +422,28 @@ export const IntegrationsSettings: React.FC = () => {
                             </div>
 
                             {/* Metadata fields */}
-                            {selectedIntegration.metadata && Object.keys(selectedIntegration.metadata).length > 0 && (
-                                <div className="space-y-3 pt-2 border-t border-slate-100/50">
-                                    <Typography variant="body2" className="font-semibold text-text-main">
-                                        Metadata
+                            {selectedIntegration.metadata && Object.keys(selectedIntegration.metadata).length > 0 ? (
+                                <div className="space-y-2 pt-2 border-t border-slate-100">
+                                    <Typography variant="body2" className="font-semibold text-text-main text-xs uppercase tracking-wider text-muted-text">
+                                        Account Metadata
                                     </Typography>
-                                    <div className="grid grid-cols-1 gap-3 bg-slate-50/50 p-3 border border-slate-100 rounded-lg">
+                                    <div className="grid grid-cols-1 gap-2.5 bg-slate-50/80 p-3.5 border border-slate-100 rounded-lg">
                                         {Object.entries(selectedIntegration.metadata).map(([key, val]) => (
-                                            <div key={key}>
-                                                <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider block mb-0.5">
+                                            <div key={key} className="flex flex-col gap-0.5">
+                                                <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider">
                                                     {formatKey(key)}
                                                 </label>
-                                                <Typography variant="body2" className="text-text-main text-xs break-all">
-                                                    {typeof val === "object" ? JSON.stringify(val) : String(val)}
+                                                <Typography variant="body2" className="text-text-main text-xs font-medium break-all">
+                                                    {typeof val === "object" ? JSON.stringify(val, null, 2) : String(val)}
                                                 </Typography>
                                             </div>
                                         ))}
                                     </div>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2 p-3 bg-slate-50 rounded-lg border border-slate-100 text-xs text-muted-text">
+                                    <AlertCircle className="w-4 h-4 text-slate-400 shrink-0" />
+                                    <span>No additional metadata stored for this integration.</span>
                                 </div>
                             )}
 
