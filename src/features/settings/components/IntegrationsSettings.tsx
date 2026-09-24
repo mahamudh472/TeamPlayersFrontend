@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { Typography, AppBadge, Button } from "../../../components/ui";
-import { Zap, Eye, X, CheckCircle2, AlertCircle, RefreshCw, ExternalLink } from "lucide-react";
+import { Zap, Eye, X, CheckCircle2, AlertCircle, RefreshCw, ExternalLink, Send } from "lucide-react";
 import { integrationsApi, Integration } from "../../../shared/api/integrations";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
+import { TestMicrosoftModal } from "./TestMicrosoftModal";
 
 const MicrosoftIcon: React.FC<{ className?: string; isConnected?: boolean }> = ({
     className = "w-8 h-8 shrink-0",
@@ -35,23 +36,6 @@ const ZoomIcon: React.FC<{ className?: string; isConnected?: boolean }> = ({
     </svg>
 );
 
-const GoogleCalendarIcon: React.FC<{ className?: string; isConnected?: boolean }> = ({
-    className = "w-8 h-8 shrink-0",
-    isConnected = true,
-}) => (
-    <svg className={`${className} ${!isConnected ? "grayscale opacity-60" : ""}`} viewBox="0 0 24 24" fill="none">
-        <rect width="24" height="24" rx="6" fill="#4285F4" />
-        <rect x="5" y="6" width="14" height="13" rx="2" fill="white" />
-        <path d="M5 6H19V9H5V6Z" fill="#EA4335" />
-        <circle cx="8.5" cy="12" r="1" fill="#4285F4" />
-        <circle cx="12" cy="12" r="1" fill="#FBBC04" />
-        <circle cx="15.5" cy="12" r="1" fill="#34A853" />
-        <circle cx="8.5" cy="15" r="1" fill="#34A853" />
-        <circle cx="12" cy="15" r="1" fill="#4285F4" />
-        <circle cx="15.5" cy="15" r="1" fill="#EA4335" />
-    </svg>
-);
-
 export const IntegrationsSettings: React.FC = () => {
     const { user } = useAuth();
     const { toast } = useToast();
@@ -61,6 +45,7 @@ export const IntegrationsSettings: React.FC = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState<Record<string, boolean>>({});
     const [selectedIntegration, setSelectedIntegration] = useState<Integration | null>(null);
+    const [isTestMicrosoftOpen, setIsTestMicrosoftOpen] = useState(false);
 
     const agencyId = localStorage.getItem("selected_agency_id") || user?.agency_id;
 
@@ -72,7 +57,7 @@ export const IntegrationsSettings: React.FC = () => {
         try {
             setIsLoading(true);
             const data = await integrationsApi.getAvailableIntegrations(agencyId);
-            setIntegrations(data);
+            setIntegrations(data.filter((item) => item.provider !== "google_calendar"));
         } catch (error: any) {
             console.error("Failed to fetch integrations:", error);
             toast.error(error.response?.data?.detail || error.response?.data?.error || "Failed to load integrations");
@@ -93,7 +78,6 @@ export const IntegrationsSettings: React.FC = () => {
         if (status) {
             const formatProviderName = (p: string | null) => {
                 if (!p) return "Integration";
-                if (p === "google_calendar") return "Google Calendar";
                 if (p === "microsoft") return "Microsoft";
                 if (p === "zoom") return "Zoom";
                 return p.charAt(0).toUpperCase() + p.slice(1);
@@ -103,7 +87,10 @@ export const IntegrationsSettings: React.FC = () => {
             if (status === "success") {
                 toast.success(`${providerName} connected successfully!`);
                 if (agencyId) {
-                    integrationsApi.getAvailableIntegrations(agencyId).then(setIntegrations).catch(console.error);
+                    integrationsApi
+                        .getAvailableIntegrations(agencyId)
+                        .then((data) => setIntegrations(data.filter((item) => item.provider !== "google_calendar")))
+                        .catch(console.error);
                 }
             } else if (status === "error") {
                 toast.error(message ? `Failed to connect ${providerName}: ${message}` : `Failed to connect ${providerName}.`);
@@ -180,7 +167,7 @@ export const IntegrationsSettings: React.FC = () => {
             
             // Refresh list
             const updated = await integrationsApi.getAvailableIntegrations(agencyId);
-            setIntegrations(updated);
+            setIntegrations(updated.filter((item) => item.provider !== "google_calendar"));
         } catch (error: any) {
             console.error(`Failed to disconnect ${name}:`, error);
             const detail = error.response?.data?.detail || error.response?.data?.error || `Failed to disconnect ${name}.`;
@@ -197,8 +184,6 @@ export const IntegrationsSettings: React.FC = () => {
             case "microsoft":
             case "outlook":
                 return <MicrosoftIcon className="w-8 h-8 shrink-0" isConnected={isConnected} />;
-            case "google_calendar":
-                return <GoogleCalendarIcon className="w-8 h-8 shrink-0" isConnected={isConnected} />;
             default:
                 return <Zap className={`w-8 h-8 shrink-0 ${isConnected ? "text-primary" : "text-slate-400"}`} />;
         }
@@ -206,9 +191,6 @@ export const IntegrationsSettings: React.FC = () => {
 
     const getDescription = (integration: Integration) => {
         if (!integration.is_connected) {
-            if (integration.provider === "google_calendar") {
-                return "Sync meetings and schedules with Google Calendar";
-            }
             if (integration.provider === "microsoft") {
                 return "Sync Outlook emails, calendars, and Microsoft Graph";
             }
@@ -305,7 +287,9 @@ export const IntegrationsSettings: React.FC = () => {
             </div>
 
             <div className="space-y-4">
-                {integrations.map((integration) => (
+                {integrations
+                    .filter((item) => item.provider !== "google_calendar")
+                    .map((integration) => (
                     <div
                         key={integration.provider}
                         className="flex items-center justify-between p-4 border border-btn-sec-border rounded-lg bg-slate-50/50 hover:bg-slate-50 transition-colors"
@@ -336,6 +320,17 @@ export const IntegrationsSettings: React.FC = () => {
                                 >
                                     <Eye className="w-4 h-4 shrink-0" />
                                 </button>
+                            )}
+                            {integration.is_connected && integration.provider === "microsoft" && (
+                                <Button
+                                    variant="outline"
+                                    className="text-xs py-1 px-2.5 h-8 gap-1.5 text-primary border-primary/30 hover:bg-primary-light"
+                                    onClick={() => setIsTestMicrosoftOpen(true)}
+                                    title="Test Outlook and Microsoft Calendar"
+                                    prefixIcon={Send}
+                                >
+                                    <span>Test</span>
+                                </Button>
                             )}
                             <AppBadge variant={integration.is_connected ? "primary" : "neutral"}>
                                 {integration.is_connected ? "Connected" : "Not connected"}
@@ -450,7 +445,23 @@ export const IntegrationsSettings: React.FC = () => {
                         </div>
 
                         {/* Footer */}
-                        <div className="flex justify-end gap-3 pt-2">
+                        <div className="flex items-center justify-between pt-2">
+                            {selectedIntegration.provider === "microsoft" && selectedIntegration.is_connected ? (
+                                <Button
+                                    type="button"
+                                    variant="outline"
+                                    className="text-xs py-1 px-2.5 h-8 gap-1.5 text-primary border-primary/30 hover:bg-primary-light"
+                                    onClick={() => {
+                                        setSelectedIntegration(null);
+                                        setIsTestMicrosoftOpen(true);
+                                    }}
+                                    prefixIcon={Send}
+                                >
+                                    Test Outlook & Calendar
+                                </Button>
+                            ) : (
+                                <span />
+                            )}
                             <Button
                                 type="button"
                                 variant="secondary"
@@ -474,6 +485,14 @@ export const IntegrationsSettings: React.FC = () => {
                     </div>
                 </div>
             )}
+
+            {/* Test Microsoft Integration Modal */}
+            <TestMicrosoftModal
+                isOpen={isTestMicrosoftOpen}
+                onClose={() => setIsTestMicrosoftOpen(false)}
+                agencyId={agencyId}
+                userEmail={user?.email}
+            />
         </div>
     );
 };
