@@ -10,33 +10,43 @@ import {
     Building2,
     Award,
     ChartArea,
+    Bell,
 } from "lucide-react";
-
+import { useNotifications } from "../../../shared/context/NotificationsContext";
 import { SidebarLinkProps } from "../types";
 
 const SidebarLink: React.FC<SidebarLinkProps> = ({
     to,
     icon: Icon,
     children,
+    badge,
 }) => {
     return (
         <NavLink
             to={to}
             end={to === "/dashboard"}
             className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors text-md font-medium ${isActive
+                `flex items-center justify-between px-3 py-2 rounded-lg transition-colors text-md font-medium ${isActive
                     ? "bg-primary text-white font-semibold"
                     : "text-white/80 hover:bg-white/10 hover:text-white"
                 }`
             }
         >
-            <Icon className="w-5 h-5" />
-            <span>{children}</span>
+            <div className="flex items-center gap-3">
+                <Icon className="w-5 h-5" />
+                <span>{children}</span>
+            </div>
+            {badge !== undefined && (
+                <span className="px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-red-500 text-white min-w-4 text-center leading-none">
+                    {badge}
+                </span>
+            )}
         </NavLink>
     );
 };
 
 export const Sidebar: React.FC = () => {
+    const { unreadCount } = useNotifications();
     return (
         <aside className="w-64 bg-sidebar border-r border-white/10 flex flex-col shrink-0">
             <div className="p-6 border-b border-white/10">
@@ -72,6 +82,13 @@ export const Sidebar: React.FC = () => {
                 </SidebarLink>
                 <SidebarLink to="/dashboard/analytics" icon={ChartArea}>
                     Analytics
+                </SidebarLink>
+                <SidebarLink
+                    to="/dashboard/notifications"
+                    icon={Bell}
+                    badge={unreadCount > 0 ? unreadCount : undefined}
+                >
+                    Notifications
                 </SidebarLink>
             </nav>
             <div className="p-4 border-t border-white/10 space-y-2">

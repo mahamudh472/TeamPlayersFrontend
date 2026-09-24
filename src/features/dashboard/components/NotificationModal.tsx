@@ -1,6 +1,7 @@
 import React from "react";
+import { useNavigate } from "react-router";
 import { Typography, Button } from "../../../components/ui";
-import { Bell, X, Loader2 } from "lucide-react";
+import { Bell, X, Loader2, ArrowRight } from "lucide-react";
 import { NotificationModalProps } from "../types";
 import { useNotifications } from "../../../shared/context/NotificationsContext";
 
@@ -9,6 +10,8 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
     onClose,
 }) => {
     if (!isOpen) return null;
+
+    const navigate = useNavigate();
 
     const {
         notifications,
@@ -158,6 +161,18 @@ export const NotificationModal: React.FC<NotificationModalProps> = ({
                     Dismiss
                 </Button>
             </div>
+
+            <button
+                type="button"
+                onClick={() => {
+                    onClose();
+                    navigate("/dashboard/notifications");
+                }}
+                className="w-full py-1.5 px-3 text-center text-xs font-semibold text-primary bg-primary-light hover:bg-primary/20 rounded-lg transition-colors flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+                <span>View All Notifications</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+            </button>
         </div>
     );
 };

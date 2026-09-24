@@ -53,6 +53,7 @@ import {
     PublicJobsContainer,
     PublicJobDetailsContainer,
 } from "./features/public-jobs";
+import { NotificationsContainer } from "./features/notifications";
 
 export const routes = createBrowserRouter([
     {
@@ -237,6 +238,10 @@ export const routes = createBrowserRouter([
             {
                 path: "analytics/:tab?",
                 element: <AnalyticsContainer />,
+            },
+            {
+                path: "notifications",
+                element: <NotificationsContainer />,
             },
             {
                 path: "settings/:tab?",

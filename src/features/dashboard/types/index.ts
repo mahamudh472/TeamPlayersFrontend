@@ -4,6 +4,7 @@ export interface SidebarLinkProps {
     to: string;
     icon: React.ComponentType<{ className?: string }>;
     children: React.ReactNode;
+    badge?: number | string;
 }
 
 export interface FunnelStep {
