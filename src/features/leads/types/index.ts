@@ -20,6 +20,7 @@ export interface LeadDetailItem {
     status: string;
     priority: "high priority" | "medium priority" | "low priority";
     industry: string;
+    jobTitle?: string;
     employees: string;
     location: string;
     contactName: string;
@@ -52,6 +53,7 @@ export interface GenerateLeadsModalProps {
     onGenerate: (filters: {
         country: string;
         industry: string;
+        jobTitle?: string;
         companySize: string;
         hiringActivity: string;
     }) => Promise<void>;

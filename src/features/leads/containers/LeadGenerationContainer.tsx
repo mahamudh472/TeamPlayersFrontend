@@ -44,6 +44,7 @@ export const LeadGenerationContainer: React.FC = () => {
         status: b.status,
         priority: b.priority === "high" ? "high priority" : b.priority === "medium" ? "medium priority" : "low priority",
         industry: b.industry,
+        jobTitle: b.job_title,
         employees: b.source ? `Source: ${b.source}` : "Inbound",
         location: b.location,
         contactName: b.contact_person,
@@ -120,6 +121,7 @@ export const LeadGenerationContainer: React.FC = () => {
     const handleGenerate = async (filters: {
         country: string;
         industry: string;
+        jobTitle?: string;
         companySize: string;
         hiringActivity: string;
     }) => {
@@ -144,12 +146,16 @@ export const LeadGenerationContainer: React.FC = () => {
                 "None": "none",
             };
 
-            const payload = {
+            const payload: Record<string, any> = {
                 country: filters.country,
                 industry: filters.industry,
                 company_size: companySizeMap[filters.companySize] || filters.companySize,
                 hiring_activity: hiringActivityMap[filters.hiringActivity] || filters.hiringActivity.toLowerCase(),
             };
+
+            if (filters.jobTitle?.trim()) {
+                payload.job_title = filters.jobTitle.trim();
+            }
 
             await apiClient.post("/api/v1/agency/leads/generate/", payload, {
                 headers: { "X-Agency-ID": String(agencyId) }

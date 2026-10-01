@@ -57,6 +57,7 @@ export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                             ? "medium priority"
                             : "low priority",
                     industry: b.industry,
+                    jobTitle: b.job_title,
                     employees: b.source ? `Source: ${b.source}` : "Inbound",
                     location: b.location,
                     contactName: b.contact_person,
@@ -237,6 +238,18 @@ export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                                             {displayLead.industry || "Not Specified"}
                                         </Typography>
                                     </div>
+
+                                    {displayLead.jobTitle && (
+                                        <div>
+                                            <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider block mb-0.5">
+                                                Target Role / Job Title
+                                            </label>
+                                            <Typography variant="body2" className="text-primary flex items-center gap-1.5 font-semibold">
+                                                <Briefcase className="w-4 h-4 text-primary shrink-0" />
+                                                {displayLead.jobTitle}
+                                            </Typography>
+                                        </div>
+                                    )}
 
                                     <div>
                                         <label className="text-[10px] font-bold text-muted-text uppercase tracking-wider block mb-0.5">
