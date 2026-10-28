@@ -3,6 +3,7 @@ import { Typography, Tabs, TabOption, Button } from "../../../components/ui";
 import { Mail, Phone, Plus, Building2, Users, MapPin, Check, Calendar, X } from "lucide-react";
 import { LeadStatus, Lead, LeadDetailItem } from "../types";
 import { LeadDetailsModal } from "./LeadDetailsModal";
+import { ContactLeadModal } from "./ContactLeadModal";
 
 interface LeadPipelineProps {
     leads: Lead[];
@@ -38,6 +39,7 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
     onTabChange,
 }) => {
     const [selectedLead, setSelectedLead] = useState<LeadDetailItem | null>(null);
+    const [contactLead, setContactLead] = useState<Lead | null>(null);
     const [confirmState, setConfirmState] = useState<{
         isOpen: boolean;
         leadId: string;
@@ -140,7 +142,7 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
                                                 prefixIcon={Mail}
                                                 onClick={(e) => {
                                                     e.stopPropagation();
-                                                    // Placeholder for later
+                                                    setContactLead(lead);
                                                 }}
                                             >
                                                 Contact
@@ -256,6 +258,17 @@ export const LeadPipeline: React.FC<LeadPipelineProps> = ({
                 lead={selectedLead}
                 onClose={() => setSelectedLead(null)}
                 onNoteAdded={onNoteAdded}
+            />
+
+            {/* Contact Lead AI Outreach Modal */}
+            <ContactLeadModal
+                isOpen={!!contactLead}
+                lead={contactLead}
+                onClose={() => setContactLead(null)}
+                onEmailSent={() => {
+                    setContactLead(null);
+                    onNoteAdded();
+                }}
             />
 
             {/* Status Change Confirmation Popup */}

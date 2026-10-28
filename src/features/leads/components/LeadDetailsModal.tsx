@@ -15,6 +15,7 @@ import { apiClient } from "../../../shared/api/apiClient";
 import { useAuth } from "../../../shared/context/AuthContext";
 import { useToast } from "../../../shared/context/ToastContext";
 import { LeadDetailItem, LeadDetailsModalProps } from "../types";
+import { ContactLeadModal } from "./ContactLeadModal";
 
 export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
     isOpen,
@@ -28,6 +29,7 @@ export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
         localStorage.getItem("selected_agency_id") || user?.agency_id;
 
     const [detailedLead, setDetailedLead] = useState<LeadDetailItem | null>(null);
+    const [isContactModalOpen, setIsContactModalOpen] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
     const [newNote, setNewNote] = useState("");
     const [isSubmittingNote, setIsSubmittingNote] = useState(false);
@@ -425,11 +427,30 @@ export const LeadDetailsModal: React.FC<LeadDetailsModalProps> = ({
                 )}
 
                 {/* Footer */}
-                <div className="flex justify-end gap-3 border-t border-slate-100 pt-4">
+                <div className="flex justify-between items-center gap-3 border-t border-slate-100 pt-4">
+                    <Button
+                        type="button"
+                        variant="primary"
+                        prefixIcon={Mail}
+                        onClick={() => setIsContactModalOpen(true)}
+                    >
+                        Contact Lead
+                    </Button>
                     <Button type="button" variant="secondary" onClick={onClose}>
                         Close
                     </Button>
                 </div>
+
+                {/* Contact Lead AI Outreach Modal */}
+                <ContactLeadModal
+                    isOpen={isContactModalOpen}
+                    lead={displayLead}
+                    onClose={() => setIsContactModalOpen(false)}
+                    onEmailSent={() => {
+                        setIsContactModalOpen(false);
+                        onNoteAdded?.();
+                    }}
+                />
 
                 {/* Top-right close button */}
                 <Button

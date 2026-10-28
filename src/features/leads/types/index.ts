@@ -65,3 +65,24 @@ export interface Lead extends LeadDetailItem {
     accentColor: string;
 }
 
+export interface GeneratedLeadEmailResponse {
+    lead_id: number | string;
+    company: string;
+    contact_person: string;
+    recipient_email: string;
+    subject: string;
+    body: string;
+}
+
+export interface SendLeadEmailPayload {
+    recipient_email?: string;
+    subject: string;
+    body: string;
+}
+
+export interface SendLeadEmailResponse {
+    message: string;
+    lead_id: number | string;
+    status: LeadStatus;
+}
+
